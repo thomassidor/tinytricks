@@ -123,11 +123,6 @@ struct RM8BaseWidget : ModuleWidget {
         addParam(w);
     }
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.847, 41.251f)), module, RM8Base::MUTE_COUNT_CV_INPUT));
-
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
-
   }
 };
 
@@ -146,6 +141,9 @@ struct RM8MonoWidget : RM8BaseWidget {
       addChild(createLight<SmallLight<GreenLight>>(mm2px(Vec(26.209, 14.701 + 14.f * i)), module, RM8Base::MUTE_LIGHT + i));
       addOutput(createOutput<PJ301MPort>(mm2px(Vec(29.122f, 11.782f + 14.f * i)), module, RM8Base::MUTE_L_OUTPUT  + i));
     }
+    //Screws
+    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelRM8 = createModel<RM8Mono, RM8MonoWidget>("RM8");
@@ -166,6 +164,9 @@ struct RM8StereoWidget : RM8BaseWidget {
       addOutput(createOutput<PJ301MPort>(mm2px(Vec(39.567f, 12.003f + 14.f * i)), module, RM8Base::MUTE_L_OUTPUT  + i));
       addOutput(createOutput<PJ301MPort>(mm2px(Vec(48.773f, 12.003f + 14.f * i)), module, RM8Base::MUTE_R_OUTPUT  + i));
     }
+    //Screws
+    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelRM8S = createModel<RM8Stereo, RM8StereoWidget>("RM8S");

@@ -224,9 +224,7 @@ struct ModulationGeneratorBaseWidget : ModuleWidget {
     addParam(createParam<CKSS>(mm2px(Vec(5.151f,70.697f)), module, ModulationGeneratorBase::SH_ON_PARAM));
 		addParam(createParam<CKSS>(mm2px(Vec(5.151f,88.025f)), module, ModulationGeneratorBase::OFFSET_PARAM));
 
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
+
 	}
 };
 
@@ -244,6 +242,10 @@ struct ModulationGeneratorX1Widget : ModulationGeneratorBaseWidget {
 	ModulationGeneratorX1Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
 		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/LFO1.svg")));
     addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,111.934f)), module, ModulationGeneratorBase::MOD_OUTPUT+0));
+
+    //Screws
+    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelModulationGeneratorX1 = createModel<ModulationGeneratorX1, ModulationGeneratorX1Widget>("MG1");
@@ -264,6 +266,10 @@ struct ModulationGeneratorX8Widget : ModulationGeneratorBaseWidget {
     for(int i = 0; i < X8_CHANNELS; i++){
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.501f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
     }
+
+    //Screws
+    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelModulationGeneratorX8 = createModel<ModulationGeneratorX8, ModulationGeneratorX8Widget>("MG8");
@@ -286,6 +292,9 @@ struct ModulationGeneratorX16Widget : ModulationGeneratorBaseWidget {
     for(int i = 0; i < X16_CHANNELS/2; i++)
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.818f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i + X16_CHANNELS/2));
 
+    //Screws
+    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelModulationGeneratorX16 = createModel<ModulationGeneratorX16, ModulationGeneratorX16Widget>("MG16");
