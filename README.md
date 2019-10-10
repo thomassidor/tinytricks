@@ -22,7 +22,7 @@ Upcoming modules (maybe):
 
 Feel free to join the project, copy source code or panel designs.
 
-For questions, comments and everything else: mail@thomassidor.com
+Questions, comments, suggestions and everything else: Submit an issue.
 
 Best regards,
 Thomas René Sidor
