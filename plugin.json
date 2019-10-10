@@ -1,0 +1,105 @@
+{
+  "slug": "TinyTricks",
+  "name": "Tiny Trick Modules",
+  "brand": "Tiny Tricks",
+  "version": "1.0.0",
+  "license": "CC0-1.0",
+  "author": "Thomas Ren\u00c3\u00a9 Sidor",
+  "authorEmail": "mail@thomassidor.com",
+  "authorUrl": "https://thomassidor.com",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+    {
+      "slug": "SH16",
+      "name": "Sample and Hold 16",
+      "description": "16 random values on trigger (sample and hold).",
+      "tags": [
+        "sample and hold",
+        "utility"
+      ]
+    },
+	{
+      "slug": "MG1",
+      "name": "Modulation Generator x1",
+      "description": "1x S&H or LFO with random state (rate, waveform, scale) generated on trigger.",
+      "tags": [
+        "sample and hold",
+        "utility",
+		      "low-frequency oscilator"
+      ]
+    },
+    {
+        "slug": "MG8",
+        "name": "Random state LFOx8",
+        "description": "8x S&H or LFO with random state (rate, waveform, scale) generated on trigger.",
+        "tags": [
+          "sample and hold",
+          "utility",
+          "low-frequency oscilator"
+        ]
+      },
+      {
+          "slug": "MG16",
+          "name": "Modulation Generator x16",
+          "description": "16x S&H or LFO with random state (rate, waveform, scale) generated on trigger.",
+          "tags": [
+            "sample and hold",
+            "utility",
+            "low-frequency oscilator"
+          ]
+        }
+        ,
+        {
+            "slug": "A8",
+            "name": "Attenuator x8",
+            "description": "8x attenuators with same level.",
+            "tags": [
+              "utility",
+              "attenuator"
+
+            ]
+          },
+          {
+              "slug": "RM8",
+              "name": "Random Mute x8",
+              "description": "Randomly mute a defined number of 1-8 channels.",
+              "tags": [
+                "utility",
+                "attenuator"
+
+              ]
+            },
+            {
+                "slug": "RM8S",
+                "name": "Random Stereo Mute x8",
+                "description": "Randomly mute a defined number of 1-8 stereo channels.",
+                "tags": [
+                  "utility",
+                  "attenuator"
+
+                ]
+              }
+              ,
+              {
+                  "slug": "TT-A",
+                  "name": "Tiny Tricks Arithmetic",
+                  "description": "A bunch of arithmetic tricks on two inputs.",
+                  "tags": [
+                    "utility"
+                  ]
+                },
+                {
+                    "slug": "TT-L",
+                    "name": "Tiny Tricks Logic",
+                    "description": "A bunch of logic tricks on two inputs.",
+                    "tags": [
+                      "utility"
+                    ]
+                  }
+
+  ]
+}
