@@ -15,6 +15,10 @@ Currently the following are included:
 * Random Mute x8 (RM8)
 * Random Stereo Mute x8 (RM8s)
 
+Upcoming modules (maybe):
+* Random Mix x8 (RX8)
+* Random Stereo Mix x8 (RX8s)
+* Have an idea for a module? Create an issue and suggest it - I might do it.
 
 Feel free to join the project, copy source code or panel designs.
 
