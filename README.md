@@ -18,6 +18,7 @@ Currently the following are included:
 Upcoming modules (maybe):
 * Random Mix x8 (RX8)
 * Random Stereo Mix x8 (RX8s)
+* Configurable Sample and Hold x8 (SH8c)
 * Have an idea for a module? Create an issue and suggest it - I might do it.
 
 Feel free to join the project, copy source code or panel designs.
