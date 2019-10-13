@@ -67,7 +67,7 @@ struct TTO1 : Module {
     for (int i = 0; i < NUM_OSCILLATORS; i++) {
       //Updating osc
       oscillators[i].setPitch(pitch);
-      oscillators[i].detune(i*00001.f);
+      oscillators[i].detune(i*00001.f); //move out to init - no need to do it all the time as it's gonna be the same
       oscillators[i].step(args.sampleRate);
       outValue += oscillators[i].getValue()*0.3;
     }
