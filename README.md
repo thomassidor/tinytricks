@@ -29,3 +29,12 @@ Questions, comments, suggestions and everything else: Submit an issue.
 
 Best regards,
 Thomas René Sidor
+
+
+## Changelog
+Version 1.0.2
+* Fixed incorrect tags in plugin.json
+* Updated formatting of plugin.json
+
+Version 1.0.1
+* Intial release
