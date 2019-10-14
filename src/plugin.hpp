@@ -17,4 +17,7 @@ extern Model *modelRM8;
 extern Model *modelRM8S;
 extern Model *modelTTA;
 extern Model *modelTTL;
-extern Model *modelTTO1;
+extern Model *modelTTSIN;
+extern Model *modelTTSAW;
+extern Model *modelTTSQR;
+extern Model *modelTTTRI;

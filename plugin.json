@@ -2,7 +2,7 @@
   "slug": "TinyTricks",
   "name": "Tiny Trick Modules",
   "brand": "Tiny Tricks",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "license": "MIT",
   "author": "Thomas Ren\u00c3\u00a9 Sidor",
   "authorEmail": "mail@thomassidor.com",
@@ -101,9 +101,33 @@
       ]
     },
     {
-      "slug": "TT-O1",
-      "name": "Tiny Tricks Oscillator 1",
-      "description": "A tiny strange sine based oscillator.",
+      "slug": "TTSIN",
+      "name": "Tiny Tricks Sine Oscillator",
+      "description": "A tiny sine based oscillator.",
+      "tags": [
+        "oscillator"
+      ]
+    },
+    {
+      "slug": "TTSAW",
+      "name": "Tiny Tricks Saw Oscillator",
+      "description": "A tiny saw based oscillator.",
+      "tags": [
+        "oscillator"
+      ]
+    },
+    {
+      "slug": "TTSQR",
+      "name": "Tiny Tricks Square Oscillator",
+      "description": "A tiny square based oscillator.",
+      "tags": [
+        "oscillator"
+      ]
+    },
+    {
+      "slug": "TTTRI",
+      "name": "Tiny Tricks Triangle Oscillator",
+      "description": "A tiny triangle based oscillator.",
       "tags": [
         "oscillator"
       ]

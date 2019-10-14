@@ -15,7 +15,10 @@ void init(Plugin *p) {
   p->addModel(modelRM8S);
   p->addModel(modelTTA);
   p->addModel(modelTTL);
-  p->addModel(modelTTO1);
+  p->addModel(modelTTSIN);
+  p->addModel(modelTTSAW);
+  p->addModel(modelTTSQR);
+  p->addModel(modelTTTRI);
 
 
 
