@@ -9,7 +9,7 @@ Currently the following are included (v1.1.0):
 * Tiny Tricks Arithmetic (TT-A)
 * Tiny Tricks Logic (TT-L)
 * Sample and Hold x16 (SH16)
-* Modulation Generator(MG1)
+* Modulation Generator (MG1)
 * Modulation Generator x8 (MG8)
 * Modulation Generator x16 (MG16)
 * Attenuator x8 (A8)
