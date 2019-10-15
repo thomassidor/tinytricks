@@ -21,6 +21,10 @@ Modules in development (for v1.1.0):
 * Simple Sawtooth Oscillator (TT-SAW)
 * Simple Square Oscillator (TT-SQR)
 * Simple Triangle Oscillator (TT-TRI)
+* Sine+ Oscillator (TT-SINE+)
+* Sawtooth+ Oscillator (TT-SAW+)
+* Square+ Oscillator (TT-SQR+)
+* Triangle+ Oscillator (TT-TRI+)
 
 Potential upcoming modules:
 * Random Mix x8 (RX8)
