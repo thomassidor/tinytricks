@@ -5,8 +5,7 @@
 
 Tiny Tricks is a collection of (more or less) tiny modules for VCV Rack.
 
-Currently the following are included:
-
+Currently the following are included (v1.0.2):
 * Tiny Tricks Arithmetic (TT-A)
 * Tiny Tricks Logic (TT-L)
 * Sample and Hold x16 (SH16)
@@ -17,7 +16,13 @@ Currently the following are included:
 * Random Mute x8 (RM8)
 * Random Stereo Mute x8 (RM8s)
 
-Upcoming modules (maybe):
+Modules in development (for v1.1.0):
+* Simple Sine Oscillator (TT-SINE)
+* Simple Sawtooth Oscillator (TT-SAW)
+* Simple Square Oscillator (TT-SQR)
+* Simple Triangle Oscillator (TT-TRI)
+
+Potential upcoming modules:
 * Random Mix x8 (RX8)
 * Random Stereo Mix x8 (RX8s)
 * Configurable Sample and Hold x8 (SH8c)
