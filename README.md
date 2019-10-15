@@ -5,7 +5,7 @@
 
 Tiny Tricks is a collection of (more or less) tiny modules for VCV Rack.
 
-Currently the following are included (v1.0.2):
+Currently the following are included (v1.1.0):
 * Tiny Tricks Arithmetic (TT-A)
 * Tiny Tricks Logic (TT-L)
 * Sample and Hold x16 (SH16)
@@ -15,8 +15,6 @@ Currently the following are included (v1.0.2):
 * Attenuator x8 (A8)
 * Random Mute x8 (RM8)
 * Random Stereo Mute x8 (RM8s)
-
-Modules in development (for v1.1.0):
 * Simple Sine Oscillator (TT-SINE)
 * Simple Sawtooth Oscillator (TT-SAW)
 * Simple Square Oscillator (TT-SQR)
@@ -41,6 +39,17 @@ Thomas René Sidor
 
 
 ## Changelog
+Version 1.1.0
+* Added: Simple Sine Oscillator (TT-SINE)
+* Added: Simple Sawtooth Oscillator (TT-SAW)
+* Added: Simple Square Oscillator (TT-SQR)
+* Added: Simple Triangle Oscillator (TT-TRI)
+* Added: Sine+ Oscillator (TT-SINE+)
+* Added: Sawtooth+ Oscillator (TT-SAW+)
+* Added: Square+ Oscillator (TT-SQR+)
+* Added: Triangle+ Oscillator (TT-TRI+)
+* Fixed: Small issues in plugin.json (#1 #2 )
+
 Version 1.0.2
 * Fixed incorrect tags in plugin.json
 * Updated formatting of plugin.json
