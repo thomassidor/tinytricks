@@ -181,9 +181,7 @@ struct TTOBasePlusWidget : ModuleWidget {
 		//Output
 		addOutput(createOutput<PJ301MPort>(mm2px(Vec(8.848f,113.06f)), module, TTOBasePlus::OSC_OUTPUT));
 
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
+
 	}
 };
 
@@ -197,6 +195,9 @@ struct TTOSinPlus : TTOBasePlus{
 struct TTOSinPlusWidget : TTOBasePlusWidget {
 	TTOSinPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
 		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTSINPLUS.svg")));
+		//Screws
+		addChild(createWidget<ScrewSilver>(Vec(0, 0)));
+		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelTTSINPLUS = createModel<TTOSinPlus, TTOSinPlusWidget>("TTSINPLUS");
@@ -214,7 +215,9 @@ struct TTOSawPlusWidget : TTOBasePlusWidget {
 		//Theta
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,75.802f)), module, TTOBasePlus::THETA_PARAM));
 		addInput(createInput<PJ301MPort>(mm2px(Vec(14.126f,75.447f)), module, TTOBasePlus::THETA_CV_INPUT));
-
+		//Screws
+    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 
 	}
 };
@@ -233,7 +236,9 @@ struct TTOSqrPlusWidget : TTOBasePlusWidget {
 		//Theta
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,75.802f)), module, TTOBasePlus::THETA_PARAM));
 		addInput(createInput<PJ301MPort>(mm2px(Vec(14.126f,75.447f)), module, TTOBasePlus::THETA_CV_INPUT));
-
+		//Screws
+    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 
 	}
 };
@@ -252,7 +257,9 @@ struct TTOTriPlusWidget : TTOBasePlusWidget {
 		//Theta
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,75.802f)), module, TTOBasePlus::THETA_PARAM));
 		addInput(createInput<PJ301MPort>(mm2px(Vec(14.126f,75.447f)), module, TTOBasePlus::THETA_CV_INPUT));
-
+		//Screws
+    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 
 	}
 };
