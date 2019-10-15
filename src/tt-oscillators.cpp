@@ -5,19 +5,30 @@ struct TinyOscillator{
     float phase = 0.0f;
     float freq = 0.0f;
     float theta = 0.01f;
+    float isStepEOC = false;
 
   public:
-    void step(float dt){
-      phase+= freq / dt;
-      if (phase >= 1.0f)
-        phase -= 1.0f;
-    }
     enum OscillatorType {
       SIN,
       SAW,
       SQR,
       TRI
     };
+
+    void step(float dt){
+      //phase+= freq;
+      phase+= freq / dt;
+      if (phase >= 1.0f){
+        phase -= 1.0f;
+        isStepEOC = true;
+      }
+      else
+        isStepEOC = false;
+    }
+
+    void reset(){
+        phase = 0.f;
+    }
 
     void setTheta(float t){
       theta = t;
@@ -47,10 +58,12 @@ struct TinyOscillator{
       return 2*atan(sin(2.0f*M_PI*x)/theta)/M_PI;
     }
 
+    bool isEOC(){
+      return isStepEOC;
+    }
 
-    void setPitch(float f){
-      freq = 440.f * powf(2.0f, f);
-      //freq = dsp::FREQ_C4 * dsp::approxExp2_taylor5(pitch + 30) / 1073741824;
+    void setPitch(float pitch){
+      freq = 440.f * powf(2.0f, pitch);
     }
 
 
@@ -68,10 +81,12 @@ struct TTOBase : Module {
 		FREQ_CV_INPUT,
     FREQ_FINE_CV_INPUT,
     THETA_CV_INPUT,
+    SYNC_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
 		OSC_OUTPUT,
+    SYNC_OUTPUT,
 		NUM_OUTPUTS
 	};
 	enum LightIds {
@@ -82,6 +97,7 @@ struct TTOBase : Module {
   TinyOscillator::OscillatorType oscType;
   float prevPitch = 0.f;
   float prevTheta = 0.f;
+  dsp::SchmittTrigger syncTrigger;
 
   void Initialize(){
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -101,19 +117,20 @@ struct TTOBase : Module {
 
   void process(const ProcessArgs &args) override{
 
-    //Getting the pitch
+    //Setting the pitch
   	float pitch = params[FREQ_PARAM].getValue();
     pitch += params[FREQ_FINE_PARAM].getValue();
-    pitch += inputs[FREQ_FINE_CV_INPUT].getVoltage()/5.f;
-  	//pitch += inputs[FREQ_FINE_CV_INPUT].getVoltage();
+    if(inputs[FREQ_FINE_CV_INPUT].isConnected())
+      pitch += inputs[FREQ_FINE_CV_INPUT].getVoltage()/5.f;
   	pitch = clamp(pitch, -3.5f, 3.5f);
-
 
     if(pitch != prevPitch){
       oscillator.setPitch(pitch);
       prevPitch = pitch;
     }
 
+
+    //Setting Theta
     float theta = params[THETA_PARAM].getValue();
 
     if(inputs[THETA_CV_INPUT].isConnected())
@@ -126,10 +143,16 @@ struct TTOBase : Module {
       prevTheta = theta;
     }
 
+    //Resetting if synced
+    if(inputs[SYNC_INPUT].isConnected() && syncTrigger.process(inputs[SYNC_INPUT].getVoltage()))
+      oscillator.reset();
 
+    //Stepping
     oscillator.step(args.sampleRate);
-    float value = 0.f;
 
+
+    //Getting the value
+    float value = 0.f;
     switch (oscType) {
       case TinyOscillator::OscillatorType::SIN:
         value = oscillator.getSin();
@@ -147,8 +170,11 @@ struct TTOBase : Module {
         value = oscillator.getTri();
         break;
     }
-
+    //Setting output
   	outputs[OSC_OUTPUT].setVoltage(value);
+
+    if(outputs[SYNC_OUTPUT].isConnected())
+        outputs[SYNC_OUTPUT].setVoltage(oscillator.isEOC() ? 1.f : 0.f);
   }
 };
 
@@ -162,14 +188,15 @@ struct TTOBaseWidget : ModuleWidget {
 
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,11.912f)), module, TTOBase::FREQ_CV_INPUT));
 
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,29.749f)), module, TTOBase::FREQ_PARAM));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,46.562f)), module, TTOBase::FREQ_FINE_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,56.193f)), module, TTOBase::FREQ_FINE_CV_INPUT));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,27.541f)), module, TTOBase::FREQ_PARAM));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,42.329f)), module, TTOBase::FREQ_FINE_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,51.607f)), module, TTOBase::FREQ_FINE_CV_INPUT));
 
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,71.808f)), module, TTOBase::THETA_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,81.456f)), module, TTOBase::THETA_CV_INPUT));
 
-		addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,111.843)), module, TTOBase::OSC_OUTPUT));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,89.308f)), module, TTOBase::SYNC_INPUT));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,100.201f)), module, TTOBase::SYNC_OUTPUT));
+
+		addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,113.06f)), module, TTOBase::OSC_OUTPUT));
 
     //Screws
     addChild(createWidget<ScrewSilver>(Vec(0, 0)));
@@ -200,6 +227,8 @@ struct TTOSaw : TTOBase{
 struct TTOSawWidget : TTOBaseWidget {
 	TTOSawWidget(TTOBase *module) : TTOBaseWidget(module) {
 		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTSAW.svg")));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,75.106f)), module, TTOBase::THETA_CV_INPUT));
 	}
 };
 Model *modelTTSAW = createModel<TTOSaw, TTOSawWidget>("TTSAW");
@@ -214,6 +243,8 @@ struct TTOSqr : TTOBase{
 struct TTOSqrWidget : TTOBaseWidget {
 	TTOSqrWidget(TTOBase *module) : TTOBaseWidget(module) {
 		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTSQR.svg")));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,75.106f)), module, TTOBase::THETA_CV_INPUT));
 	}
 };
 Model *modelTTSQR = createModel<TTOSqr, TTOSqrWidget>("TTSQR");
@@ -228,6 +259,8 @@ struct TTOTri : TTOBase{
 struct TTOTriWidget : TTOBaseWidget {
 	TTOTriWidget(TTOBase *module) : TTOBaseWidget(module) {
 		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTTRI.svg")));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,75.106f)), module, TTOBase::THETA_CV_INPUT));
 	}
 };
 Model *modelTTTRI = createModel<TTOTri, TTOTriWidget>("TTTRI");
