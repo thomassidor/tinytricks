@@ -19,6 +19,10 @@ void init(Plugin *p) {
   p->addModel(modelTTSAW);
   p->addModel(modelTTSQR);
   p->addModel(modelTTTRI);
+  p->addModel(modelTTSINPLUS);
+  p->addModel(modelTTSAWPLUS);
+  p->addModel(modelTTSQRPLUS);
+  p->addModel(modelTTTRIPLUS);
 
 
 

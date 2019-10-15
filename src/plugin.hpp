@@ -21,3 +21,7 @@ extern Model *modelTTSIN;
 extern Model *modelTTSAW;
 extern Model *modelTTSQR;
 extern Model *modelTTTRI;
+extern Model *modelTTSINPLUS;
+extern Model *modelTTSAWPLUS;
+extern Model *modelTTSQRPLUS;
+extern Model *modelTTTRIPLUS;

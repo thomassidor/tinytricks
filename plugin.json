@@ -35,7 +35,7 @@
     },
     {
       "slug": "MG8",
-      "name": "odulation Generator x8",
+      "name": "Modulation Generator x8",
       "description": "Get up to 8 random value (S&H on internal noise) or LFO with random state (rate, waveform, scale, phase) generated on a trigger. Settings for variance and bias of random, whether to include S&H values and unipolar or bipolar.",
       "tags": [
         "sample and hold",
@@ -132,6 +132,41 @@
         "oscillator"
       ]
     }
-
+    ,
+    {
+      "slug": "TTSINPLUS",
+      "name": "Tiny Tricks Sine+ Oscillator",
+      "description": "Three sine based oscillators with detune and sync.",
+      "tags": [
+        "oscillator"
+      ]
+    }
+    ,
+    {
+      "slug": "TTSAWPLUS",
+      "name": "Tiny Tricks Sawtooth+ Oscillator",
+      "description": "Three sawtooth based oscillators with detune and sync.",
+      "tags": [
+        "oscillator"
+      ]
+    }
+    ,
+    {
+      "slug": "TTSQRPLUS",
+      "name": "Tiny Tricks Square+ Oscillator",
+      "description": "Three square based oscillators with detune and sync.",
+      "tags": [
+        "oscillator"
+      ]
+    }
+    ,
+    {
+      "slug": "TTTRIPLUS",
+      "name": "Tiny Tricks Triangle+ Oscillator",
+      "description": "Three triangle based oscillators with detune and sync.",
+      "tags": [
+        "oscillator"
+      ]
+    }
   ]
 }
