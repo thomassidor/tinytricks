@@ -131,8 +131,7 @@
       "tags": [
         "oscillator"
       ]
-    }
-    ,
+    },
     {
       "slug": "TTSINPLUS",
       "name": "Tiny Tricks Sine+ Oscillator",
@@ -140,8 +139,7 @@
       "tags": [
         "oscillator"
       ]
-    }
-    ,
+    },
     {
       "slug": "TTSAWPLUS",
       "name": "Tiny Tricks Sawtooth+ Oscillator",
@@ -149,8 +147,7 @@
       "tags": [
         "oscillator"
       ]
-    }
-    ,
+    },
     {
       "slug": "TTSQRPLUS",
       "name": "Tiny Tricks Square+ Oscillator",
@@ -158,8 +155,7 @@
       "tags": [
         "oscillator"
       ]
-    }
-    ,
+    },
     {
       "slug": "TTTRIPLUS",
       "name": "Tiny Tricks Triangle+ Oscillator",
