@@ -44,6 +44,7 @@ Version 1.1.1
 * Fixed: Oscillators not oscillating until you change frequency
 * Fixed: Author name formatting in plugin.json
 * Fixed: Proper saving and restoring of hardsync states in oscillator modules
+* Fixed: Naming of modules to not include Tiny Tricks
 * Changed: Name from Tiny Trick Modules to Tiny Tricks
 
 Version 1.1.0
