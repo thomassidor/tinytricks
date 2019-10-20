@@ -1,10 +1,10 @@
 {
   "slug": "TinyTricks",
-  "name": "Tiny Trick Modules",
+  "name": "Tiny Tricks",
   "brand": "Tiny Tricks",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
-  "author": "Thomas Ren\u00c3\u00a9 Sidor",
+  "author": "Thomas René Sidor",
   "authorEmail": "mail@thomassidor.com",
   "authorUrl": "https://thomassidor.com",
   "pluginUrl": "https://github.com/thomassidor/tinytricks",

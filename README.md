@@ -39,6 +39,12 @@ Thomas René Sidor
 
 
 ## Changelog
+Version 1.1.1
+* Fixed: RM8Base.svg missing or not needed ? (#4)
+* Fixed: Oscillators not oscillating until you change frequency
+* Fixed: Author name formatting in plugin.json
+* Changed: Name from Tiny Trick Modules to Tiny Tricks
+
 Version 1.1.0
 * Added: Simple Sine Oscillator (TT-SINE)
 * Added: Simple Sawtooth Oscillator (TT-SAW)

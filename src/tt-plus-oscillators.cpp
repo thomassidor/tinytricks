@@ -36,9 +36,9 @@ struct TTOBasePlus : Module {
 	dsp::SchmittTrigger hardsync3Trigger;
 	bool hardsync2 = false;
 	bool hardsync3 = false;
-  float prevPitch = 0.f;
-  float prevTheta = 0.f;
-	float prevDetune = 0.f;
+  float prevPitch = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
+  float prevTheta = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
+	float prevDetune = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
 
 
   void Initialize(){
