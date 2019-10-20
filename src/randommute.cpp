@@ -113,7 +113,6 @@ struct RM8Base : Module {
 struct RM8BaseWidget : ModuleWidget {
   RM8BaseWidget(RM8Base *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/RM8Base.svg")));
 
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.847f, 12.003f)), module, RM8Base::TRIG_INPUT));
 
