@@ -23,6 +23,7 @@ void init(Plugin *p) {
   p->addModel(modelTTSAWPLUS);
   p->addModel(modelTTSQRPLUS);
   p->addModel(modelTTTRIPLUS);
+  p->addModel(modelRX8);
 
 
 
