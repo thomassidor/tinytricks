@@ -1,7 +1,12 @@
 #include "plugin.hpp"
-#include "PerlinNoise.hpp"
+#include "utility/SimplexNoise.hpp"
 
 const int NUM_CHANNELS = 8;
+const float SPEED_MAX = 1.f;
+const float SPEED_MIN = 0.005f;
+const float STABILITY_MAX = 1.f;
+const float STABILITY_MIN = 8.f;
+
 struct RX8Base : Module {
 
   enum ParamIds {
@@ -14,7 +19,8 @@ struct RX8Base : Module {
     ENUMS(AUDIO_L_INPUT, NUM_CHANNELS),
     ENUMS(AUDIO_R_INPUT, NUM_CHANNELS),
     TRIG_INPUT,
-    OVERRIDE_INPUT,
+    SPEED_CV_INPUT,
+    STABILITY_CV_INPUT,
     NUM_INPUTS
   };
   enum OutputIds {
@@ -28,14 +34,15 @@ struct RX8Base : Module {
   };
 
   dsp::SchmittTrigger trigger;
-  bool levels[NUM_CHANNELS] = {0};
+  float levels[NUM_CHANNELS] = {0};
   bool stereo = false;
-  PerlinNoise pn;
+  SimplexNoise simp;
 
   void initialize(){
+      simp.init();
       config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-      configParam(SPEED_PARAM, 0.f, 10.f, 5.f, "Speed of change");
-      configParam(STABILITY_PARAM, 0.f, 1.f, 1.f, "Stability of change");
+      configParam(SPEED_PARAM, SPEED_MIN, SPEED_MAX, 0.05f, "Speed of change");
+      configParam(STABILITY_PARAM, STABILITY_MIN, STABILITY_MAX, 1.f, "Stability of change");
       configParam(TRIGONLY_PARAM, 0.f, 1.f, 1.f, "Flow free or only change on trigger");
   }
 
@@ -49,34 +56,72 @@ struct RX8Base : Module {
     initialize();
   }
 
+  float sumOcatave(int num_iterations, float x, float y, float persistence, float scale){
+    float maxAmp = 0.f;
+    float amp = 1.f;
+    float freq = scale;
+    float noise = 0.f;
+
+
+    for(int i = 0; i < num_iterations; ++i){
+        noise += simp.noise(x * freq, y * freq) * amp;
+        maxAmp += amp;
+        amp *= persistence;
+        freq *= 2.f;
+      }
+
+    //take the average value of the iterations
+    noise /= maxAmp;
+
+    return noise;
+  }
 
   float t = 0.f;
   void process(const ProcessArgs &args) override {
+
     bool freeflow = (params[TRIGONLY_PARAM].getValue() == 0.f);
+    int connected = 0;
+    float summedLevels = 0.f;
     t += 1.0f / args.sampleRate;
 
-    std::cout << "trig conn: " << inputs[TRIG_INPUT].isConnected() << std::endl;
-
     if(freeflow || (inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage()))){
-      float x = sinf(t);
+
+      float speed = params[SPEED_PARAM].getValue();
+      if(inputs[SPEED_CV_INPUT].isConnected())
+        speed += inputs[SPEED_CV_INPUT].getVoltage();
+      speed = clamp(speed,)
+
+      float stability = params[STABILITY_PARAM].getValue();
+
+      float x = t;
       for (int i = 0; i < NUM_CHANNELS; i++) {
         if(inputs[AUDIO_L_INPUT + i].isConnected()){
-          float y = i*i;
-          float level = pn.noise(x, y, 1.0f);
+          connected++;
+          float y = (2.f*i);
+          float noiseVal = sumOcatave(stability,x,y,0.7f,speed);
+          float level = clamp(noiseVal*2.5f,-1.5f,1.5f)/1.5f;
+          level *= level;
+          summedLevels += level;
           levels[i] = level;
           lights[LEVEL_LIGHT + i].value = level;
-          if(!freeflow)
-            std::cout << "C" << i << " level: " << level << std::endl;
         }
       }
     }
 
+
     float mix = 0.f;
     if(outputs[MIX_L_OUTPUT].isConnected()){
       for (int i = 0; i < NUM_CHANNELS; i++) {
-        mix += inputs[AUDIO_L_INPUT + i].getVoltage()*levels[i];
+        if(inputs[AUDIO_L_INPUT + i].isConnected())
+          mix += inputs[AUDIO_L_INPUT + i].getVoltage()*levels[i];
       }
-      outputs[MIX_L_OUTPUT].setVoltage(mix);
+      if(connected==1)
+          outputs[MIX_L_OUTPUT].setVoltage(mix);
+      else if(summedLevels>0.f)
+        outputs[MIX_L_OUTPUT].setVoltage(mix/summedLevels);
+      else
+        outputs[MIX_L_OUTPUT].setVoltage(0.f);
+
     }
   }
 };
@@ -98,10 +143,19 @@ struct RX8BaseWidget : ModuleWidget {
 
     //Internal selection controls
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(17.45f,30.677f)), module, RX8Base::SPEED_PARAM));
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(17.45f,49.768f)), module, RX8Base::STABILITY_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(18.389f, 41.992f)), module, RX8Base::SPEED_CV_INPUT));
 
-    //External override
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.977f, 12.003f)), module, RX8Base::OVERRIDE_INPUT));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(17.45f,58.239f)), module, RX8Base::STABILITY_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(18.398f, 69.585f)), module, RX8Base::STABILITY_CV_INPUT));
+    /*
+    {
+        auto w = createParam<RoundBlackKnob>(mm2px(Vec(17.45f,49.768f)), module, RX8Base::STABILITY_PARAM);
+        dynamic_cast<Knob*>(w)->snap = true;
+        addParam(w);
+    }
+    */
+
+
 
     //Mix output
     addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.398f, 113.403f)), module, RX8Base::MIX_L_OUTPUT));

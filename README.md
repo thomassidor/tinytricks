@@ -39,6 +39,12 @@ Thomas René Sidor
 
 
 ## Changelog
+Version 1.2.0
+* Added: Random Mix x8 (RX8)
+* Added: Simplex Noise (SN1)
+* Added: Simplex Noise x8 (SN8)
+* Fixed: Tint Trick Logic output to low max 1V (#6)
+
 Version 1.1.0
 * Added: Simple Sine Oscillator (TT-SINE)
 * Added: Simple Sawtooth Oscillator (TT-SAW)

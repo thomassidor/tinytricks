@@ -42,16 +42,16 @@ struct TTL : Module {
       bool isA = (a!=0.f);
       bool isB = (b!=0.f);
 
-      outputs[AND_OUTPUT].setVoltage((isA && isB?1.f:0.f));
-      outputs[OR_OUTPUT].setVoltage((isA || isB?1.f:0.f));
-      outputs[XOR_OUTPUT].setVoltage((isA != isB?1.f:0.f));
-      outputs[NOR_OUTPUT].setVoltage((!(a || b)?1.f:0.f));
-      outputs[ALTB_OUTPUT].setVoltage((a<b?1.f:0.f));
-      outputs[AGTB_OUTPUT].setVoltage((a>b?1.f:0.f));
-      outputs[ALTEB_OUTPUT].setVoltage((a<=b?1.f:0.f));
-      outputs[AGTEB_OUTPUT].setVoltage((a>=b?1.f:0.f));
-      outputs[AISB_OUTPUT].setVoltage((a==b?1.f:0.f));
-      outputs[AISNOTB_OUTPUT].setVoltage((a!=b?1.f:0.f));
+      outputs[AND_OUTPUT].setVoltage((isA && isB?10.f:0.f));
+      outputs[OR_OUTPUT].setVoltage((isA || isB?10.f:0.f));
+      outputs[XOR_OUTPUT].setVoltage((isA != isB?10.f:0.f));
+      outputs[NOR_OUTPUT].setVoltage((!(a || b)?10.f:0.f));
+      outputs[ALTB_OUTPUT].setVoltage((a<b?10.f:0.f));
+      outputs[AGTB_OUTPUT].setVoltage((a>b?10.f:0.f));
+      outputs[ALTEB_OUTPUT].setVoltage((a<=b?10.f:0.f));
+      outputs[AGTEB_OUTPUT].setVoltage((a>=b?10.f:0.f));
+      outputs[AISB_OUTPUT].setVoltage((a==b?10.f:0.f));
+      outputs[AISNOTB_OUTPUT].setVoltage((a!=b?10.f:0.f));
       outputs[NOTA_OUTPUT].setVoltage(!a);
       outputs[NOTB_OUTPUT].setVoltage(!b);
 
