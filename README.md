@@ -1,4 +1,4 @@
-![The current modules](https://github.com/thomassidor/tinytricks/blob/master/screenshot.jpg)
+![The current modules](https://github.com/thomassidor/tinytricks/blob/master/screenshot.png)
 
 # Tiny Tricks VCV Rack modules
 
