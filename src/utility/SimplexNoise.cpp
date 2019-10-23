@@ -6,6 +6,25 @@ int SimplexNoise::FastFloor(double x) {
     return x < xi ? xi - 1 : xi;
 }
 
+float SimplexNoise::SumOctave(int num_iterations, float x, float y, float persistence, float scale){
+  float maxAmp = 0.f;
+  float amp = 1.f;
+  float freq = scale;
+  float noise = 0.f;
+
+  for(int i = 0; i < num_iterations; ++i){
+      noise += this->noise(x * freq, y * freq) * amp;
+      maxAmp += amp;
+      amp *= persistence;
+      freq *= 2.f;
+    }
+
+  //take the average value of the iterations
+  noise /= maxAmp;
+
+  return noise;
+};
+
 double SimplexNoise::noise(double xin, double yin) {
 
     double n0, n1, n2; // Noise contributions from the three corners

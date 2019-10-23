@@ -4,15 +4,16 @@
 const int NUM_CHANNELS = 8;
 const float SPEED_MAX = 1.f;
 const float SPEED_MIN = 0.005f;
-const float STABILITY_MAX = 1.f;
-const float STABILITY_MIN = 8.f;
+const float JITTER_MIN = 1.f;
+const float JITTER_MAX = 8.f;
 
 struct RX8Base : Module {
 
   enum ParamIds {
     SPEED_PARAM,
-    STABILITY_PARAM,
+    JITTER_PARAM,
     TRIGONLY_PARAM,
+    PINNING_PARAM,
     NUM_PARAMS
   };
   enum InputIds {
@@ -20,7 +21,7 @@ struct RX8Base : Module {
     ENUMS(AUDIO_R_INPUT, NUM_CHANNELS),
     TRIG_INPUT,
     SPEED_CV_INPUT,
-    STABILITY_CV_INPUT,
+    JITTER_CV_INPUT,
     NUM_INPUTS
   };
   enum OutputIds {
@@ -41,9 +42,10 @@ struct RX8Base : Module {
   void initialize(){
       simp.init();
       config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-      configParam(SPEED_PARAM, SPEED_MIN, SPEED_MAX, 0.05f, "Speed of change");
-      configParam(STABILITY_PARAM, STABILITY_MIN, STABILITY_MAX, 1.f, "Stability of change");
+      configParam(SPEED_PARAM, SPEED_MIN, SPEED_MAX, 0.5f, "Speed of change");
+      configParam(JITTER_PARAM, JITTER_MIN, JITTER_MAX, JITTER_MIN, "jitter of change");
       configParam(TRIGONLY_PARAM, 0.f, 1.f, 1.f, "Flow free or only change on trigger");
+      configParam(PINNING_PARAM, 1.f, 10.f, 1.5f, "Amount to pin at top og bottom of curve");
   }
 
 
@@ -56,25 +58,7 @@ struct RX8Base : Module {
     initialize();
   }
 
-  float sumOcatave(int num_iterations, float x, float y, float persistence, float scale){
-    float maxAmp = 0.f;
-    float amp = 1.f;
-    float freq = scale;
-    float noise = 0.f;
 
-
-    for(int i = 0; i < num_iterations; ++i){
-        noise += simp.noise(x * freq, y * freq) * amp;
-        maxAmp += amp;
-        amp *= persistence;
-        freq *= 2.f;
-      }
-
-    //take the average value of the iterations
-    noise /= maxAmp;
-
-    return noise;
-  }
 
   float t = 0.f;
   void process(const ProcessArgs &args) override {
@@ -85,21 +69,34 @@ struct RX8Base : Module {
     t += 1.0f / args.sampleRate;
 
     if(freeflow || (inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage()))){
+      //Getting pinning
+      float pinning = params[PINNING_PARAM].getValue();
 
+      //Getting the speed
       float speed = params[SPEED_PARAM].getValue();
-      if(inputs[SPEED_CV_INPUT].isConnected())
-        speed += inputs[SPEED_CV_INPUT].getVoltage();
-      speed = clamp(speed,)
+      if(inputs[SPEED_CV_INPUT].isConnected()){
+        float speedCV = inputs[SPEED_CV_INPUT].getVoltage();
+        speedCV /= 10.f;
+        speed = clamp(speed+speedCV,SPEED_MIN,SPEED_MAX);
+      }
 
-      float stability = params[STABILITY_PARAM].getValue();
+      //Getting jitter
+      float jitter = params[JITTER_PARAM].getValue();
+      if(inputs[JITTER_CV_INPUT].isConnected()){
+        float jitterCV = inputs[JITTER_CV_INPUT].getVoltage();
+        jitterCV = rescale(jitterCV, -5.f, 5.f, 0.f, 10.f);
+        jitterCV /= 2.f;
+        jitter = clamp(jitter + jitterCV,JITTER_MIN,JITTER_MAX);
+      }
 
+      //Getting new levels
       float x = t;
       for (int i = 0; i < NUM_CHANNELS; i++) {
         if(inputs[AUDIO_L_INPUT + i].isConnected()){
           connected++;
           float y = (2.f*i);
-          float noiseVal = sumOcatave(stability,x,y,0.7f,speed);
-          float level = clamp(noiseVal*2.5f,-1.5f,1.5f)/1.5f;
+          float noiseVal = simp.SumOctave(jitter,x,y,0.7f,speed);
+          float level = clamp(noiseVal*(pinning),-1.f,1.f);
           level *= level;
           summedLevels += level;
           levels[i] = level;
@@ -109,6 +106,7 @@ struct RX8Base : Module {
     }
 
 
+    //Mixing signal for output
     float mix = 0.f;
     if(outputs[MIX_L_OUTPUT].isConnected()){
       for (int i = 0; i < NUM_CHANNELS; i++) {
@@ -145,16 +143,16 @@ struct RX8BaseWidget : ModuleWidget {
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(17.45f,30.677f)), module, RX8Base::SPEED_PARAM));
     addInput(createInput<PJ301MPort>(mm2px(Vec(18.389f, 41.992f)), module, RX8Base::SPEED_CV_INPUT));
 
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(17.45f,58.239f)), module, RX8Base::STABILITY_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(18.398f, 69.585f)), module, RX8Base::STABILITY_CV_INPUT));
-    /*
-    {
-        auto w = createParam<RoundBlackKnob>(mm2px(Vec(17.45f,49.768f)), module, RX8Base::STABILITY_PARAM);
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(17.45f,58.239f)), module, RX8Base::JITTER_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(18.398f, 69.585f)), module, RX8Base::JITTER_CV_INPUT));
+
+    /*{
+        auto w = createParam<RoundBlackKnob>(mm2px(Vec(17.45f,58.239f)), module, RX8Base::JITTER_PARAM);
         dynamic_cast<Knob*>(w)->snap = true;
         addParam(w);
-    }
-    */
+    }*/
 
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(17.45f,87.104f)), module, RX8Base::PINNING_PARAM));
 
 
     //Mix output

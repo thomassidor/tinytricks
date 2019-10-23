@@ -58,7 +58,9 @@ public:
 
     double noise(double xin, double yin);
     double dot(int g[3], double x, double y);
+    float SumOctave(int num_iterations, float x, float y, float persistence, float scale);
     static int FastFloor(double x);
+
 };
 
 

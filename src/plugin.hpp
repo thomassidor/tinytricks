@@ -26,3 +26,5 @@ extern Model *modelTTSAWPLUS;
 extern Model *modelTTSQRPLUS;
 extern Model *modelTTTRIPLUS;
 extern Model *modelRX8;
+extern Model *modelSN1;
+extern Model *modelSN8;
