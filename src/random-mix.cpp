@@ -61,11 +61,9 @@ struct RX8Base : Module {
 
 
   float t = 0.f;
+  float summedLevels = 0.f;
   void process(const ProcessArgs &args) override {
-
     bool freeflow = (params[TRIGONLY_PARAM].getValue() == 0.f);
-    int connected = 0;
-    float summedLevels = 0.f;
     t += 1.0f / args.sampleRate;
 
     if(freeflow || (inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage()))){
@@ -90,12 +88,11 @@ struct RX8Base : Module {
       }
 
       //Getting new levels
-      float x = t;
+      summedLevels = 0.f;
       for (int i = 0; i < NUM_CHANNELS; i++) {
         if(inputs[AUDIO_L_INPUT + i].isConnected()){
-          connected++;
           float y = (2.f*i);
-          float noiseVal = simp.SumOctave(jitter,x,y,0.7f,speed);
+          float noiseVal = simp.SumOctave(jitter,t,y,0.7f,speed);
           float level = clamp(noiseVal*(pinning),-1.f,1.f);
           level *= level;
           summedLevels += level;
@@ -108,10 +105,13 @@ struct RX8Base : Module {
 
     //Mixing signal for output
     float mix = 0.f;
+    int connected = 0;
     if(outputs[MIX_L_OUTPUT].isConnected()){
       for (int i = 0; i < NUM_CHANNELS; i++) {
-        if(inputs[AUDIO_L_INPUT + i].isConnected())
+        if(inputs[AUDIO_L_INPUT + i].isConnected()) {
+          connected++;
           mix += inputs[AUDIO_L_INPUT + i].getVoltage()*levels[i];
+        }
       }
       if(connected==1)
           outputs[MIX_L_OUTPUT].setVoltage(mix);

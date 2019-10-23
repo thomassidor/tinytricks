@@ -39,6 +39,9 @@ Thomas René Sidor
 
 
 ## Changelog
+Version 1.2.1
+* Fixed: Random Mix x8 (RX8) not working in trigger mode. 
+
 Version 1.2.0
 * Added: Random Mix x8 (RX8)
 * Added: Simplex Noise (SN1)
