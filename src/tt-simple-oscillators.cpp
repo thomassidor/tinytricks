@@ -26,8 +26,8 @@ struct TTOBase : Module {
 
   TinyOscillator oscillator;
   TinyOscillator::OscillatorType oscType;
-  float prevPitch = 0.f;
-  float prevTheta = 0.f;
+  float prevPitch = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
+  float prevTheta = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
   dsp::SchmittTrigger syncTrigger;
 
   void Initialize(){
@@ -45,6 +45,7 @@ struct TTOBase : Module {
     oscType = t;
     Initialize();
   }
+
 
   void process(const ProcessArgs &args) override{
 

@@ -36,9 +36,9 @@ struct TTOBasePlus : Module {
 	dsp::SchmittTrigger hardsync3Trigger;
 	bool hardsync2 = false;
 	bool hardsync3 = false;
-  float prevPitch = 0.f;
-  float prevTheta = 0.f;
-	float prevDetune = 0.f;
+  float prevPitch = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
+  float prevTheta = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
+	float prevDetune = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
 
 
   void Initialize(){
@@ -60,6 +60,29 @@ struct TTOBasePlus : Module {
     oscType = t;
     Initialize();
   }
+
+	//Got this approach from https://github.com/Miserlou/RJModules/blob/master/src/ChordSeq.cpp
+	json_t *dataToJson() override {
+		json_t *rootJ = json_object();
+
+		// Hardsync 2+3
+		json_object_set_new(rootJ, "hardsync2", json_boolean(hardsync2));
+		json_object_set_new(rootJ, "hardsync3", json_boolean(hardsync3));
+
+		return rootJ;
+	}
+
+	void dataFromJson(json_t *rootJ) override {
+		// hardsync2
+		json_t *hardsync2J = json_object_get(rootJ, "hardsync2");
+		if (hardsync2J)
+			hardsync2 = json_is_true(hardsync2J);
+		// hardsync2
+		json_t *hardsync3J = json_object_get(rootJ, "hardsync3");
+		if (hardsync3J)
+			hardsync3 = json_is_true(hardsync3J);
+	}
+
 
   void process(const ProcessArgs &args) override{
 
