@@ -28,8 +28,9 @@ Currently the following are included (v1.1.0):
 * Simplex Noise x8 (SN8)
 
 Potential upcoming modules:
-* Random Mix x8 (RX8)
 * Random Stereo Mix x8 (RX8s)
+* Simplex Oscillator (SN-OSC)
+* Simplex Wavetable Oscillator (SN-WAVE)
 * Configurable Sample and Hold x8 (SH8c)
 * Have an idea for a module? Create an issue and suggest it - I might do it.
 
