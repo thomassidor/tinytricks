@@ -3,8 +3,8 @@
 #include "widgets/mini-scope.cpp"
 
 
-const float SCALE_MAX = 5.f;
-const float SCALE_MIN = 0.005f;
+const float SCALE_MAX = 5.5f;
+const float SCALE_MIN = 0.5f;
 const float DETAIL_MIN = 1.f;
 const float DETAIL_MAX = 8.f;
 
@@ -46,10 +46,10 @@ struct SNOSC : Module, ScopedModule {
 
 
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-    configParam(SCALE_PARAM, SCALE_MIN, SCALE_MAX, 0.5f, "Scale");
+    configParam(SCALE_PARAM, SCALE_MIN, SCALE_MAX, 2.5f, "Scale");
     configParam(DETAIL_PARAM, DETAIL_MIN, DETAIL_MAX, DETAIL_MIN, "Level of detail");
-    configParam(X_PARAM, 0.f, 5.f, 0.f, "X modulation");
-    configParam(Y_PARAM, 0.f, 1.f, 0.5f, "Y modulation");
+    configParam(X_PARAM, 0.f, 5.f, 2.5f, "X modulation");
+    configParam(Y_PARAM, 0.f, 5.f, 2.5f, "Y modulation");
 		configParam(FREQ_PARAM, -3.0f, 3.0f, 0.0f, "Tuning");
     configParam(FREQ_FINE_PARAM, -0.5f, 0.5f, 0.0f, "Fine tuning");
   }
@@ -75,19 +75,46 @@ struct SNOSC : Module, ScopedModule {
       prevPitch = pitch;
     }
 
-		//Stepping
-    oscillator.step(args.sampleRate);
-
-    //Resetting if synced
+		//Resetting if synced
     if(inputs[SYNC_INPUT].isConnected() && syncTrigger.process(inputs[SYNC_INPUT].getVoltage()))
       oscillator.reset();
 
-		//Getting the value
+		//Stepping
+    oscillator.step(args.sampleRate);
+
+
+
+		//Getting scale
 		float scale = params[SCALE_PARAM].getValue();
+		if(inputs[SCALE_CV_INPUT].isConnected()){
+			scale += inputs[SCALE_CV_INPUT].getVoltage()/4.f;
+			scale = clamp(scale, SCALE_MIN, SCALE_MAX);
+		}
+
+
+		//Getting detail
 		unsigned int detail = params[DETAIL_PARAM].getValue();
+		if(inputs[DETAIL_CV_INPUT].isConnected()){
+			detail += inputs[DETAIL_CV_INPUT].getVoltage()*0.8f;
+			detail = clamp(detail, DETAIL_MIN, DETAIL_MAX);
+		}
+
+		//Getting x
 		float x = params[X_PARAM].getValue();
+		if(inputs[X_CV_INPUT].isConnected()){
+			x += inputs[X_CV_INPUT].getVoltage()/4.f;
+			x = clamp(x, 0.f, 5.f);
+		}
+
+		//Getting y
 		float y = params[Y_PARAM].getValue();
-    float value = oscillator.getOsc(detail, x, y, 0.5f, scale);
+		if(inputs[Y_CV_INPUT].isConnected()){
+			y += inputs[Y_CV_INPUT].getVoltage()/4.f;
+			y = clamp(y, 0.f, 5.f);
+		}
+
+		//Getting result
+    float value = oscillator.getNormalizedOsc(detail, x, y, 0.5f, scale);
 
     //Setting output
   	outputs[OSC_OUTPUT].setVoltage(value);

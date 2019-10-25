@@ -1,10 +1,13 @@
+#include <algorithm>
 #include "../utility/SimplexNoise.hpp"
-const int BUFFER_LENGTH = 512;
+
+const int BUFFER_LENGTH = 1024;
+
 struct SimplexOscillator{
 	float phase = 0.0f;
 	float freq = 0.0f;
 	float isStepEOC = false;
-  float buffer[BUFFER_LENGTH];
+  float buffer[BUFFER_LENGTH] = {0};
   int bufferIndex = 0;
   float min = 0.f;
   float max = 0.f;
@@ -24,8 +27,9 @@ struct SimplexOscillator{
 			phase -= 1.0f;
 			isStepEOC = true;
 		}
-		else
+		else{
 			isStepEOC = false;
+    }
 	}
 
 	void reset(){
@@ -41,24 +45,37 @@ struct SimplexOscillator{
 		freq = 440.f * powf(2.0f, pitch);
 	}
 
+  float getValue(float detaillevel, float x, float y, float z, float scale){
+    return simp.SumOctave(detaillevel,x+phase,y,z,scale);
+  }
+
 	float getOsc(float detaillevel, float x, float y, float z, float scale){
-			float value = simp.SumOctave(detaillevel,x+phase,y,z,scale);
+			float value = getValue(detaillevel, x, y, z, scale);
 			return value*5.f;
 	}
 
+  int t = 0;
+  //float sum = 0.f;
   float getNormalizedOsc(float detaillevel, float x, float y, float z, float scale){
-    float value = getOsc(detaillevel, x, y, z, scale);
 
-    int prevBufferIndex = bufferIndex-1;
+    float value = getValue(detaillevel, x, y, z, scale);
 
-    if(bufferIndex > BUFFER_LENGTH-1){
-      bufferIndex = 0;
-    }
+		if(bufferIndex >= BUFFER_LENGTH){
+			bufferIndex = 0;
+		}
 
-    float bufferEndValue = buffer[bufferEndIndex];
+  	buffer[bufferIndex] = value;
+  	bufferIndex++;
 
-    buffer[bufferIndex] = value;
-    bufferIndex++;
+
+		if(t++ % 256 == 0){
+    	auto result = std::minmax_element(begin(buffer),end(buffer));
+    	min = *result.first;
+    	max = *result.second;
+		}
+
+    value = rescale(value,min,max,-1.f,1.f);
+    return value*5.f;;
+
   }
-
 };

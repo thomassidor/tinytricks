@@ -50,7 +50,7 @@ struct MiniScope : TransparentWidget {
 			float* buffer = module->buffer;
 			int waveEnd = module->waveEnd;
 
-			float gain = std::pow(2.f, std::round(4.f)) / 10.f;
+			float gain = std::pow(2.f, std::round(2.f)) / 10.f;
 			Rect b = Rect(Vec(5, 15), box.size.minus(Vec(5*2, 15 * 2)));
 
       //Adding the points
