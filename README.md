@@ -23,6 +23,9 @@ Currently the following are included (v1.1.0):
 * Sawtooth+ Oscillator (TT-SAW+)
 * Square+ Oscillator (TT-SQR+)
 * Triangle+ Oscillator (TT-TRI+)
+* Random Mix x8 (RX8)
+* Simplex Noise (SN1)
+* Simplex Noise x8 (SN8)
 
 Potential upcoming modules:
 * Random Mix x8 (RX8)
