@@ -28,3 +28,5 @@ extern Model *modelTTTRIPLUS;
 extern Model *modelRX8;
 extern Model *modelSN1;
 extern Model *modelSN8;
+extern Model *modelSNWAVE;
+extern Model *modelSNOSC;

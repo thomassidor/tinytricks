@@ -39,8 +39,12 @@ Thomas René Sidor
 
 
 ## Changelog
+Version 1.3.0
+* Added: Simplex Oscillator (SN-OSC)
+* Added: Simplex Waveform Oscillator (SN-WAVE)
+
 Version 1.2.1
-* Fixed: Random Mix x8 (RX8) not working in trigger mode. 
+* Fixed: Random Mix x8 (RX8) not working in trigger mode.
 
 Version 1.2.0
 * Added: Random Mix x8 (RX8)

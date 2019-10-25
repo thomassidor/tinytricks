@@ -1,5 +1,5 @@
 #include "plugin.hpp"
-#include "oscillator.cpp"
+#include "oscillators/oscillator.cpp"
 
 struct TTOBase : Module {
 	enum ParamIds {

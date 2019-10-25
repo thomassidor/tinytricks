@@ -1,5 +1,5 @@
 #include "plugin.hpp"
-#include "oscillator.cpp"
+#include "oscillators/oscillator.cpp"
 
 
 const int OSC_COUNT = 3;
