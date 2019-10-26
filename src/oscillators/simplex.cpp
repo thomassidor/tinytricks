@@ -19,9 +19,28 @@ struct SimplexOscillator{
 	    simp.init();
 	}
 
-
+	bool reverse = false;
 	void step(float dt){
 		//phase+= freq;
+		float delta = freq / dt;
+
+		isStepEOC = false;
+		if(!reverse){
+			phase += delta;
+			if (phase >= 0.5f)
+				reverse = true;
+		}
+		else{
+			phase -= delta;
+			if(phase < 0){
+				reverse = false;
+				phase = -phase;
+				isStepEOC = true;
+			}
+		}
+
+
+		/*
 		phase+= freq / dt;
 		if (phase >= 1.0f){
 			phase -= 1.0f;
@@ -29,7 +48,8 @@ struct SimplexOscillator{
 		}
 		else{
 			isStepEOC = false;
-    }
+		}
+		*/
 	}
 
 	void reset(){

@@ -110,7 +110,7 @@ struct TTOBase : Module {
   	outputs[OSC_OUTPUT].setVoltage(value);
 
     if(outputs[SYNC_OUTPUT].isConnected())
-        outputs[SYNC_OUTPUT].setVoltage(oscillator.isEOC() ? 1.f : 0.f);
+        outputs[SYNC_OUTPUT].setVoltage(oscillator.isEOC() ? 10.f : 0.f);
   }
 };
 

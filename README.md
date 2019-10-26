@@ -42,6 +42,9 @@ Thomas René Sidor
 Version 1.3.0
 * Added: Simplex Oscillator (SN-OSC)
 * Added: Simplex Waveform Oscillator (SN-WAVE)
+* Fixed: Sync out of simple and plus oscillators only giving 1v
+* Fixed: Simplex Noise LFOs stop working after some time
+* Fixed: Random Mix stop working after some time
 
 Version 1.2.1
 * Fixed: Random Mix x8 (RX8) not working in trigger mode.
