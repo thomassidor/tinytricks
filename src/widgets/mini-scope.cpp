@@ -1,41 +1,32 @@
-const int SCOPE_BUFFER_SIZE = 1024;
+const int SCOPE_BUFFER_SIZE = 10240;
 
 struct ScopedModule{
 	float buffer[SCOPE_BUFFER_SIZE] = {};
 	int bufferIndex = 0;
-	int frameIndex = 0;
 	int waveEnd = 0;
 
 	ScopedModule(){
 	}
 
 	void resetScope(){
-		waveEnd = bufferIndex;
-		frameIndex = 0;
+		waveEnd = bufferIndex-1;
 		bufferIndex = 0;
 	}
 
 	void addFrameToScope(int sampleRate, float value){
-		float deltaTime = std::pow(2.f, -14.f);
-		int frameCount = (int) std::ceil(deltaTime * sampleRate);
 
-		if (bufferIndex < SCOPE_BUFFER_SIZE) {
-			if (++frameIndex > frameCount) {
-				frameIndex = 0;
-				buffer[bufferIndex] = (buffer[bufferIndex]+value)/2.f;
-				bufferIndex++;
-			}
-		}
-		frameIndex++;
+		if(bufferIndex >= SCOPE_BUFFER_SIZE)
+			bufferIndex = 0;
+
+		buffer[bufferIndex] = (buffer[bufferIndex]+value)/2.f;
+		bufferIndex++;
 	}
 };
 
 struct MiniScope : TransparentWidget {
-
 	ScopedModule* module;
 
 	MiniScope() {
-
 	}
 
   void draw(const DrawArgs &args) override {
@@ -54,9 +45,9 @@ struct MiniScope : TransparentWidget {
 			Rect b = Rect(Vec(5, 15), box.size.minus(Vec(5*2, 15 * 2)));
 
       //Adding the points
-			for (int i = 0; i < waveEnd-1; i++) {
+			for (int i = 0; i < waveEnd; i++) {
 						Vec v;
-						v.x = (float) i / (waveEnd - 2);
+						v.x = (float) i / (waveEnd - 1);
 						v.y = buffer[i] * gain / 2.f + 0.5f;
 						Vec p;
 						p.x = rescale(v.x, 0.f, 1.f, b.pos.x, b.pos.x + b.size.x);
@@ -71,7 +62,6 @@ struct MiniScope : TransparentWidget {
       nvgStroke(args.vg);
       nvgClosePath(args.vg);
       //Done with scope
-
 
       nvgRestore(args.vg);
     }

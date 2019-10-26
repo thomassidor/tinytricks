@@ -193,14 +193,6 @@
       ]
     },
     {
-      "slug": "SNWAVE",
-      "name": "Simplex Wavetable",
-      "description": "A wavetable oscillator based on a simplex noise source. Resolution degradation using Ramer-Douglas-Peucker line simplification.",
-      "tags": [
-        "oscillator"
-      ]
-    },
-    {
       "slug": "SNOSC",
       "name": "Simplex Oscillator",
       "description": "A oscillator based on a simplex noise source.",

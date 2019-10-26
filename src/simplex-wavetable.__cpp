@@ -89,8 +89,6 @@ struct SNWAVE : Module {
     DETAIL_PARAM,
 		PITCH_PARAM,
     STARTX_PARAM,
-    Y_PARAM,
-    Z_PARAM,
     DEGREDATION_PARAM,
 		NUM_PARAMS
 	};
@@ -105,24 +103,15 @@ struct SNWAVE : Module {
 		NUM_LIGHTS
 	};
 
-
-  SimplexNoise simp;
-
   static const unsigned int TABLE_SIZE = 1 << 7;
-  unsigned int TABLE_END = TABLE_SIZE;
-  float lookuptable[TABLE_SIZE];
-
+  SimplexNoise simp;
+  float baseLookuptable[TABLE_SIZE];
   float currentIndex = 0.f;
   float tableDelta = 0.f;
+  bool updateFreq = true;
 
-  float prevScale = 0.f;
-  unsigned int prevDetail = 0.f;
-  float prevXstart = 0.f;
-  float prevPitch = 0.f;
-  float prevDegredation = 0.f;
-  float prevY = 0.f;
-  float prevZ = 0.f;
-
+  vector<Point> pointList;
+  vector<Point> pointListOut;
 
   void Initialize(){
     simp.init();
@@ -130,50 +119,41 @@ struct SNWAVE : Module {
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
     configParam(SCALE_PARAM, SCALE_MIN, SCALE_MAX, 0.5f, "Scale");
     configParam(DETAIL_PARAM, DETAIL_MIN, DETAIL_MAX, DETAIL_MIN, "Level of detail");
-    configParam(STARTX_PARAM, 0.f, 5.f, 0.f, "X modulation");
-    configParam(Y_PARAM, 0.f, 1.f, 0.5f, "Y modulation");
-    configParam(Z_PARAM, 0.f, 1.f, 0.5f, "Z modulation");
+    configParam(STARTX_PARAM, 0.f, 5.f, 0.f, "Start of waveform");
 		configParam(PITCH_PARAM, -3.0f, 3.0f, 0.0f, "Tuning");
-    configParam(DEGREDATION_PARAM, 0.000001f, 0.3f, 0.000001f, "Degradation amount");
+    configParam(DEGREDATION_PARAM, 0.01f, 3.0f, 0.01f, "Degradation amount");
   }
 
 	SNWAVE() {
 		Initialize();
 	}
 
-  void createLookuptable(float detailLevel, float scale, float xstart, float y, float z, float degradation){
+  void createLookuptable(float detailLevel, float scale, float xstart, float degradation){
     vector<Point> pointList;
     vector<Point> pointListOut;
     float x = xstart;
     for (unsigned int i = 0; i < TABLE_SIZE; i++) {
       x += 0.01f;
-      float value = simp.SumOctave(detailLevel,x,y,z,scale);
-      //baseLookuptable[i] = value;
+      float value = simp.SumOctave(detailLevel,x,0.5f,0.5f,scale);
+      baseLookuptable[i] = value;
       pointList.push_back(Point(i,value));
     }
 
     RamerDouglasPeucker(pointList, degradation, pointListOut);
 
-    int size = pointListOut.size();
-    for(int i = 0; i < size; i++){
-      lookuptable[i] = pointListOut[i].second;
-  		//cout << pointListOut[i].first << "," << pointListOut[i].second << endl;
-  	}
-
-    cout << "Size: " << size << endl;
-
-    TABLE_END = size;
-    currentIndex = 0.f;
   }
 
   void setFrequency(float pitch, float sampleRate){
     float frequency = 440.f * powf(2.0f, pitch);
-    //auto tableSizeOverSampleRate = TABLE_SIZE / sampleRate;
-    auto tableSizeOverSampleRate = TABLE_END / sampleRate;
+    auto tableSizeOverSampleRate = TABLE_SIZE / sampleRate;
     tableDelta = frequency * tableSizeOverSampleRate;
   }
 
-
+  float prevScale = 0.f;
+  unsigned int prevDetail = 0.f;
+  float prevXstart = 0.f;
+  float prevPitch = 0.f;
+  float prevDegredation = 0.f;
   void process(const ProcessArgs &args) override{
 
     float scale = params[SCALE_PARAM].getValue();
@@ -181,18 +161,13 @@ struct SNWAVE : Module {
     float xstart = params[STARTX_PARAM].getValue();
     float pitch = params[PITCH_PARAM].getValue();
     float degradation = params[DEGREDATION_PARAM].getValue();
-    float y = params[Y_PARAM].getValue();
-    float z = params[Z_PARAM].getValue();
 
-    if(scale != prevScale || detail != prevDetail || xstart != prevXstart || degradation != prevDegredation || y != prevY || z != prevZ){
-      createLookuptable(detail, scale, xstart, y, z, degradation);
+    if(scale != prevScale || detail != prevDetail || xstart != prevXstart || degradation != prevDegredation){
+      createLookuptable(detail, scale, xstart, degradation);
       prevScale = scale;
       prevDetail = detail;
       prevXstart = xstart;
       prevDegredation = degradation;
-      prevY = y;
-      prevZ = z;
-      setFrequency(pitch,args.sampleRate);
     }
 
     if(pitch != prevPitch){
@@ -202,8 +177,7 @@ struct SNWAVE : Module {
 
     //Getting indexes for current place in table
     unsigned int index0 = (unsigned int) currentIndex;
-    unsigned int index1 = index0 == (TABLE_END - 1) ? (unsigned int) 0 : index0 + 1;
-    //unsigned int index1 = index0 == (TABLE_SIZE - 1) ? (unsigned int) 0 : index0 + 1;
+    unsigned int index1 = index0 == (TABLE_SIZE - 1) ? (unsigned int) 0 : index0 + 1;
 
     // How far are we from the index
     auto frac = currentIndex - (float) index0;
@@ -216,10 +190,9 @@ struct SNWAVE : Module {
     float currentSample = value0 + frac * (value1 - value0);
 
     //Adjusting currentIndex
-    if ((currentIndex += tableDelta) > TABLE_END)
-      currentIndex -= TABLE_END;
-    //if ((currentIndex += tableDelta) > TABLE_SIZE)
-    //  currentIndex -= TABLE_SIZE;
+    if ((currentIndex += tableDelta) > TABLE_SIZE)
+      currentIndex -= TABLE_SIZE;
+
     outputs[AUDIO_OUTPUT].setVoltage(currentSample*5.f);
 
   }
@@ -237,12 +210,10 @@ struct SNWAVEWidget : ModuleWidget {
 		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,11.051f)), module, SNWAVE::SCALE_PARAM));
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,23.613f)), module, SNWAVE::DETAIL_PARAM));
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,37.478f)), module, SNWAVE::STARTX_PARAM));
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,53.478f)), module, SNWAVE::PITCH_PARAM));
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,67.478f)), module, SNWAVE::DEGREDATION_PARAM));
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,79.478f)), module, SNWAVE::Y_PARAM));
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,89.478f)), module, SNWAVE::Z_PARAM));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,28.613f)), module, SNWAVE::DETAIL_PARAM));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,47.478f)), module, SNWAVE::STARTX_PARAM));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,67.478f)), module, SNWAVE::PITCH_PARAM));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,87.478f)), module, SNWAVE::DEGREDATION_PARAM));
 
 		//Output
 		addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.558f, 113.403f)), module, SNWAVE::AUDIO_OUTPUT));

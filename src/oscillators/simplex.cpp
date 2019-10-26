@@ -2,16 +2,22 @@
 #include "../utility/SimplexNoise.hpp"
 
 const int BUFFER_LENGTH = 1024;
-
 struct SimplexOscillator{
 	float phase = 0.0f;
 	float freq = 0.0f;
-	float isStepEOC = false;
+
+  int t = 0;
+
+	bool isStepEOC = false;
+	bool hasBeenReset = false;
+
   float buffer[BUFFER_LENGTH] = {0};
   int bufferIndex = 0;
+
   float min = 0.f;
   float max = 0.f;
 
+	float mirror = false;
 
   SimplexNoise simp;
 
@@ -19,42 +25,48 @@ struct SimplexOscillator{
 	    simp.init();
 	}
 
+	void setMirror(bool _mirror){
+		mirror = _mirror;
+		reverse = false;
+		reset();
+	}
+
 	bool reverse = false;
 	void step(float dt){
-		//phase+= freq;
+
 		float delta = freq / dt;
 
-		isStepEOC = false;
-		if(!reverse){
-			phase += delta;
-			if (phase >= 0.5f)
-				reverse = true;
+		isStepEOC = hasBeenReset;
+		hasBeenReset = false;
+
+		if(mirror){
+			if(!reverse){
+				phase += delta;
+				if (phase >= 0.5f)
+					reverse = true;
+			}
+			else{
+				phase -= delta;
+				if(phase < 0){
+					reverse = false;
+					phase = -phase;
+					isStepEOC = true;
+				}
+			}
 		}
 		else{
-			phase -= delta;
-			if(phase < 0){
-				reverse = false;
-				phase = -phase;
+			phase+= freq / dt;
+			if (phase >= 1.0f){
+				phase -= 1.0f;
 				isStepEOC = true;
 			}
 		}
-
-
-		/*
-		phase+= freq / dt;
-		if (phase >= 1.0f){
-			phase -= 1.0f;
-			isStepEOC = true;
-		}
-		else{
-			isStepEOC = false;
-		}
-		*/
 	}
 
 	void reset(){
 			phase = 0.f;
-			isStepEOC = true;
+			reverse = false;
+			hasBeenReset = true;
 	}
 
 	bool isEOC(){
@@ -74,8 +86,7 @@ struct SimplexOscillator{
 			return value*5.f;
 	}
 
-  int t = 0;
-  //float sum = 0.f;
+
   float getNormalizedOsc(float detaillevel, float x, float y, float z, float scale){
 
     float value = getValue(detaillevel, x, y, z, scale);
