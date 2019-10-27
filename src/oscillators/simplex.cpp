@@ -1,21 +1,23 @@
 #include <algorithm>
 #include "../utility/SimplexNoise.hpp"
 
-const int BUFFER_LENGTH = 1024;
+const int BUFFER_LENGTH = 2048;
 struct SimplexOscillator{
 	float phase = 0.0f;
 	float freq = 0.0f;
 
-  int t = 0;
+  int tick = 0;
 
 	bool isStepEOC = false;
 	bool hasBeenReset = false;
 
+	bool reverse = false;
+
   float buffer[BUFFER_LENGTH] = {0};
   int bufferIndex = 0;
 
-  float min = 0.f;
-  float max = 0.f;
+  float min = -1.f;
+  float max = 1.f;
 
 	float mirror = false;
 
@@ -27,16 +29,15 @@ struct SimplexOscillator{
 
 	void setMirror(bool _mirror){
 		mirror = _mirror;
-		reverse = false;
+		min = -1.f;
+		max = 1.f;
 		reset();
 	}
 
-	bool reverse = false;
 	void step(float dt){
-
 		float delta = freq / dt;
 
-		isStepEOC = hasBeenReset;
+		isStepEOC = false;//hasBeenReset;
 		hasBeenReset = false;
 
 		if(mirror){
@@ -47,7 +48,7 @@ struct SimplexOscillator{
 			}
 			else{
 				phase -= delta;
-				if(phase < 0){
+				if(phase < 0.f){
 					reverse = false;
 					phase = -phase;
 					isStepEOC = true;
@@ -55,7 +56,7 @@ struct SimplexOscillator{
 			}
 		}
 		else{
-			phase+= freq / dt;
+			phase += freq / dt;
 			if (phase >= 1.0f){
 				phase -= 1.0f;
 				isStepEOC = true;
@@ -74,11 +75,11 @@ struct SimplexOscillator{
 	}
 
 	void setPitch(float pitch){
-		freq = 440.f * powf(2.0f, pitch);
+		freq = dsp::FREQ_C4 * powf(2.0f, pitch);
 	}
 
   float getValue(float detaillevel, float x, float y, float z, float scale){
-    return simp.SumOctave(detaillevel,x+phase,y,z,scale);
+    return simp.SumOctaveSmooth(detaillevel,x+phase,y,z,scale);
   }
 
 	float getOsc(float detaillevel, float x, float y, float z, float scale){
@@ -99,13 +100,13 @@ struct SimplexOscillator{
   	bufferIndex++;
 
 
-		if(t++ % 256 == 0){
+		if(tick++ % 256 == 0){
     	auto result = std::minmax_element(begin(buffer),end(buffer));
     	min = *result.first;
     	max = *result.second;
 		}
 
-    value = rescale(value,min,max,-1.f,1.f);
+    value = clamp(rescale(value,min,max,-1.f,1.f),-1.f,1.f);
     return value*5.f;;
 
   }

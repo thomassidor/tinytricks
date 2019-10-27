@@ -80,6 +80,7 @@ struct SNOSC : Module, ScopedModule {
 	}
 
 
+	int ticksSinceSync = 0;
   void process(const ProcessArgs &args) override {
 
 		//Setting mirror
@@ -110,7 +111,7 @@ struct SNOSC : Module, ScopedModule {
 		}
 
 		//Getting detail
-		unsigned int detail = params[DETAIL_PARAM].getValue();
+		float detail = params[DETAIL_PARAM].getValue();
 		if(inputs[DETAIL_CV_INPUT].isConnected()){
 			detail += inputs[DETAIL_CV_INPUT].getVoltage()*0.8f;
 			detail = clamp(detail, DETAIL_MIN, DETAIL_MAX);
@@ -132,39 +133,50 @@ struct SNOSC : Module, ScopedModule {
 
 
 		//Resetting if synced
-		bool syncReset = false;
-    if(inputs[SYNC_INPUT].isConnected() && syncTrigger.process(inputs[SYNC_INPUT].getVoltage())){
-      oscillator.reset();
-			syncReset = true;
+		bool useEOCSync = true;
+		if(inputs[SYNC_INPUT].isConnected()){
+			ticksSinceSync++;
+			if(ticksSinceSync<=2048) //If sync comes to rarely, then we'll use the normal EOC to update scope
+				useEOCSync = false;
+			if(syncTrigger.process(inputs[SYNC_INPUT].getVoltage())){
+				oscillator.reset();
+				resetScope();
+				ticksSinceSync = 0;
+			}
+		}
+		else{
+			ticksSinceSync = 0;
 		}
 
-
 		//Stepping
-    oscillator.step(args.sampleRate);
-
+		oscillator.step(args.sampleRate);
 		//Getting result
     float value = oscillator.getNormalizedOsc(detail, x, y, 0.5f, scale);
-
     //Setting output
   	outputs[OSC_OUTPUT].setVoltage(value);
-
 		//Updating scope
 		addFrameToScope(args.sampleRate, value);
 
 		//Setting sync and resetting scope
 		if(oscillator.isEOC()){
     	outputs[SYNC_OUTPUT].setVoltage(10.f);
-			if(!syncReset)
+			if(useEOCSync)
 				resetScope();
 		}
 		else{
 			outputs[SYNC_OUTPUT].setVoltage(0.f);
 		}
+
+
+
+
   }
 };
 
 
 struct SNOSCWidget : ModuleWidget {
+	//void appendContextMenu(Menu *menu) override;
+
 	SNOSCWidget(SNOSC *module) {
 		setModule(module);
     setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/SNOSC.svg")));
@@ -214,5 +226,34 @@ struct SNOSCWidget : ModuleWidget {
 		addOutput(createOutput<PJ301MPort>(mm2px(Vec(17.713f,113.402f)), module, SNOSC::OSC_OUTPUT));
 	}
 };
+
+/*
+struct BaseFreqItem : MenuItem {
+	SNOSC *osc;
+	void onAction(EventAction &e) override {
+			osc->freqFactor = tiare->freqFactor == 1 ? 100 : 1;
+		}
+	void step() override {
+		rightText = tiare->freqFactor == 1 ? "OSC" : "LFO";
+		MenuItem::step();
+	}
+};
+
+void SNOSCWidget::appendContextMenu(Menu *menu) {
+	MenuLabel *spacerLabel = new MenuLabel();
+	menu->addChild(spacerLabel);
+
+	SNOSC *osc = dynamic_cast<SNOSC*>(module);
+	assert(tiare);
+
+	BaseFreqItem *baseFreqItem = new BaseFreqItem();
+	modeItem->text = "Use A4 as base frequency";
+	modeItem->osc = osc;
+	menu->addChild(modeItem);
+
+	return menu;
+}
+*/
+
 
 Model *modelSNOSC = createModel<SNOSC, SNOSCWidget>("SNOSC");

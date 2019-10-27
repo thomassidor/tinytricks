@@ -63,7 +63,7 @@ struct TinyOscillator{
     }
 
     void setPitch(float pitch){
-      freq = 440.f * powf(2.0f, pitch);
+      freq = dsp::FREQ_C4 * powf(2.0f, pitch);
     }
 
 

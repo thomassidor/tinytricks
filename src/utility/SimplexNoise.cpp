@@ -1,5 +1,6 @@
 //Source: https://github.com/vinceallenvince/cpp-simplex-noise
 #include "SimplexNoise.hpp"
+#include <iostream>
 
 int SimplexNoise::FastFloor(double x) {
     int xi = (int)x;
@@ -18,6 +19,36 @@ float SimplexNoise::SumOctave(int num_iterations, float x, float y, float persis
       amp *= persistence;
       freq *= 2.f;
     }
+
+  //take the average value of the iterations
+  noise /= maxAmp;
+
+  return noise;
+};
+
+float SimplexNoise::SumOctaveSmooth(float num_iterations_float, float x, float y, float persistence, float scale){
+
+  int num_iterations_int = ceil(num_iterations_float);
+  num_iterations_int = max(num_iterations_int,1);
+  float lastLevelPersistence = num_iterations_int == 1 ? 1.f : num_iterations_float - floor(num_iterations_float);
+  float maxAmp = 0.f;
+  float amp = 1.f;
+  float freq = scale;
+  float noise = 0.f;
+
+  for(int i = 0; i < num_iterations_int; ++i){
+    if(i == num_iterations_int-1){
+      noise += this->noise(x * freq, y * freq) * amp * lastLevelPersistence;
+      maxAmp += amp * lastLevelPersistence;
+    }
+    else{
+      noise += this->noise(x * freq, y * freq) * amp;
+      maxAmp += amp;
+    }
+
+    amp *= persistence;
+    freq *= 2.f;
+  }
 
   //take the average value of the iterations
   noise /= maxAmp;

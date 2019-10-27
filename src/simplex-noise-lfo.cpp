@@ -97,7 +97,7 @@ struct SNBase : Module {
     for (int i = 0; i < numChannels; i++) {
       if(outputs[SIMPLEX_OUTPUT + i].isConnected()){
         float y = (2.f*i);
-        float noiseVal = simp.SumOctave(jitter,x,y,0.7f,speed);
+        float noiseVal = simp.SumOctaveSmooth(jitter,x,y,0.7f,speed);
         float level = clamp(noiseVal*(pinning),-1.f,1.f);
         outputs[SIMPLEX_OUTPUT + i].setVoltage(level*5.f);
       }

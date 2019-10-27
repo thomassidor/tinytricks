@@ -23,6 +23,7 @@ Currently the following are included (v1.1.0):
 * Sawtooth+ Oscillator (TT-SAW+)
 * Square+ Oscillator (TT-SQR+)
 * Triangle+ Oscillator (TT-TRI+)
+* Simplex Oscillator (SN-OSC)
 
 Potential upcoming modules:
 * Random Mix x8 (RX8)
@@ -41,10 +42,10 @@ Thomas René Sidor
 ## Changelog
 Version 1.3.0
 * Added: Simplex Oscillator (SN-OSC)
-* Added: Simplex Waveform Oscillator (SN-WAVE)
 * Fixed: Sync out of simple and plus oscillators only giving 1v
 * Fixed: Simplex Noise LFOs stop working after some time
 * Fixed: Random Mix stop working after some time
+* Changed: Rebased oscillators to C4 instead of A4 (#9)
 
 Version 1.2.1
 * Fixed: Random Mix x8 (RX8) not working in trigger mode.
