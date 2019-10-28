@@ -1,4 +1,4 @@
-#include "plugin.hpp"
+#include "../plugin.hpp"
 #include <cmath>
 
 struct LowFrequencyOscillator {

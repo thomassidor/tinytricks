@@ -51,16 +51,9 @@ struct RM8Base : Module {
   	if (inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage())) {
       int muteCount = 0;
 
-      //std::cout << "Voltage: " << inputs[MUTE_COUNT_CV_INPUT].getVoltage() << std::endl;
-
+      muteCount = params[MUTE_COUNT_PARAM].getValue();
       if(inputs[MUTE_COUNT_CV_INPUT].isConnected())
-        muteCount = static_cast<int>(round(rescale(inputs[MUTE_COUNT_CV_INPUT].getVoltage(),-5.f,5.f,0.f,8.f)));
-      else
-        muteCount = params[MUTE_COUNT_PARAM].getValue();
-
-
-      //std::cout << "muteCount: " << muteCount << std::endl;
-
+        muteCount += static_cast<int>(round(rescale(inputs[MUTE_COUNT_CV_INPUT].getVoltage(),-5.f,5.f,0.f,8.f)));
 
       //Getting candidates for mutes = connected channels
       std::vector<int> candidates;
@@ -69,19 +62,15 @@ struct RM8Base : Module {
         bool leftIsConnected = (inputs[MUTE_L_INPUT + i].isConnected() && outputs[MUTE_L_OUTPUT + i].isConnected());
         bool rightIsConnected = (stereo && (inputs[MUTE_R_INPUT + i].isConnected() && outputs[MUTE_R_OUTPUT + i].isConnected()));
 
-        if(leftIsConnected || rightIsConnected){
+        if(leftIsConnected || rightIsConnected)
             candidates.push_back(i);
-            //std::cout << "Push: " << i << std::endl;
-        }
       }
 
       int candidateCount = static_cast<int>(candidates.size());
       if(candidateCount > muteCount){
          std::random_shuffle (candidates.begin(), candidates.end());
-         for(int i = 0; i < candidateCount - muteCount; i++){
+         for(int i = 0; i < candidateCount - muteCount; i++)
             muted[candidates[i]] = false;
-            //std::cout << "Muting: " << candidates[i] << std::endl;
-          }
       }
     }
 

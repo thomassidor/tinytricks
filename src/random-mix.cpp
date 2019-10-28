@@ -61,10 +61,25 @@ struct RX8Base : Module {
 
 
   float t = 0.f;
+  bool reverse = false;
   float summedLevels = 0.f;
   void process(const ProcessArgs &args) override {
     bool freeflow = (params[TRIGONLY_PARAM].getValue() == 0.f);
-    t += 1.0f / args.sampleRate;
+
+
+      float delta = 1.0f / args.sampleRate;
+    if(!reverse){
+      t += delta;
+      if (t >= 128.f)
+        reverse = true;
+    }
+    else{
+      t -= delta;
+      if(t < 0){
+        reverse = false;
+        t = -t;
+      }
+    }
 
     if(freeflow || (inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage()))){
       //Getting pinning

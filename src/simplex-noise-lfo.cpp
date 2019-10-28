@@ -54,8 +54,23 @@ struct SNBase : Module {
 
 
   float t = 0.f;
+  bool reverse = false;
   void process(const ProcessArgs &args) override {
-    t += 1.0f / args.sampleRate;
+    float delta = 1.0f / args.sampleRate;
+
+		if(!reverse){
+			t += delta;
+			if (t >= 128.f)
+				reverse = true;
+		}
+		else{
+			t -= delta;
+			if(t < 0){
+				reverse = false;
+				t = -t;
+			}
+		}
+
 
     //Getting pinning
     float pinning = params[PINNING_PARAM].getValue();
@@ -82,7 +97,7 @@ struct SNBase : Module {
     for (int i = 0; i < numChannels; i++) {
       if(outputs[SIMPLEX_OUTPUT + i].isConnected()){
         float y = (2.f*i);
-        float noiseVal = simp.SumOctave(jitter,x,y,0.7f,speed);
+        float noiseVal = simp.SumOctaveSmooth(jitter,x,y,0.7f,speed);
         float level = clamp(noiseVal*(pinning),-1.f,1.f);
         outputs[SIMPLEX_OUTPUT + i].setVoltage(level*5.f);
       }

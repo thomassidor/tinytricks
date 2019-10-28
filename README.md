@@ -26,10 +26,10 @@ Currently the following are included (v1.1.0):
 * Random Mix x8 (RX8)
 * Simplex Noise (SN1)
 * Simplex Noise x8 (SN8)
+* Simplex Oscillator (SN-OSC)
 
 Potential upcoming modules:
 * Random Stereo Mix x8 (RX8s)
-* Simplex Oscillator (SN-OSC)
 * Simplex Wavetable Oscillator (SN-WAVE)
 * Configurable Sample and Hold x8 (SH8c)
 * Have an idea for a module? Create an issue and suggest it - I might do it.
@@ -43,8 +43,16 @@ Thomas René Sidor
 
 
 ## Changelog
+Version 1.3.0
+* Added: Simplex Oscillator (SN-OSC)
+* Fixed: Sync out of simple and plus oscillators only giving 1v
+* Fixed: Simplex Noise LFOs stop working after some time
+* Fixed: Random Mix stop working after some time
+* Changed: Random Mute CV as mod instead of override of mute knob
+* Changed: Rebased all oscillators to C4 instead of A4 (#9)
+
 Version 1.2.1
-* Fixed: Random Mix x8 (RX8) not working in trigger mode. 
+* Fixed: Random Mix x8 (RX8) not working in trigger mode.
 
 Version 1.2.0
 * Added: Random Mix x8 (RX8)

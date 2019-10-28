@@ -2,7 +2,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
-#include "lfo.cpp"
+#include "oscillators/lfo.cpp"
 
 
 struct ModulationSource {
