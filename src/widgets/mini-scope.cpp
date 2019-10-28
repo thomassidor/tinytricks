@@ -9,18 +9,16 @@ struct ScopedModule{
 	}
 
 	void resetScope(){
-		waveEnd = ceil((waveEnd+bufferIndex-1)/2.f);
+		waveEnd = bufferIndex-1;
+		//waveEnd = ceil((waveEnd+bufferIndex-1)/2.f);
 		bufferIndex = 0;
 	}
 
 	void addFrameToScope(int sampleRate, float value){
 
-		if(bufferIndex >= SCOPE_BUFFER_SIZE){
+		if(bufferIndex >= SCOPE_BUFFER_SIZE)
 			bufferIndex = 0;
-			//std::cout << "Shouldn't happen" << std::endl;
-		}
 
-		//buffer[bufferIndex] = (buffer[bufferIndex]+value)/2.f;
 		buffer[bufferIndex] = value;
 		bufferIndex++;
 	}

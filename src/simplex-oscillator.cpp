@@ -80,7 +80,7 @@ struct SNOSC : Module, ScopedModule {
 	}
 
 
-	int ticksSinceSync = 0;
+	int ticksSinceScopeReset = 0;
   void process(const ProcessArgs &args) override {
 
 		//Setting mirror
@@ -133,19 +133,21 @@ struct SNOSC : Module, ScopedModule {
 
 
 		//Resetting if synced
-		bool useEOCSync = true;
+		bool forwardSyncReset = false;
 		if(inputs[SYNC_INPUT].isConnected()){
-			ticksSinceSync++;
-			if(ticksSinceSync<=2048) //If sync comes to rarely, then we'll use the normal EOC to update scope
-				useEOCSync = false;
-			if(syncTrigger.process(inputs[SYNC_INPUT].getVoltage())){
+			ticksSinceScopeReset++;
+			float voltage = inputs[SYNC_INPUT].getVoltage();
+			if(syncTrigger.process(voltage)){
 				oscillator.reset();
-				resetScope();
-				ticksSinceSync = 0;
+				forwardSyncReset = true;
+				if(voltage >= 11.f){
+					resetScope();
+					ticksSinceScopeReset = 0;
+				}
 			}
 		}
 		else{
-			ticksSinceSync = 0;
+			ticksSinceScopeReset = 0;
 		}
 
 		//Stepping
@@ -157,19 +159,24 @@ struct SNOSC : Module, ScopedModule {
 		//Updating scope
 		addFrameToScope(args.sampleRate, value);
 
-		//Setting sync and resetting scope
-		if(oscillator.isEOC()){
-    	outputs[SYNC_OUTPUT].setVoltage(10.f);
-			if(useEOCSync)
+
+		//TODO: Clean up this logic. It's not pretty.
+		if(forwardSyncReset){
+			outputs[SYNC_OUTPUT].setVoltage(11.f);
+		}
+		else if(oscillator.isEOC()){
+			if(!inputs[SYNC_INPUT].isConnected())
+    		outputs[SYNC_OUTPUT].setVoltage(11.f);
+			else
+				outputs[SYNC_OUTPUT].setVoltage(10.f);
+			// Normally we'll reset the scope on EOC,
+			// but not if sync is connected - unless it's been too long since last sync
+			if(!inputs[SYNC_INPUT].isConnected() || ticksSinceScopeReset > SimplexOscillator::BUFFER_LENGTH)
 				resetScope();
 		}
 		else{
 			outputs[SYNC_OUTPUT].setVoltage(0.f);
 		}
-
-
-
-
   }
 };
 

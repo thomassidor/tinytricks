@@ -45,7 +45,8 @@ Version 1.3.0
 * Fixed: Sync out of simple and plus oscillators only giving 1v
 * Fixed: Simplex Noise LFOs stop working after some time
 * Fixed: Random Mix stop working after some time
-* Changed: Rebased oscillators to C4 instead of A4 (#9)
+* Changed: Random Mute CV as mod instead of override of mute knob
+* Changed: Rebased all oscillators to C4 instead of A4 (#9)
 
 Version 1.2.1
 * Fixed: Random Mix x8 (RX8) not working in trigger mode.
