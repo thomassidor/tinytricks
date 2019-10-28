@@ -23,11 +23,14 @@ Currently the following are included (v1.1.0):
 * Sawtooth+ Oscillator (TT-SAW+)
 * Square+ Oscillator (TT-SQR+)
 * Triangle+ Oscillator (TT-TRI+)
+* Random Mix x8 (RX8)
+* Simplex Noise (SN1)
+* Simplex Noise x8 (SN8)
 * Simplex Oscillator (SN-OSC)
 
 Potential upcoming modules:
-* Random Mix x8 (RX8)
 * Random Stereo Mix x8 (RX8s)
+* Simplex Wavetable Oscillator (SN-WAVE)
 * Configurable Sample and Hold x8 (SH8c)
 * Have an idea for a module? Create an issue and suggest it - I might do it.
 
