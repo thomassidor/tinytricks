@@ -5,7 +5,7 @@
 
 Tiny Tricks is a collection of (more or less) tiny modules for VCV Rack.
 
-Currently the following are included (v1.1.0):
+Currently the following are included:
 * Tiny Tricks Arithmetic (TT-A)
 * Tiny Tricks Logic (TT-L)
 * Sample and Hold x16 (SH16)
