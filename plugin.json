@@ -200,5 +200,14 @@
         "oscillator"
       ]
     }
+    ,
+    {
+      "slug": "WAVE",
+      "name": "Wavetable Oscillator",
+      "description": "A wavetable oscillator where you can record your own waves.",
+      "tags": [
+        "oscillator"
+      ]
+    }
   ]
 }

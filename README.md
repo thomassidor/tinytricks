@@ -27,6 +27,7 @@ Currently the following are included:
 * Simplex Noise (SN1)
 * Simplex Noise x8 (SN8)
 * Simplex Oscillator (SN-OSC)
+* Wavetable Oscillator (WAVE)
 
 Feel free to join the project, copy source code or panel designs.
 
@@ -36,6 +37,9 @@ All the  best, Thomas René Sidor
 
 
 ## Changelog
+Version 1.4.0
+* Added: Wavetable Oscillator (WAVE)
+
 Version 1.3.0
 * Added: Simplex Oscillator (SN-OSC)
 * Fixed: Sync out of simple and plus oscillators only giving 1v
