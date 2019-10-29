@@ -28,18 +28,11 @@ Currently the following are included:
 * Simplex Noise x8 (SN8)
 * Simplex Oscillator (SN-OSC)
 
-Potential upcoming modules:
-* Random Stereo Mix x8 (RX8s)
-* Simplex Wavetable Oscillator (SN-WAVE)
-* Configurable Sample and Hold x8 (SH8c)
-* Have an idea for a module? Create an issue and suggest it - I might do it.
-
 Feel free to join the project, copy source code or panel designs.
 
-Questions, comments, suggestions and everything else: Submit an issue.
+Questions, comments, enhancement suggestions, ideas for modules and everything else: [Create a ticket.](https://github.com/thomassidor/tinytricks/issues/new)
 
-Best regards,
-Thomas René Sidor
+All the  best, Thomas René Sidor
 
 
 ## Changelog
