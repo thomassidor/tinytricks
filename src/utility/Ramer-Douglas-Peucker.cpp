@@ -1,3 +1,8 @@
+#include <cmath>
+#include <utility>
+#include <vector>
+#include <stdexcept>
+
 using namespace std;
 
 //Source: https://rosettacode.org/wiki/Ramer-Douglas-Peucker_line_simplification#C.2B.2B
