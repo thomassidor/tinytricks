@@ -207,7 +207,7 @@ struct WAVEWidget : ModuleWidget {
 			WaveTableScope *scope = new WaveTableScope();
 			scope->box.pos = mm2px(Vec(22.737f, 9.1f));
 			scope->box.size = mm2px(Vec(35.807f, 110.354f));
-			scope->initialize(3,2);
+			scope->initialize(3,3);
 			addChild(scope);
 			module->scope = scope;
 

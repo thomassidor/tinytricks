@@ -125,7 +125,7 @@ struct WaveTableScope : FramebufferWidget {
 			scope->box.pos = Vec(0,scopeHeight*i);
 			scope->box.size = Vec(box.size.x, scopeHeight);
 			scope->setGain(1.0f);
-			//std::cout << "pos: " << scopeHeight*i <<std::endl;
+			std::cout << "craeted scope: " << scopeHeight*i <<std::endl;
 			addChild(scope);
 		}
 	}
@@ -167,10 +167,10 @@ struct WaveTableScope : FramebufferWidget {
 
 					int subDivisionLevel = (w*waves)+s;
 
-					int mainLevel0 = w*((subDivisions-1)*(waves-1));
-					int mainLevel1 = (w+1)*((subDivisions-1)*(waves-1));
+					int mainLevel0 = w*((subDivisions-1)*(waves));
+					int mainLevel1 = mainLevel0+subDivisions+1;
 
-					float levelFrac = (float)s/(float)(subDivisions);
+					float levelFrac = (float)s/(float)(subDivisions+1);
 
 					std::cout << "--------" <<std::endl;
 					std::cout << "s: " << s <<std::endl;
