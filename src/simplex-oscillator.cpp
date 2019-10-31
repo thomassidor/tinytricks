@@ -192,9 +192,9 @@ struct SNOSCWidget : ModuleWidget {
 
 		if(module){
 			MiniScope *scope = new MiniScope();
-			scope->box.pos = mm2px(Vec(1.571f, 6.0f));
-			scope->box.size = mm2px(Vec(27.337f, 14.366f));
-			scope->setGain(0.0f);
+			scope->box.pos = mm2px(Vec(3.571f, 9.0f));
+			scope->box.size = mm2px(Vec(23.337f, 8.366f));
+			scope->setGain(1.0f);
 			addChild(scope);
 			module->scope = scope;
 		}

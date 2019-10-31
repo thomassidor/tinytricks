@@ -37,6 +37,7 @@ struct WAVE : Module {
 
   float prevPitch = 90000.f;
   float prevDetailLevel = 90000.f;
+	float prevY = 90000.0f;
 
 	dsp::SchmittTrigger syncTrigger;
 	dsp::SchmittTrigger mirrorTrigger;
@@ -105,7 +106,7 @@ struct WAVE : Module {
 				oscillator.startCapture();
 				scope->startCapture();
 			}
-			if(ticksSinceRecordingStarted < oscillator.TABLE_SIZE){
+			if(ticksSinceRecordingStarted < oscillator.TABLE_SIZE-1){
 
 				float topV = inputs[TOP_INPUT].getNormalVoltage(0.0f);
 				oscillator.addSampleToFrame(topV,1.0f);
@@ -156,8 +157,12 @@ struct WAVE : Module {
 		//Getting y
 		float y = params[Y_PARAM].getValue();
 		if(inputs[Y_CV_INPUT].isConnected()){
-			y += inputs[Y_CV_INPUT].getVoltage()/5.f;
+			y += inputs[Y_CV_INPUT].getVoltage()/10.f;
 			y = clamp(y, 0.f, 1.f);
+		}
+		if(abs(prevY-y)>0.05f || y == 0.f || y == 1.f){
+			scope->setY(y);
+			prevY = y;
 		}
 
 
@@ -185,7 +190,7 @@ struct WAVEWidget : ModuleWidget {
 
 		//Capture button
 		addParam(createParam<LEDButton>(mm2px(Vec(7.869f,11.125f)), module, WAVE::CAPTURE_PARAM));
-		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(7.914f,11.170f)), module, WAVE::CAPTURE_LIGHT));
+		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(7.869f+0.45f,11.125f+0.45f)), module, WAVE::CAPTURE_LIGHT));
 
 		//Inputs
 		addInput(createInput<PJ301MPort>(mm2px(Vec(6.992f,28.474f)), module, WAVE::TOP_INPUT));
@@ -197,7 +202,7 @@ struct WAVEWidget : ModuleWidget {
 
 		//Mirror button
 		addParam(createParam<LEDButton>(mm2px(Vec(7.869f,90.138f)), module, WAVE::MIRROR_PARAM));
-		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(7.914f,90.183f)), module, WAVE::MIRROR_LIGHT));
+		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(7.869f+0.45f,90.138f+0.45f)), module, WAVE::MIRROR_LIGHT));
 
 		//Detail
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(7.045f,105.244f)), module, WAVE::DETAIL_PARAM));
@@ -207,7 +212,7 @@ struct WAVEWidget : ModuleWidget {
 			WaveTableScope *scope = new WaveTableScope();
 			scope->box.pos = mm2px(Vec(22.737f, 9.1f));
 			scope->box.size = mm2px(Vec(35.807f, 110.354f));
-			scope->initialize(3,3);
+			scope->initialize(3,10);
 			addChild(scope);
 			module->scope = scope;
 
