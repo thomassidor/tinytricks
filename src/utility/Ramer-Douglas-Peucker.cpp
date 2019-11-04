@@ -8,7 +8,7 @@ using namespace std;
 //Source: https://rosettacode.org/wiki/Ramer-Douglas-Peucker_line_simplification#C.2B.2B
 typedef std::pair<double, double> Point;
 
-double PerpendicularDistance(const Point &pt, const Point &lineStart, const Point &lineEnd){
+static double PerpendicularDistance(const Point &pt, const Point &lineStart, const Point &lineEnd){
 	double dx = lineEnd.first - lineStart.first;
 	double dy = lineEnd.second - lineStart.second;
 
@@ -35,7 +35,7 @@ double PerpendicularDistance(const Point &pt, const Point &lineStart, const Poin
 	return pow(pow(ax,2.0)+pow(ay,2.0),0.5);
 }
 
-void RamerDouglasPeucker(const vector<Point> &pointList, double epsilon, vector<Point> &out){
+static void RamerDouglasPeucker(const vector<Point> &pointList, double epsilon, vector<Point> &out){
 	if(pointList.size()<2)
 		return; //invalid list size
 

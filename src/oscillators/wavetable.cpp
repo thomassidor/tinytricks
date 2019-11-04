@@ -1,56 +1,60 @@
-//#include "../utility/Ramer-Douglas-Peucker.cpp"
+struct WaveTableOscillator{
 
-struct WaveTableOscillatorWithRDP{
-
-  static const int TABLE_LEVELS = 3;
-  static const int TABLE_SIZE = 2048;
-  int TABLE_END = TABLE_SIZE;
-  float lookuptables[TABLE_LEVELS][TABLE_SIZE] = {0};
-  
+  static const int WAVEFORM_COUNT = 3;
+  static const int MAX_SAMPLE_COUNT = 2048;
+  int TABLE_END = MAX_SAMPLE_COUNT;
+  float lookuptables[WAVEFORM_COUNT][MAX_SAMPLE_COUNT] = {0};
 
   float currentIndex = 0.f;
   float tableDelta = 0.f;
 
-  bool mirror = false;
+	bool isStepEOC = false;
 
-  WaveTableOscillatorWithRDP(){
+  bool mirror = false;
+  bool reverse = false;
+
+  float prevPitch = 90000.f;
+
+  float phase = 0.f;
+  float freq = 0.f;
+
+  WaveTableOscillator(){
 
   }
 
   void step(){
+    isStepEOC = false;
 
-    /*
     if(mirror){
       if(!reverse){
-        //phase += delta;
-        if (phase >= 0.5f)
+        currentIndex += tableDelta;
+        if (currentIndex >= TABLE_END/2.f)
           reverse = true;
       }
       else{
-        phase -= delta;
-        if(phase < 0.f){
+        currentIndex -= tableDelta;
+        if(currentIndex < 0.f){
           reverse = false;
-          phase = -phase;
+          currentIndex = 0.f;
           isStepEOC = true;
         }
       }
     }
     else{
-      phase += delta;
-      if (phase >= 1.0f){
-        phase -= 1.0f;
+      currentIndex += tableDelta;
+      if (currentIndex >= TABLE_END){
+        currentIndex -= TABLE_END;
+        isStepEOC = true;
       }
     }
-    */
-
-    //Adjusting currentIndex
-    if ((currentIndex += tableDelta) > TABLE_END)
-      currentIndex -= TABLE_END;
   }
 
+  bool isEOC(){
+		return isStepEOC;
+	}
 
-  unsigned int tick = 0;
   float getSample(float y){
+
     //Getting indexes for current place in table
     int index0 = (int) currentIndex;
     int index1 = index0 == (TABLE_END - 1) ? (int) 0 : index0 + 1;
@@ -59,7 +63,7 @@ struct WaveTableOscillatorWithRDP{
     float indexFrac = currentIndex - (float) index0;
 
     //Getting indexes for the levels based on y
-    float frac = y * (TABLE_LEVELS-1);
+    float frac = y * (WAVEFORM_COUNT-1);
     int level0 = floor(frac);
     int level1 = ceil(frac);
     float levelFrac = frac - (float) level0;
@@ -77,34 +81,6 @@ struct WaveTableOscillatorWithRDP{
 
     float finalValue = interpolatedValueForLevel0 + levelFrac * (interpolatedValueForLevel1 - interpolatedValueForLevel0);
 
-    /*
-    if(tick++%100000==0){
-      std::cout << "------------------" << std::endl;
-      std::cout << "currentIndex: " << currentIndex << std::endl;
-      std::cout << "indexFrac: " << indexFrac << std::endl;
-
-      std::cout << " " << std::endl;
-      std::cout << "y: " << y << std::endl;
-      std::cout << "level0: " << level0 << std::endl;
-      std::cout << "level1: " << level1 << std::endl;
-      std::cout << "levelFrac: " << levelFrac << std::endl;
-
-      std::cout << " " << std::endl;
-      std::cout << "Level0Value0: " << Level0Value0 << std::endl;
-      std::cout << "Level0Value1: " << Level0Value1 << std::endl;
-      std::cout << "interpolatedValueForLevel0: " << interpolatedValueForLevel0 << std::endl;
-
-      std::cout << " " << std::endl;
-      std::cout << "Level1Value0: " << Level1Value0 << std::endl;
-      std::cout << "Level1Value1: " << Level1Value1 << std::endl;
-      std::cout << "interpolatedValueForLevel1: " << interpolatedValueForLevel1 << std::endl;
-
-      std::cout << " " << std::endl;
-      std::cout << "finalValue: " << finalValue << std::endl;
-      std::cout << "done" << std::endl;
-    }
-    */
-
     return finalValue;
   }
 
@@ -113,7 +89,7 @@ struct WaveTableOscillatorWithRDP{
   }
 
   unsigned int yToLevel(float y){
-    return floor(y*(TABLE_LEVELS-1));
+    return floor(y*(WAVEFORM_COUNT-1));
   }
 
   void endFrame(){
@@ -127,20 +103,15 @@ struct WaveTableOscillatorWithRDP{
   void endCapture(){
     TABLE_END = currentIndex;
     reset();
-    /*
-    for (int l = 0; l < TABLE_LEVELS; l++){
-        for (int i = 0; i < 15; i++) {
-        std::cout << lookuptables[l][i] << ", ";
-      }
-      std::cout <<  std::endl;
-    }
-    */
   }
 
   void setPitch(float pitch, float sampleRate){
-    float frequency = dsp::FREQ_C4 * powf(2.0f, pitch);
-    auto tableSizeOverSampleRate = TABLE_END / sampleRate;
-    tableDelta = frequency * tableSizeOverSampleRate;
+    if(pitch != prevPitch){
+      float frequency = dsp::FREQ_C4 * powf(2.0f, pitch);
+      auto tableSizeOverSampleRate = TABLE_END / sampleRate;
+      tableDelta = frequency * tableSizeOverSampleRate;
+      prevPitch = pitch;
+    }
   }
 
   void setMirror(bool _mirror){
@@ -153,35 +124,5 @@ struct WaveTableOscillatorWithRDP{
     currentIndex = 0.f;
   }
 
-  void simplify(float simplificationLevel){
-
-  }
-
-  /*
-  void createlookuptables(float detailLevel, float scale, float xstart, float y, float z, float degradation){
-    vector<Point> pointList;
-    vector<Point> pointListOut;
-    float x = xstart;
-    for (unsigned int i = 0; i < TABLE_SIZE; i++) {
-      x += 0.01f;
-      float value = simp.SumOctave(detailLevel,x,y,z,scale);
-      //baselookuptables[i] = value;
-      pointList.push_back(Point(i,value));
-    }
-
-    //RamerDouglasPeucker(pointList, degradation, pointListOut);
-
-    int size = pointListOut.size();
-    for(int i = 0; i < size; i++){
-      lookuptables[i] = pointListOut[i].second;
-      //cout << pointListOut[i].first << "," << pointListOut[i].second << endl;
-    }
-
-    //cout << "Size: " << size << endl;
-
-    TABLE_END = size;
-    currentIndex = 0.f;
-  }
-  */
 
 };
