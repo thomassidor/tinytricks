@@ -8,7 +8,7 @@ const float SCALE_MIN = 0.5f;
 const float DETAIL_MIN = 1.f;
 const float DETAIL_MAX = 8.f;
 
-struct SNOSC : Module, ScopedModule {
+struct SNOSC : Module {
 	enum ParamIds {
     SCALE_PARAM,
     DETAIL_PARAM,
@@ -39,6 +39,8 @@ struct SNOSC : Module, ScopedModule {
 		NUM_LIGHTS
 	};
 
+
+	MiniScope* scope;
 
 	SimplexOscillator oscillator;
 	float prevPitch = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
@@ -141,7 +143,7 @@ struct SNOSC : Module, ScopedModule {
 				oscillator.reset();
 				forwardSyncReset = true;
 				if(voltage >= 11.f){
-					resetScope();
+					scope->reset();
 					ticksSinceScopeReset = 0;
 				}
 			}
@@ -157,7 +159,7 @@ struct SNOSC : Module, ScopedModule {
     //Setting output
   	outputs[OSC_OUTPUT].setVoltage(value);
 		//Updating scope
-		addFrameToScope(args.sampleRate, value);
+		scope->addFrame(value);
 
 
 		//TODO: Clean up this logic. It's not pretty.
@@ -172,7 +174,7 @@ struct SNOSC : Module, ScopedModule {
 			// Normally we'll reset the scope on EOC,
 			// but not if sync is connected - unless it's been too long since last sync
 			if(!inputs[SYNC_INPUT].isConnected() || ticksSinceScopeReset > SimplexOscillator::BUFFER_LENGTH)
-				resetScope();
+				scope->reset();
 		}
 		else{
 			outputs[SYNC_OUTPUT].setVoltage(0.f);
@@ -188,11 +190,14 @@ struct SNOSCWidget : ModuleWidget {
 		setModule(module);
     setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/SNOSC.svg")));
 
-		MiniScope *scope = new MiniScope();
-		scope->module = module;
-		scope->box.pos = mm2px(Vec(1.571f, 6.0f));
-		scope->box.size = mm2px(Vec(27.337f, 14.366f));
-		addChild(scope);
+		if(module){
+			MiniScope *scope = new MiniScope();
+			scope->box.pos = mm2px(Vec(3.571f, 9.0f));
+			scope->box.size = mm2px(Vec(23.337f, 8.366f));
+			scope->setGain(1.0f);
+			addChild(scope);
+			module->scope = scope;
+		}
 
 		//Screws
 		addChild(createWidget<ScrewSilver>(Vec(0, 0)));

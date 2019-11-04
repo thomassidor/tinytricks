@@ -26,8 +26,8 @@ void init(Plugin *p) {
   p->addModel(modelRX8);
   p->addModel(modelSN1);
   p->addModel(modelSN8);
-  //p->addModel(modelSNWAVE);
   p->addModel(modelSNOSC);
+  p->addModel(modelWAVE);
 
 
 

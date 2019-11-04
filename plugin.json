@@ -2,7 +2,7 @@
   "slug": "TinyTricks",
   "name": "Tiny Tricks",
   "brand": "Tiny Tricks",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "license": "MIT",
   "author": "Thomas René Sidor",
   "authorEmail": "mail@thomassidor.com",
@@ -196,6 +196,15 @@
       "slug": "SNOSC",
       "name": "Simplex Oscillator",
       "description": "A oscillator based on a simplex noise source.",
+      "tags": [
+        "oscillator"
+      ]
+    }
+    ,
+    {
+      "slug": "WAVE",
+      "name": "Wavetable Oscillator",
+      "description": "A wavetable oscillator where you can record your own waves.",
       "tags": [
         "oscillator"
       ]
