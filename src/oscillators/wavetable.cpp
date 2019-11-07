@@ -3,7 +3,7 @@ struct WaveTableOscillator{
   static const int WAVEFORM_COUNT = 3;
   static const int MAX_SAMPLE_COUNT = 2048;
   int TABLE_END = MAX_SAMPLE_COUNT;
-  float lookuptables[WAVEFORM_COUNT][MAX_SAMPLE_COUNT] = {0};
+  float lookuptables[WAVEFORM_COUNT][MAX_SAMPLE_COUNT] = {{0}};
 
   float currentIndex = 0.f;
   float tableDelta = 0.f;
