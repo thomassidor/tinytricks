@@ -27,7 +27,7 @@ Currently the following are included:
 * Simplex Noise (SN1)
 * Simplex Noise x8 (SN8)
 * Simplex Oscillator (SN-OSC)
-* Wavetable Oscillator (WAVE)
+* [Wavetable Oscillator (WAVE)](#wavetable-oscillator-wave)
 
 Feel free to join the project, copy source code or panel designs.
 
@@ -35,13 +35,38 @@ Questions, comments, enhancement suggestions, ideas for modules and everything e
 
 All the  best, Thomas René Sidor
 
-## Module descriptions (being updated)
+## Module descriptions (in progress)
 
 ### Sample and Hold x16 (SH16)
 Generates 16 dfifferent random bipolar values upon trigger. Values are uniformly spread across the range.
 
 ### Attenuator x8 (A8)
 Attenuates eight different signals the same amount.
+
+### Wavetable Oscillator (WAVE)
+A wavetable style oscillator - with three seperate oscillators - where you can (and need to) capture your own waves.
+
+#### Creating the wavetable
+To capture a wavetable connect audio to `WAVE TOP`, `MIDDLE` and `BOTTOM` and press `CAPTURE`. This will record the incoming audio to the respectively the top, middle and bottom positions in the wavetable. Intermediate values are automatically interpolated.
+
+Connect `SYNC` from your oscillator to sync the recording to one single cycle. If not connected 2048 samples will be recorded.
+
+`MIRROR` mirrors the recorded wave at the halfway point.
+
+#### Main oscillator
+`FREQ` and `FINE` determines the coarse and fine tuning of the output. CV for `FREQ` is 1 volt per octave.
+
+`POS` determines the vertical position in the wavetable.
+
+#### Oscillator 2 and Oscillator 3
+These are seperate oscillators using the same wavetable that can be turned on and off individually using `ENABLE`.
+
+`DETUNE` offsets the pitch reletive to the main oscillator.
+
+`POS` offsets the vertical position in the wavetable relative to the main oscillator.
+
+`SYNC` enables oscillator hard sync agains the chosen oscillator. To hear the effect detune the oscillator.
+
 
 ## Changelog
 Version 1.4.0
