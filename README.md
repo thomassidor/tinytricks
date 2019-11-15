@@ -8,11 +8,11 @@ Tiny Tricks is a collection of (more or less) tiny modules for VCV Rack.
 Currently the following are included:
 * Tiny Tricks Arithmetic (TT-A)
 * Tiny Tricks Logic (TT-L)
-* Sample and Hold x16 (SH16)
+* [Sample and Hold x16 (SH16)](#sample-and-hold-x16-sh16)
 * Modulation Generator (MG1)
 * Modulation Generator x8 (MG8)
 * Modulation Generator x16 (MG16)
-* Attenuator x8 (A8)
+* [Attenuator x8 (A8)](#attenuator-x8-a8)
 * Random Mute x8 (RM8)
 * Random Stereo Mute x8 (RM8s)
 * Simple Sine Oscillator (TT-SINE)
