@@ -35,6 +35,13 @@ Questions, comments, enhancement suggestions, ideas for modules and everything e
 
 All the  best, Thomas René Sidor
 
+## Module descriptions (being updated)
+
+### Sample and Hold x16 (SH16)
+Generates 16 dfifferent random bipolar values upon trigger. Values are uniformly spread across the range.
+
+### Attenuator x8 (A8)
+Attenuates eight different signals the same amount.
 
 ## Changelog
 Version 1.4.0
