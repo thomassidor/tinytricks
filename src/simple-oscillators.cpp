@@ -1,7 +1,8 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 #include "oscillators/oscillator.cpp"
 
-struct TTOBase : Module {
+struct TTOBase : TinyTricksModule {
 	enum ParamIds {
 		FREQ_PARAM,
     FREQ_FINE_PARAM,
@@ -117,7 +118,7 @@ struct TTOBase : Module {
 
 
 
-struct TTOBaseWidget : ModuleWidget {
+struct TTOBaseWidget : TinyTricksModuleWidget {
 
 	TTOBaseWidget(TTOBase *module) {
 		setModule(module);
@@ -134,9 +135,6 @@ struct TTOBaseWidget : ModuleWidget {
 
 		addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,113.06f)), module, TTOBase::OSC_OUTPUT));
 
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 
@@ -149,7 +147,7 @@ struct TTOSin : TTOBase{
 
 struct TTOSinWidget : TTOBaseWidget {
 	TTOSinWidget(TTOBase *module) : TTOBaseWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTSIN.svg")));
+		InitializeSkin("TTSIN.svg");
 	}
 };
 Model *modelTTSIN = createModel<TTOSin, TTOSinWidget>("TTSIN");
@@ -162,7 +160,7 @@ struct TTOSaw : TTOBase{
 
 struct TTOSawWidget : TTOBaseWidget {
 	TTOSawWidget(TTOBase *module) : TTOBaseWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTSAW.svg")));
+		InitializeSkin("TTSAW.svg");
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,75.106f)), module, TTOBase::THETA_CV_INPUT));
 	}
@@ -178,8 +176,8 @@ struct TTOSqr : TTOBase{
 
 struct TTOSqrWidget : TTOBaseWidget {
 	TTOSqrWidget(TTOBase *module) : TTOBaseWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTSQR.svg")));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
+		InitializeSkin("TTSQR.svg");
+		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,75.106f)), module, TTOBase::THETA_CV_INPUT));
 	}
 };
@@ -194,7 +192,7 @@ struct TTOTri : TTOBase{
 
 struct TTOTriWidget : TTOBaseWidget {
 	TTOTriWidget(TTOBase *module) : TTOBaseWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTTRI.svg")));
+		InitializeSkin("TTTRI.svg");
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,75.106f)), module, TTOBase::THETA_CV_INPUT));
 	}

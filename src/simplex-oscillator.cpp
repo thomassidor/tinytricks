@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 #include "oscillators/simplex.cpp"
 #include "widgets/mini-scope.cpp"
 
@@ -8,7 +9,7 @@ const float SCALE_MIN = 0.5f;
 const float DETAIL_MIN = 1.f;
 const float DETAIL_MAX = 8.f;
 
-struct SNOSC : Module {
+struct SNOSC : TinyTricksModule {
 	enum ParamIds {
     SCALE_PARAM,
     DETAIL_PARAM,
@@ -69,10 +70,14 @@ struct SNOSC : Module {
 		json_t *rootJ = json_object();
 		// Mirror
 		json_object_set_new(rootJ, "mirror", json_boolean(mirror));
+
+		AppendBaseJson(rootJ);
 		return rootJ;
 	}
 
 	void dataFromJson(json_t *rootJ) override {
+		TinyTricksModule::dataFromJson(rootJ);
+
 		// Mirror
 		json_t *mirrorJ = json_object_get(rootJ, "mirror");
 		if (mirrorJ)
@@ -183,12 +188,12 @@ struct SNOSC : Module {
 };
 
 
-struct SNOSCWidget : ModuleWidget {
+struct SNOSCWidget : TinyTricksModuleWidget {
 	//void appendContextMenu(Menu *menu) override;
 
 	SNOSCWidget(SNOSC *module) {
 		setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/SNOSC.svg")));
+		InitializeSkin("SNOSC.svg");
 
 		if(module){
 			MiniScope *scope = new MiniScope();
@@ -199,9 +204,7 @@ struct SNOSCWidget : ModuleWidget {
 			module->scope = scope;
 		}
 
-		//Screws
-		addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
+
 
 		//Mirror buttons
 		addParam(createParam<LEDButton>(mm2px(Vec(12.065f,19.191f)), module, SNOSC::MIRROR_PARAM));

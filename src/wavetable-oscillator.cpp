@@ -1,10 +1,11 @@
 #include "plugin.hpp"
 #include <vector>
+#include "shared/shared.cpp"
 #include "oscillators/wavetable.cpp"
 #include "widgets/wavetable-scope.cpp"
 
 
-struct WAVE : Module {
+struct WAVE : TinyTricksModule {
 	enum ParamIds {
   	FREQ_PARAM,
 		FREQ_FINE_PARAM,
@@ -120,10 +121,14 @@ struct WAVE : Module {
 		}
 		json_object_set_new(rootJ, "wavetable", wavetableJ);
 		//std::cout << "done writing" <<std::endl;
+
+		AppendBaseJson(rootJ);
 		return rootJ;
 	}
 
 	void dataFromJson(json_t *rootJ) override {
+		TinyTricksModule::dataFromJson(rootJ);
+
 		JSON_REAL_PRECISION(31);
 
 		//Reading wavetable
@@ -389,13 +394,11 @@ struct WAVE : Module {
 
 
 
-struct WAVEWidget : ModuleWidget {
+struct WAVEWidget : TinyTricksModuleWidget {
 	WAVEWidget(WAVE *module) {
 		setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/WAVE.svg")));
-		//Screws
-		addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
+		InitializeSkin("WAVE.svg");
+
 
 		//inCaptureMode button
 		addParam(createParam<LEDButton>(mm2px(Vec(7.164f,11.125f)), module, WAVE::CAPTURE_PARAM));

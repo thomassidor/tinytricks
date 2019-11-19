@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 #include "utility/SimplexNoise.hpp"
 
 const int NUM_CHANNELS = 8;
@@ -7,7 +8,7 @@ const float SPEED_MIN = 0.005f;
 const float JITTER_MIN = 1.f;
 const float JITTER_MAX = 8.f;
 
-struct RX8Base : Module {
+struct RX8Base : TinyTricksModule {
 
   enum ParamIds {
     SPEED_PARAM,
@@ -140,10 +141,9 @@ struct RX8Base : Module {
 };
 
 
-struct RX8BaseWidget : ModuleWidget {
+struct RX8BaseWidget : TinyTricksModuleWidget {
   RX8BaseWidget(RX8Base *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/RX8.svg")));
 
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.977f, 12.003f)), module, RX8Base::TRIG_INPUT));
 
@@ -173,9 +173,6 @@ struct RX8BaseWidget : ModuleWidget {
     //Mix output
     addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.398f, 113.403f)), module, RX8Base::MIX_L_OUTPUT));
 
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
   }
 };
 
@@ -188,6 +185,7 @@ struct RX8Mono : RX8Base{
 
 struct RX8MonoWidget : RX8BaseWidget {
 	RX8MonoWidget(RX8Base *module) : RX8BaseWidget(module) {
+    InitializeSkin("RX8.svg");
   }
 };
 Model *modelRX8 = createModel<RX8Mono, RX8MonoWidget>("RX8");

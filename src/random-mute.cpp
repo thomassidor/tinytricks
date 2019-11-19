@@ -1,8 +1,9 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 
 const int NUM_CHANNELS = 8;
 
-struct RM8Base : Module {
+struct RM8Base : TinyTricksModule {
 
   enum ParamIds {
     MUTE_COUNT_PARAM,
@@ -99,7 +100,7 @@ struct RM8Base : Module {
 };
 
 
-struct RM8BaseWidget : ModuleWidget {
+struct RM8BaseWidget : TinyTricksModuleWidget {
   RM8BaseWidget(RM8Base *module) {
     setModule(module);
 
@@ -123,15 +124,13 @@ struct RM8Mono : RM8Base{
 
 struct RM8MonoWidget : RM8BaseWidget {
 	RM8MonoWidget(RM8Base *module) : RM8BaseWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/RM8.svg")));
+    InitializeSkin("RM8.svg");
+
     for (int i = 0; i < NUM_CHANNELS; i++){
       addInput(createInput<PJ301MPort>(mm2px(Vec(17.424f, 11.782f + 14.f * i)), module, RM8Base::MUTE_L_INPUT + i));
       addChild(createLight<SmallLight<GreenLight>>(mm2px(Vec(26.209, 14.701 + 14.f * i)), module, RM8Base::MUTE_LIGHT + i));
       addOutput(createOutput<PJ301MPort>(mm2px(Vec(29.122f, 11.782f + 14.f * i)), module, RM8Base::MUTE_L_OUTPUT  + i));
     }
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelRM8 = createModel<RM8Mono, RM8MonoWidget>("RM8");
@@ -144,7 +143,8 @@ struct RM8Stereo : RM8Base{
 
 struct RM8StereoWidget : RM8BaseWidget {
 	RM8StereoWidget(RM8Base *module) : RM8BaseWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/RM8S.svg")));
+    InitializeSkin("RM8S.svg");
+
     for (int i = 0; i < NUM_CHANNELS; i++){
       addInput(createInput<PJ301MPort>(mm2px(Vec(17.788f, 12.003f + 14.f * i)), module, RM8Base::MUTE_L_INPUT + i));
       addInput(createInput<PJ301MPort>(mm2px(Vec(26.994f, 12.003f + 14.f * i)), module, RM8Base::MUTE_R_INPUT + i));
@@ -152,9 +152,6 @@ struct RM8StereoWidget : RM8BaseWidget {
       addOutput(createOutput<PJ301MPort>(mm2px(Vec(39.567f, 12.003f + 14.f * i)), module, RM8Base::MUTE_L_OUTPUT  + i));
       addOutput(createOutput<PJ301MPort>(mm2px(Vec(48.773f, 12.003f + 14.f * i)), module, RM8Base::MUTE_R_OUTPUT  + i));
     }
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelRM8S = createModel<RM8Stereo, RM8StereoWidget>("RM8S");

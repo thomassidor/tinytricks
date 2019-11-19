@@ -1,7 +1,8 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 
 
-struct TTA : Module {
+struct TTA : TinyTricksModule {
   enum ParamIds {
     NUM_PARAMS
   };
@@ -59,10 +60,11 @@ struct TTA : Module {
 
 
 
-struct TTAWidget : ModuleWidget {
+struct TTAWidget : TinyTricksModuleWidget {
   TTAWidget(TTA *module) {
+
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTA.svg")));
+    InitializeSkin("TTA.svg");
 
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.2f, 12.003f)), module, TTA::A_INPUT));
     addInput(createInput<PJ301MPort>(mm2px(Vec(14.088f, 12.003f)), module, TTA::B_INPUT));
@@ -84,10 +86,6 @@ struct TTAWidget : ModuleWidget {
 
     addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 111.613f)), module, TTA::MINUSA_OUTPUT));
     addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 111.613f)), module, TTA::MINUSB_OUTPUT));
-
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
   }
 };
 

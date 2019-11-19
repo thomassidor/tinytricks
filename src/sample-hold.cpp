@@ -1,9 +1,10 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 
 const int NUM_CHANNELS = 16;
 const int NUM_CHANNELS_PER_COLUMN = 8;
 
-struct SH16 : Module {
+struct SH16 : TinyTricksModule {
   enum ParamIds {
     NUM_PARAMS
   };
@@ -40,10 +41,10 @@ void SH16::process(const ProcessArgs &args) {
 
 
 
-struct SH16Widget : ModuleWidget {
+struct SH16Widget : TinyTricksModuleWidget {
   SH16Widget(SH16 *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/SH16.svg")));
+    InitializeSkin("SH16.svg");
 
     addInput(createInput<PJ301MPort>(mm2px(Vec(8.647f, 12.003f)), module, SH16::TRIG_INPUT));
 
@@ -55,9 +56,6 @@ struct SH16Widget : ModuleWidget {
       addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.063f, 29.859f + 11.5f * i)), module, SH16::HOLD_OUTPUT + NUM_CHANNELS_PER_COLUMN + i));
     }
 
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
   }
 };
 

@@ -18,5 +18,24 @@ SOURCES += $(wildcard src/*.cpp src/utility/*.cpp)
 DISTRIBUTABLES += res
 DISTRIBUTABLES += $(wildcard LICENSE*)
 
+teal-theme:
+	mkdir -p res/panels-teal
+	cp res/panels/* res/panels-teal/
+	sed -i 's/#e6e6e6/#4c5b5c/g' res/panels-teal/* # Background
+	sed -i 's/#f9f9f9/#566666/g' res/panels-teal/* # Input area
+	sed -i 's/#ccc/#414f4f/g' res/panels-teal/* # Output area
+	sed -i 's/#000/#fff/g' res/panels-teal/* # Text
+
+purple-theme:
+	mkdir -p res/panels-purple
+	cp res/panels/* res/panels-purple/
+	sed -i 's/#e6e6e6/#262730/g' res/panels-purple/* # Background
+	sed -i 's/#f9f9f9/#2e3038/g' res/panels-purple/* # Input area
+	sed -i 's/#ccc/#18191e/g' res/panels-purple/* # Output area
+	sed -i 's/#000/#fff/g' res/panels-purple/* # Text
+
+allthemes: teal-theme purple-theme
+
+
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk

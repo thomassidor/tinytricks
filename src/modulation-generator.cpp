@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include "oscillators/lfo.cpp"
+#include "shared/shared.cpp"
 
 
 struct ModulationSource {
@@ -123,7 +124,7 @@ struct ModulationSource {
 
 
 
-struct ModulationGeneratorBase : Module {
+struct ModulationGeneratorBase : TinyTricksModule {
 
   enum ParamIds {
 		OFFSET_PARAM,
@@ -212,7 +213,7 @@ struct ModulationGeneratorBase : Module {
 };
 
 
-struct ModulationGeneratorBaseWidget : ModuleWidget {
+struct ModulationGeneratorBaseWidget : TinyTricksModuleWidget {
 	ModulationGeneratorBaseWidget(ModulationGeneratorBase *module) {
 		setModule(module);
 
@@ -240,12 +241,12 @@ struct ModulationGeneratorX1 : ModulationGeneratorBase{
 
 struct ModulationGeneratorX1Widget : ModulationGeneratorBaseWidget {
 	ModulationGeneratorX1Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/LFO1.svg")));
+
+    InitializeSkin("LFO1.svg");
+
     addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,111.934f)), module, ModulationGeneratorBase::MOD_OUTPUT+0));
 
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
+
 	}
 };
 Model *modelModulationGeneratorX1 = createModel<ModulationGeneratorX1, ModulationGeneratorX1Widget>("MG1");
@@ -262,14 +263,13 @@ struct ModulationGeneratorX8 : ModulationGeneratorBase{
 
 struct ModulationGeneratorX8Widget : ModulationGeneratorBaseWidget {
 	ModulationGeneratorX8Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/LFO8.svg")));
+
+    InitializeSkin("LFO8.svg");
+
     for(int i = 0; i < X8_CHANNELS; i++){
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.501f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
     }
 
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelModulationGeneratorX8 = createModel<ModulationGeneratorX8, ModulationGeneratorX8Widget>("MG8");
@@ -284,7 +284,8 @@ struct ModulationGeneratorX16 : ModulationGeneratorBase{
 
 struct ModulationGeneratorX16Widget : ModulationGeneratorBaseWidget {
 	ModulationGeneratorX16Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/LFO16.svg")));
+
+    InitializeSkin("LFO16.svg");
 
     for(int i = 0; i < X16_CHANNELS/2; i++)
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.501,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
@@ -292,9 +293,6 @@ struct ModulationGeneratorX16Widget : ModulationGeneratorBaseWidget {
     for(int i = 0; i < X16_CHANNELS/2; i++)
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.818f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i + X16_CHANNELS/2));
 
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
 	}
 };
 Model *modelModulationGeneratorX16 = createModel<ModulationGeneratorX16, ModulationGeneratorX16Widget>("MG16");

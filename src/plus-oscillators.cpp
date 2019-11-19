@@ -1,9 +1,10 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 #include "oscillators/oscillator.cpp"
 
 
 const int OSC_COUNT = 3;
-struct TTOBasePlus : Module {
+struct TTOBasePlus : TinyTricksModule {
 	enum ParamIds {
 		FREQ_PARAM,
     FREQ_FINE_PARAM,
@@ -61,7 +62,6 @@ struct TTOBasePlus : Module {
     Initialize();
   }
 
-	//Got this approach from https://github.com/Miserlou/RJModules/blob/master/src/ChordSeq.cpp
 	json_t *dataToJson() override {
 		json_t *rootJ = json_object();
 
@@ -69,10 +69,13 @@ struct TTOBasePlus : Module {
 		json_object_set_new(rootJ, "hardsync2", json_boolean(hardsync2));
 		json_object_set_new(rootJ, "hardsync3", json_boolean(hardsync3));
 
+		AppendBaseJson(rootJ);
 		return rootJ;
 	}
 
 	void dataFromJson(json_t *rootJ) override {
+		TinyTricksModule::dataFromJson(rootJ);
+
 		// hardsync2
 		json_t *hardsync2J = json_object_get(rootJ, "hardsync2");
 		if (hardsync2J)
@@ -177,7 +180,7 @@ struct TTOBasePlus : Module {
 
 
 
-struct TTOBasePlusWidget : ModuleWidget {
+struct TTOBasePlusWidget : TinyTricksModuleWidget {
 
 	TTOBasePlusWidget(TTOBasePlus *module) {
 		setModule(module);
@@ -217,10 +220,7 @@ struct TTOSinPlus : TTOBasePlus{
 
 struct TTOSinPlusWidget : TTOBasePlusWidget {
 	TTOSinPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTSINPLUS.svg")));
-		//Screws
-		addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
+		InitializeSkin("TTSINPLUS.svg");
 	}
 };
 Model *modelTTSINPLUS = createModel<TTOSinPlus, TTOSinPlusWidget>("TTSINPLUS");
@@ -234,14 +234,10 @@ struct TTOSawPlus : TTOBasePlus{
 
 struct TTOSawPlusWidget : TTOBasePlusWidget {
 	TTOSawPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTSAWPLUS.svg")));
+		InitializeSkin("TTSAWPLUS.svg");
 		//Theta
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,75.802f)), module, TTOBasePlus::THETA_PARAM));
 		addInput(createInput<PJ301MPort>(mm2px(Vec(14.126f,75.447f)), module, TTOBasePlus::THETA_CV_INPUT));
-		//Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
-
 	}
 };
 Model *modelTTSAWPLUS = createModel<TTOSawPlus, TTOSawPlusWidget>("TTSAWPLUS");
@@ -255,14 +251,10 @@ struct TTOSqrPlus : TTOBasePlus{
 
 struct TTOSqrPlusWidget : TTOBasePlusWidget {
 	TTOSqrPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTSQRPLUS.svg")));
+		InitializeSkin("TTSQRPLUS.svg");
 		//Theta
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,75.802f)), module, TTOBasePlus::THETA_PARAM));
 		addInput(createInput<PJ301MPort>(mm2px(Vec(14.126f,75.447f)), module, TTOBasePlus::THETA_CV_INPUT));
-		//Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
-
 	}
 };
 Model *modelTTSQRPLUS = createModel<TTOSqrPlus, TTOSqrPlusWidget>("TTSQRPLUS");
@@ -276,14 +268,10 @@ struct TTOTriPlus : TTOBasePlus{
 
 struct TTOTriPlusWidget : TTOBasePlusWidget {
 	TTOTriPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTTRIPLUS.svg")));
+		InitializeSkin("TTTRIPLUS.svg");
 		//Theta
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,75.802f)), module, TTOBasePlus::THETA_PARAM));
 		addInput(createInput<PJ301MPort>(mm2px(Vec(14.126f,75.447f)), module, TTOBasePlus::THETA_CV_INPUT));
-		//Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
-
 	}
 };
 Model *modelTTTRIPLUS = createModel<TTOTriPlus, TTOTriPlusWidget>("TTTRIPLUS");
