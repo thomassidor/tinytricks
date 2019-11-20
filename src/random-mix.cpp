@@ -148,8 +148,8 @@ struct RX8BaseWidget : TinyTricksModuleWidget {
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.977f, 12.003f)), module, RX8Base::TRIG_INPUT));
 
     for (int i = 0; i < NUM_CHANNELS; i++){
-      addChild(createLight<SmallLight<GreenLight>>(mm2px(Vec(9.685f, 32.511f + 11.f * i)), module, RX8Base::LEVEL_LIGHT + i));
-      addInput(createInput<PJ301MPort>(mm2px(Vec(3.977f, 26.016f + 11.f * i)), module, RX8Base::AUDIO_L_INPUT + i));
+      addChild(createLight<SmallLight<GreenLight>>(mm2px(Vec(9.641f, 35.995f + 11.6f * i)), module, RX8Base::LEVEL_LIGHT + i));
+      addInput(createInput<PJ301MPort>(mm2px(Vec(3.933f, 29.5f + 11.6f * i)), module, RX8Base::AUDIO_L_INPUT + i));
     }
 
     addParam(createParam<CKSS>(mm2px(Vec(19.981f,10.992f)), module, RX8Base::TRIGONLY_PARAM));
@@ -171,7 +171,7 @@ struct RX8BaseWidget : TinyTricksModuleWidget {
 
 
     //Mix output
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.398f, 113.403f)), module, RX8Base::MIX_L_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.354f, 113.358f)), module, RX8Base::MIX_L_OUTPUT));
 
   }
 };

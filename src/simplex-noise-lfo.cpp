@@ -132,7 +132,7 @@ struct SN1Widget : SNBaseWidget {
 	SN1Widget(SNBase *module) : SNBaseWidget(module) {
     InitializeSkin("SN1.svg");
 
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,111.934f)), module, SNBase::SIMPLEX_OUTPUT+0));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.523f,113.403f)), module, SNBase::SIMPLEX_OUTPUT+0));
 
   }
 };

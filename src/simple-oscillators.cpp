@@ -123,17 +123,17 @@ struct TTOBaseWidget : TinyTricksModuleWidget {
 	TTOBaseWidget(TTOBase *module) {
 		setModule(module);
 
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,11.912f)), module, TTOBase::FREQ_CV_INPUT));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,22.402f)), module, TTOBase::FREQ_CV_INPUT));
 
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,27.541f)), module, TTOBase::FREQ_PARAM));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,42.329f)), module, TTOBase::FREQ_FINE_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,51.607f)), module, TTOBase::FREQ_FINE_CV_INPUT));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,11.05f)), module, TTOBase::FREQ_PARAM));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,35.626f)), module, TTOBase::FREQ_FINE_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,44.86f)), module, TTOBase::FREQ_FINE_CV_INPUT));
 
 
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,89.308f)), module, TTOBase::SYNC_INPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,100.201f)), module, TTOBase::SYNC_OUTPUT));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,84.325f)), module, TTOBase::SYNC_INPUT));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,99.804f)), module, TTOBase::SYNC_OUTPUT));
 
-		addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,113.06f)), module, TTOBase::OSC_OUTPUT));
+		addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,113.016f)), module, TTOBase::OSC_OUTPUT));
 
 	}
 };
@@ -161,8 +161,8 @@ struct TTOSaw : TTOBase{
 struct TTOSawWidget : TTOBaseWidget {
 	TTOSawWidget(TTOBase *module) : TTOBaseWidget(module) {
 		InitializeSkin("TTSAW.svg");
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,75.106f)), module, TTOBase::THETA_CV_INPUT));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,61.225f)), module, TTOBase::THETA_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,70.476f)), module, TTOBase::THETA_CV_INPUT));
 	}
 };
 Model *modelTTSAW = createModel<TTOSaw, TTOSawWidget>("TTSAW");
@@ -177,8 +177,8 @@ struct TTOSqr : TTOBase{
 struct TTOSqrWidget : TTOBaseWidget {
 	TTOSqrWidget(TTOBase *module) : TTOBaseWidget(module) {
 		InitializeSkin("TTSQR.svg");
-		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,75.106f)), module, TTOBase::THETA_CV_INPUT));
+		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,61.225f)), module, TTOBase::THETA_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,70.476f)), module, TTOBase::THETA_CV_INPUT));
 	}
 };
 Model *modelTTSQR = createModel<TTOSqr, TTOSqrWidget>("TTSQR");
@@ -193,8 +193,8 @@ struct TTOTri : TTOBase{
 struct TTOTriWidget : TTOBaseWidget {
 	TTOTriWidget(TTOBase *module) : TTOBaseWidget(module) {
 		InitializeSkin("TTTRI.svg");
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,65.811f)), module, TTOBase::THETA_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,75.106f)), module, TTOBase::THETA_CV_INPUT));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f,61.225f)), module, TTOBase::THETA_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,70.476f)), module, TTOBase::THETA_CV_INPUT));
 	}
 };
 Model *modelTTTRI = createModel<TTOTri, TTOTriWidget>("TTTRI");

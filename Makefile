@@ -24,7 +24,9 @@ teal-theme:
 	sed -i 's/#e6e6e6/#4c5b5c/g' res/panels-teal/* # Background
 	sed -i 's/#f9f9f9/#566666/g' res/panels-teal/* # Input area
 	sed -i 's/#ccc/#414f4f/g' res/panels-teal/* # Output area
-	sed -i 's/#000/#fff/g' res/panels-teal/* # Text
+	sed -i 's/#848484/#414f4f/g' res/panels-teal/* # Section header
+	#sed -i 's/#010000/#b3b3b3/g' res/panels-teal/* # Black text
+	#sed -i 's/#f8f9f9/#b3b3b3/g' res/panels-purple/* # White text
 
 purple-theme:
 	mkdir -p res/panels-purple
@@ -32,7 +34,10 @@ purple-theme:
 	sed -i 's/#e6e6e6/#262730/g' res/panels-purple/* # Background
 	sed -i 's/#f9f9f9/#2e3038/g' res/panels-purple/* # Input area
 	sed -i 's/#ccc/#18191e/g' res/panels-purple/* # Output area
-	sed -i 's/#000/#fff/g' res/panels-purple/* # Text
+	sed -i 's/#848484/#18191e/g' res/panels-teal/* # Section header
+	sed -i 's/#010000/#b3b3b3/g' res/panels-purple/* # Black text
+	#sed -i 's/#f8f9f9/#b3b3b3/g' res/panels-purple/* # White text
+
 
 allthemes: teal-theme purple-theme
 

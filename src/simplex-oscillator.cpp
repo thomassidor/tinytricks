@@ -28,6 +28,7 @@ struct SNOSC : TinyTricksModule {
     Y_CV_INPUT,
 		SCALE_CV_INPUT,
     DETAIL_CV_INPUT,
+		MIRROR_TRIGGER_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
@@ -207,38 +208,40 @@ struct SNOSCWidget : TinyTricksModuleWidget {
 
 
 		//Mirror buttons
-		addParam(createParam<LEDButton>(mm2px(Vec(12.065f,19.191f)), module, SNOSC::MIRROR_PARAM));
-		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(12.515f,19.641f)), module, SNOSC::MIRROR_LIGHT));
+		addParam(createParam<LEDButton>(mm2px(Vec(12.065f,25.062f)), module, SNOSC::MIRROR_PARAM));
+		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(12.065f+0.45f,25.062f+0.45f)), module, SNOSC::MIRROR_LIGHT));
+		addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,24.184f)), module, SNOSC::MIRROR_TRIGGER_INPUT));
 
 		//Freq
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,31.304f)), module, SNOSC::FREQ_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(20.803f,31.251f)), module, SNOSC::FREQ_CV_INPUT));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,34.816f)), module, SNOSC::FREQ_PARAM));
+		addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,34.763f)), module, SNOSC::FREQ_CV_INPUT));
 
 		//Fine
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,42.415f)), module, SNOSC::FREQ_FINE_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.803f,42.362f)), module, SNOSC::FREQ_FINE_CV_INPUT));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,45.395f)), module, SNOSC::FREQ_FINE_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,45.342f)), module, SNOSC::FREQ_FINE_CV_INPUT));
 
 		//X
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,53.526f)), module, SNOSC::X_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.803f,53.473f)), module, SNOSC::X_CV_INPUT));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,55.975f)), module, SNOSC::X_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,55.922f)), module, SNOSC::X_CV_INPUT));
 
 		//Y
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,64.99f)), module, SNOSC::Y_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.803f,64.937f)), module, SNOSC::Y_CV_INPUT));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,66.554f)), module, SNOSC::Y_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,66.501f)), module, SNOSC::Y_CV_INPUT));
 
 		//Scale
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,76.101f)), module, SNOSC::SCALE_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.803f,76.048f)), module, SNOSC::SCALE_CV_INPUT));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,77.133f)), module, SNOSC::SCALE_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,77.08f)), module, SNOSC::SCALE_CV_INPUT));
 
 		//Detail
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,87.213f)), module, SNOSC::DETAIL_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.803f,87.16f)), module, SNOSC::DETAIL_CV_INPUT));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,87.712f)), module, SNOSC::DETAIL_PARAM));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,87.659f)), module, SNOSC::DETAIL_CV_INPUT));
 
 		//Sync
-    addInput(createInput<PJ301MPort>(mm2px(Vec(11.24f,98.273f)), module, SNOSC::SYNC_INPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(4.661f,113.402f)), module, SNOSC::SYNC_OUTPUT));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(11.143f,98.238f)), module, SNOSC::SYNC_INPUT));
 
-		addOutput(createOutput<PJ301MPort>(mm2px(Vec(17.713f,113.402f)), module, SNOSC::OSC_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(4.617f,113.358f)), module, SNOSC::SYNC_OUTPUT));
+
+		addOutput(createOutput<PJ301MPort>(mm2px(Vec(17.669f,113.358f)), module, SNOSC::OSC_OUTPUT));
 	}
 };
 

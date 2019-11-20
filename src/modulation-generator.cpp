@@ -244,7 +244,7 @@ struct ModulationGeneratorX1Widget : ModulationGeneratorBaseWidget {
 
     InitializeSkin("LFO1.svg");
 
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,111.934f)), module, ModulationGeneratorBase::MOD_OUTPUT+0));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,113.359f)), module, ModulationGeneratorBase::MOD_OUTPUT+0));
 
 
 	}
