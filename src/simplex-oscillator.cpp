@@ -200,7 +200,7 @@ struct SNOSCWidget : TinyTricksModuleWidget {
 		if(module){
 			MiniScope *scope = new MiniScope();
 			scope->box.pos = mm2px(Vec(3.571f, 9.0f));
-			scope->box.size = mm2px(Vec(23.337f, 8.366f));
+			scope->box.size = mm2px(Vec(23.337f, 10.366f));
 			scope->setGain(1.0f);
 			addChild(scope);
 			module->scope = scope;
