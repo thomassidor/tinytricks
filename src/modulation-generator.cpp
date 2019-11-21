@@ -42,18 +42,10 @@ struct ModulationSource {
       float upperRange = fmin(5.f,rescaledBiasParam+spread);
 
       holdValue = rescale(random::uniform(),0.f, 1.f,lowerRange,upperRange);
-
-      if(isOffset){
-        holdValue += 5.f;
-      }
-
-      //std::cout << "Value: " << holdValue << std::endl;
-
       value = holdValue;
     }
     //Generate LFO
     else{
-      //std::cout << "Regenerated: LFO" << std::endl;
       //Choosing wave
   		lfoWave = random::uniform() * 3.0f; //should be between 0.f and 3.f
 
@@ -65,10 +57,6 @@ struct ModulationSource {
 
   		float pitch = rescale(random::uniform(),0.f, 1.f,lowerRange,upperRange);
 
-      //std::cout << "Pitch: " << pitch << std::endl;
-      //std::cout << "Waveform: " << lfoWave << std::endl;
-
-
   		oscillator.setPitch(pitch);
       oscillator.setPhase(random::normal());
 
@@ -79,15 +67,6 @@ struct ModulationSource {
 
 
   void setOffset(bool offset){
-    if(!holding)
-      oscillator.offset = offset;
-    else if(offset != isOffset){
-      if(offset)
-        holdValue += 5.f;
-      else
-        holdValue -= 5.f;
-      }
-    //Saving offset state
     isOffset = offset;
   }
 
@@ -118,7 +97,10 @@ struct ModulationSource {
 
 
   float getValue(){
-    return value;
+    if(isOffset)
+      return value+5.f;
+    else
+      return value;
   }
 };
 

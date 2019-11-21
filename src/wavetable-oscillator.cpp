@@ -59,9 +59,11 @@ struct WAVE : TinyTricksModule {
 
 	dsp::SchmittTrigger syncTrigger;
 
+	dsp::SchmittTrigger mirrorButtonTrigger;
 	dsp::SchmittTrigger mirrorTrigger;
 	bool mirror = false;
 
+	dsp::SchmittTrigger inCaptureModeButtonTrigger;
 	dsp::SchmittTrigger inCaptureModeTrigger;
 	bool inCaptureMode = false;
 
@@ -197,7 +199,7 @@ struct WAVE : TinyTricksModule {
 	bool finalizeRecording = false;
 	void manageinCaptureMode(){
 		//Setting inCaptureMode
-		if (!inCaptureMode && inCaptureModeTrigger.process(params[CAPTURE_PARAM].value)) {
+		if (!inCaptureMode && (inCaptureModeButtonTrigger.process(params[CAPTURE_PARAM].value) || (inputs[CAPTURE_TRIGGER_INPUT].isConnected() && inCaptureModeTrigger.process(inputs[CAPTURE_TRIGGER_INPUT].value)))) {
 			inCaptureMode = true;
 			finalizeRecording = false;
 			useSync = inputs[SYNC_INPUT].isConnected();
@@ -275,7 +277,7 @@ struct WAVE : TinyTricksModule {
 
   void process(const ProcessArgs &args) override{
 		//Setting mirror
-		if (mirrorTrigger.process(params[MIRROR_PARAM].value)) {
+		if (mirrorButtonTrigger.process(params[MIRROR_PARAM].value) || (inputs[MIRROR_TRIGGER_INPUT].isConnected() && mirrorButtonTrigger.process(inputs[MIRROR_TRIGGER_INPUT].value))) {
 			mirror = !mirror;
 			oscillatorMain.setMirror(mirror);
 			oscillator2.setMirror(mirror);
@@ -397,6 +399,30 @@ struct WAVE : TinyTricksModule {
 
 
 struct WAVEWidget : TinyTricksModuleWidget {
+	WaveTableScope* scope;
+
+	void appendContextMenu(Menu* menu) override {
+		menu->addChild(new MenuEntry);
+		menu->addChild(createMenuLabel("Scope"));
+
+		struct ScopeItem : MenuItem {
+			WAVEWidget* widget;
+			void onAction(const event::Action& e) override {
+				widget->scope->visible = !widget->scope->visible;
+			}
+		};
+
+
+		ScopeItem* modeItem = createMenuItem<ScopeItem>("Hide scope (increases performance)");
+		modeItem->rightText = CHECKMARK(!scope->visible);
+		modeItem->widget = this;
+		menu->addChild(modeItem);
+
+
+		TinyTricksModuleWidget::appendContextMenu(menu);
+	}
+
+
 	WAVEWidget(WAVE *module) {
 		setModule(module);
 		InitializeSkin("WAVE.svg");
@@ -425,7 +451,7 @@ struct WAVEWidget : TinyTricksModuleWidget {
 
 		if(module){
 			//Top scope
-			WaveTableScope *scope = new WaveTableScope();
+			scope = new WaveTableScope();
 			scope->box.pos = mm2px(Vec(23.775f, 9.1f));
 			scope->box.size = mm2px(Vec(35.807f, 110.354f));
 			scope->initialize(3,10);

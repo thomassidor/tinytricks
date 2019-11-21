@@ -47,6 +47,7 @@ struct SNOSC : TinyTricksModule {
 	SimplexOscillator oscillator;
 	float prevPitch = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
 	dsp::SchmittTrigger syncTrigger;
+	dsp::SchmittTrigger mirrorButtonTrigger;
 	dsp::SchmittTrigger mirrorTrigger;
 	bool mirror = false;
 
@@ -92,7 +93,7 @@ struct SNOSC : TinyTricksModule {
   void process(const ProcessArgs &args) override {
 
 		//Setting mirror
-		if (mirrorTrigger.process(params[MIRROR_PARAM].value)) {
+		if (mirrorButtonTrigger.process(params[MIRROR_PARAM].value) || (inputs[MIRROR_TRIGGER_INPUT].isConnected() && mirrorButtonTrigger.process(inputs[MIRROR_TRIGGER_INPUT].value))){
 			mirror = !mirror;
 			oscillator.setMirror(mirror);
 		}

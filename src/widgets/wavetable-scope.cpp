@@ -186,12 +186,17 @@ struct WaveTableScope : FramebufferWidget {
 		return (int)floor(y*(totalScopes-1));
 	}
 
+	unsigned int tick = 0;
 	void step() override{
-		if(dirty){
-			//std::cout << "waveform dirty" << std::endl;
-			FramebufferWidget::dirty = true;
-			dirty = false;
+
+		if(tick%100 == 0){
+			tick = 0;
+			if(dirty){
+				//std::cout << "waveform dirty" << std::endl;
+				FramebufferWidget::dirty = true;
+				dirty = false;
+			}
+			FramebufferWidget::step();
 		}
-		FramebufferWidget::step();
 	}
 };

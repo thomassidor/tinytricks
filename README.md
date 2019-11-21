@@ -37,6 +37,16 @@ All the  best, Thomas René Sidor
 
 
 ## Changelog
+Version 1.4.1
+* The changes in this release is based on [community feedback](https://community.vcvrack.com/t/tiny-tricks-request-for-feedback/6788). A huge thanks to all who pitched in!
+* Added: Dark themes. Right click module to access them.
+* Changed: Some design details in a bunch of modules.
+* Changed: Simplex Oscillator (SN-OSC) now has a trigger input for the waveform mirroring.
+* Changed: Wavetable Oscillator (WAVE) now has a trigger input for the waveform mirroring plus capturing (this is quite resource intensive).
+* Changed: Added option to turn off scope in Wavetable Oscillator. Useful for improving the UI performance until scope code is improved.
+* Changed: Very slight cosmetic request (#12).
+* Fixed: Modulation Generators (MG1, MG8, MG16) now keeps values within 0-10 when set to UNI.
+
 Version 1.4.0
 * Added: Wavetable Oscillator (WAVE)
 

@@ -35,9 +35,9 @@ struct TinyTricksModule : Module {
 
 struct TinyTricksModuleWidget : ModuleWidget{
 
-  static const int SKIN_COUNT = 3;
-  std::string SKIN_NAMES[SKIN_COUNT] = {"Light (Default)", "Dark Teal", "Dark Purple"};
-  std::string SKIN_FOLDERS[SKIN_COUNT] = {"panels", "panels-teal", "panels-purple"};
+  static const int SKIN_COUNT = 6;
+  std::string SKIN_NAMES[SKIN_COUNT] = {"Light (Default)", "River bed", "Shark", "Oxford Blue", "Cod gray", "Firefly"};
+  std::string SKIN_FOLDERS[SKIN_COUNT] = {"panels", "panels-river-bed", "panels-shark", "panels-oxford-blue", "panels-cod-gray", "panels-firefly"};
 
   std::string SKIN_SVG = "";
 
@@ -56,7 +56,7 @@ struct TinyTricksModuleWidget : ModuleWidget{
 
   void InitializeSkin(std::string svgName){
     SKIN_SVG = svgName;
-    std::cout << "svg: " << SKIN_SVG << std::endl;
+    //std::cout << "svg: " << SKIN_SVG << std::endl;
 
     setSkin(0);
 
