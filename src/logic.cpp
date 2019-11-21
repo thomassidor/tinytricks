@@ -1,7 +1,8 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 
 
-struct TTL : Module {
+struct TTL : TinyTricksModule {
   enum ParamIds {
     NUM_PARAMS
   };
@@ -63,10 +64,10 @@ struct TTL : Module {
 
 
 
-struct TTLWidget : ModuleWidget {
+struct TTLWidget : TinyTricksModuleWidget {
   TTLWidget(TTL *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/TTL.svg")));
+    InitializeSkin("TTL.svg");
 
     addInput(createInput<PJ301MPort>(mm2px(Vec(3.2f, 12.003f)), module, TTL::A_INPUT));
     addInput(createInput<PJ301MPort>(mm2px(Vec(14.088f, 12.003f)), module, TTL::B_INPUT));
@@ -88,10 +89,6 @@ struct TTLWidget : ModuleWidget {
 
     addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 111.613f)), module, TTL::NOTA_OUTPUT));
     addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 111.613f)), module, TTL::NOTB_OUTPUT));
-
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
   }
 };
 

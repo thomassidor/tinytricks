@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 #include "utility/SimplexNoise.hpp"
 
 const float SPEED_MAX = 5.f;
@@ -7,7 +8,7 @@ const float JITTER_MIN = 1.f;
 const float JITTER_MAX = 8.f;
 const int MAX_CHANNELS = 8;
 
-struct SNBase : Module {
+struct SNBase : TinyTricksModule {
 
   enum ParamIds {
     SPEED_PARAM,
@@ -106,7 +107,7 @@ struct SNBase : Module {
 };
 
 
-struct SNBaseWidget : ModuleWidget {
+struct SNBaseWidget : TinyTricksModuleWidget {
   SNBaseWidget(SNBase *module) {
     setModule(module);
 
@@ -129,13 +130,9 @@ struct SN1 : SNBase{
 
 struct SN1Widget : SNBaseWidget {
 	SN1Widget(SNBase *module) : SNBaseWidget(module) {
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/SN1.svg")));
+    InitializeSkin("SN1.svg");
 
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,111.934f)), module, SNBase::SIMPLEX_OUTPUT+0));
-
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.523f,113.403f)), module, SNBase::SIMPLEX_OUTPUT+0));
 
   }
 };
@@ -151,15 +148,13 @@ struct SN8 : SNBase{
 
 struct SN8Widget : SNBaseWidget {
 	SN8Widget(SNBase *module) : SNBaseWidget(module) {
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/SN8.svg")));
+    InitializeSkin("SN8.svg");
 
     for(int i = 0; i < X8_CHANNELS; i++){
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.501f,12.003f + (i*14.f))), module, SNBase::SIMPLEX_OUTPUT + i));
     }
 
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
+
 
   }
 };

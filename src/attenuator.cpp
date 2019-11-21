@@ -1,8 +1,9 @@
 #include "plugin.hpp"
+#include "shared/shared.cpp"
 
 const int NUM_CHANNELS = 8;
 
-struct A8 : Module {
+struct A8 : TinyTricksModule {
 
   enum ParamIds {
     LEVEL_PARAM,
@@ -38,10 +39,13 @@ struct A8 : Module {
 };
 
 
-struct A8Widget : ModuleWidget {
+
+
+
+struct A8Widget : TinyTricksModuleWidget {
   A8Widget(A8 *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/A8.svg")));
+    InitializeSkin("A8.svg");
 
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(7.7f,11.055f)), module, A8::LEVEL_PARAM));
 
@@ -50,10 +54,6 @@ struct A8Widget : ModuleWidget {
 
     for (int i = 0; i < NUM_CHANNELS; i++)
       addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.164f, 29.859f + 11.5f * i)), module, A8::ATT_OUTPUT  + i));
-
-    //Screws
-    addChild(createWidget<ScrewSilver>(Vec(0, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 15, 365)));
   }
 };
 
