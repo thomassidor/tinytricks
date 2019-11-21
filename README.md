@@ -69,6 +69,10 @@ These are seperate oscillators using the same wavetable that can be turned on an
 
 
 ## Changelog
+Version 1.4.2
+* Changed: License from MIT to GPLv3
+* Fixed: Readjusted scope height in Simplex Oscillator.
+
 Version 1.4.1
 * The changes in this release is based on [community feedback](https://community.vcvrack.com/t/tiny-tricks-request-for-feedback/6788). A huge thanks to all who pitched in!
 * Added: Dark themes. Right click module to access them.
