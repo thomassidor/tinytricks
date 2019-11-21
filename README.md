@@ -1,7 +1,6 @@
-![The current modules](https://github.com/thomassidor/tinytricks/blob/master/screenshot.png)
+![The current modules](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-light.png?raw=true)
 
 # Tiny Tricks VCV Rack modules
-
 
 Tiny Tricks is a collection of (more or less) tiny modules for VCV Rack.
 
@@ -28,6 +27,15 @@ Currently the following are included:
 * Simplex Noise x8 (SN8)
 * Simplex Oscillator (SN-OSC)
 * [Wavetable Oscillator (WAVE)](#wavetable-oscillator-wave)
+
+Several color themes are included:
+
+* Light (Default)
+* River Bed
+* Oxford Blue
+* Shark
+* Cod Gray
+* Firefly
 
 Feel free to join the project, copy source code or panel designs.
 
@@ -124,3 +132,11 @@ Version 1.0.2
 
 Version 1.0.1
 * Intial release
+
+## Color themes
+![Default color theme](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-light.png?raw=true)
+![River Bed](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-river-bed.png?raw=true)
+![Oxford Blue](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-oxford-blue.png?raw=true)
+![Shark](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-shark.png?raw=true)
+![Cod Gray](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-cod-gray.png?raw=true)
+![Firefly](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-firefly.png?raw=true)
