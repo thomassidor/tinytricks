@@ -12,7 +12,7 @@ Currently the following are included:
 * Modulation Generator x8 (MG8)
 * Modulation Generator x16 (MG16)
 * [Attenuator x8 (A8)](#attenuator-x8-a8)
-* Random Mute x8 (RM8)
+* [Random Mute x8 (RM8)](#random-mute-x8-rm8)
 * Random Stereo Mute x8 (RM8s)
 * Simple Sine Oscillator (TT-SINE)
 * Simple Sawtooth Oscillator (TT-SAW)
@@ -28,7 +28,7 @@ Currently the following are included:
 * Simplex Oscillator (SN-OSC)
 * [Wavetable Oscillator (WAVE)](#wavetable-oscillator-wave)
 
-Several color themes are included:
+Several [color themes](#color-themes) are included:
 
 * Light (Default)
 * River Bed
@@ -50,6 +50,35 @@ Generates 16 dfifferent random bipolar values upon trigger. Values are uniformly
 
 ### Attenuator x8 (A8)
 Attenuates eight different signals the same amount.
+
+### Random Mute x8 (RM8 + RM8s)
+Randomly mutes a specified number of connected inputs.
+
+Connect your sources and outputs and set how many channels to mute randomly using the `MUTE` knob. When CV is connected the knob defines the average channels to mute.
+
+Send a trigger signal to `TRIG` to randomly select a new set of channels to mute.
+
+Available in mono (RM8) and stereo (RM8s) versions.
+
+### Random Mix x8 (RX8)
+Randomly mix up to 8 inputs into one output. The randomness is based on simplex noise.
+
+When set to `ON TRIG` the mix changes when a trigger signal is received on `TRIG`. When set to `FREE` the mix changes continously.
+
+`SPEED` changes the rate of change in the mix.
+
+`JITTER` introduces micro bumps in the change. Can e.g. be used to introduce a bit of local variance at slow speeds - if you want to avoid it to be too smooth and predictable.
+
+`PINNING` sets the amount that the mix value is pinned to either fully muted or fully open. The higher pinning the more of the time a channel will be either completely muted or fully passed through rather than somewhere in the middle. High pinning values also speeds up the rate at which the change moves from one point to another.
+
+### Simplex Noise (SN1 + SN8)
+Generates a smooth bipolar value based on simplex noise. Available in versions with 1 or 8 independent outputs.
+
+`SPEED` changes the rate of change the random values.
+
+`JITTER` introduces micro bumps in the random values. Can e.g. be used to introduce a bit of local variance at slow speeds - if you want to avoid it to be too smooth and predictable.
+
+`PINNING` sets the amount of time the value is pinned to either +5 or -5. The higher pinning the more of the time a channel will be either at minimum or maximum rather than somewhere in the middle. High pinning values also speeds up the rate at which the change moves from maximum to minimum.
 
 ### Wavetable Oscillator (WAVE)
 A wavetable style oscillator - with three seperate oscillators - where you can (and need to) capture your own waves.
