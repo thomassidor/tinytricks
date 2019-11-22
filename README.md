@@ -7,13 +7,13 @@ Tiny Tricks is a collection of (more or less) tiny modules for VCV Rack.
 Currently the following are included:
 * Tiny Tricks Arithmetic (TT-A)
 * Tiny Tricks Logic (TT-L)
-* [Sample and Hold x16 (SH16)](#sample-and-hold-x16-sh16)
+* [Sample and Hold x16 (SH16)](/docs/sh16.md)
 * Modulation Generator (MG1)
 * Modulation Generator x8 (MG8)
 * Modulation Generator x16 (MG16)
 * [Attenuator x8 (A8)](/docs/a8.md)
-* [Random Mute x8 (RM8)](#random-mute-x8-rm8--rm8s)
-* [Random Stereo Mute x8 (RM8s)](#random-mute-x8-rm8--rm8s)
+* [Random Mute x8 (RM8)](/docs/rm8.md)
+* [Random Stereo Mute x8 (RM8s)](/docs/rm8.md)
 * Simple Sine Oscillator (TT-SINE)
 * Simple Sawtooth Oscillator (TT-SAW)
 * Simple Square Oscillator (TT-SQR)
@@ -22,7 +22,7 @@ Currently the following are included:
 * Sawtooth+ Oscillator (TT-SAW+)
 * Square+ Oscillator (TT-SQR+)
 * Triangle+ Oscillator (TT-TRI+)
-* [Random Mix x8 (RX8)](#random-mix-x8-rx8)
+* [Random Mix x8 (RX8)](/docs/rx8.md)
 * [Simplex Noise (SN1)](#simplex-noise-sn1--sn8)
 * [Simplex Noise x8 (SN8)](#simplex-noise-sn1--sn8)
 * Simplex Oscillator (SN-OSC)
@@ -44,29 +44,6 @@ Questions, comments, enhancement suggestions, ideas for modules and everything e
 All the  best, Thomas René Sidor
 
 ## Module descriptions (in progress)
-
-### Sample and Hold x16 (SH16)
-Generates 16 dfifferent random bipolar values upon trigger. Values are uniformly spread across the range.
-
-### Random Mute x8 (RM8 + RM8s)
-Randomly mutes a specified number of connected inputs.
-
-Connect your sources and outputs and set how many channels to mute randomly using the `MUTE` knob. When CV is connected the knob defines the average channels to mute.
-
-Send a trigger signal to `TRIG` to randomly select a new set of channels to mute.
-
-Available in mono (RM8) and stereo (RM8s) versions.
-
-### Random Mix x8 (RX8)
-Randomly mix up to 8 inputs into one output. The randomness is based on simplex noise.
-
-When set to `ON TRIG` the mix changes when a trigger signal is received on `TRIG`. When set to `FREE` the mix changes continously.
-
-`SPEED` changes the rate of change in the mix.
-
-`JITTER` introduces micro bumps in the change. Can e.g. be used to introduce a bit of local variance at slow speeds - if you want to avoid it to be too smooth and predictable.
-
-`PINNING` sets the amount that the mix value is pinned to either fully muted or fully open. The higher pinning the more of the time a channel will be either completely muted or fully passed through rather than somewhere in the middle. High pinning values also speeds up the rate at which the change moves from one point to another.
 
 ### Simplex Noise (SN1 + SN8)
 Generates a smooth bipolar value based on simplex noise. Available in versions with 1 or 8 independent outputs.
