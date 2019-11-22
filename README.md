@@ -23,10 +23,10 @@ Currently the following are included:
 * Square+ Oscillator (TT-SQR+)
 * Triangle+ Oscillator (TT-TRI+)
 * [Random Mix x8 (RX8)](/docs/rx8.md)
-* [Simplex Noise (SN1)](#simplex-noise-sn1--sn8)
-* [Simplex Noise x8 (SN8)](#simplex-noise-sn1--sn8)
+* [Simplex Noise (SN1)](/docs/sn.md)
+* [Simplex Noise x8 (SN8)](/docs/sn.md)
 * Simplex Oscillator (SN-OSC)
-* [Wavetable Oscillator (WAVE)](#wavetable-oscillator-wave)
+* [Wavetable Oscillator (WAVE)](/docs/wave.md)
 
 Several [color themes](#color-themes) are included:
 
@@ -42,41 +42,6 @@ Feel free to join the project, copy source code or panel designs.
 Questions, comments, enhancement suggestions, ideas for modules and everything else: [Create a ticket.](https://github.com/thomassidor/tinytricks/issues/new)
 
 All the  best, Thomas René Sidor
-
-## Module descriptions (in progress)
-
-### Simplex Noise (SN1 + SN8)
-Generates a smooth bipolar value based on simplex noise. Available in versions with 1 or 8 independent outputs.
-
-`SPEED` changes the rate of change the random values.
-
-`JITTER` introduces micro bumps in the random values. Can e.g. be used to introduce a bit of local variance at slow speeds - if you want to avoid it to be too smooth and predictable.
-
-`PINNING` sets the amount of time the value is pinned to either +5 or -5. The higher pinning the more of the time a channel will be either at minimum or maximum rather than somewhere in the middle. High pinning values also speeds up the rate at which the change moves from maximum to minimum.
-
-### Wavetable Oscillator (WAVE)
-A wavetable style oscillator - with three seperate oscillators - where you can (and need to) capture your own waves.
-
-#### Creating the wavetable
-To capture a wavetable connect audio to `WAVE TOP`, `MIDDLE` and `BOTTOM` and press `CAPTURE`. This will record the incoming audio to the respectively the top, middle and bottom positions in the wavetable. Intermediate values are automatically interpolated.
-
-Connect `SYNC` from your oscillator to sync the recording to one single cycle. If not connected 2048 samples will be recorded.
-
-`MIRROR` mirrors the recorded wave at the halfway point.
-
-#### Main oscillator
-`FREQ` and `FINE` determines the coarse and fine tuning of the output. CV for `FREQ` is 1 volt per octave.
-
-`POS` determines the vertical position in the wavetable.
-
-#### Oscillator 2 and Oscillator 3
-These are seperate oscillators using the same wavetable that can be turned on and off individually using `ENABLE`.
-
-`DETUNE` offsets the pitch reletive to the main oscillator.
-
-`POS` offsets the vertical position in the wavetable relative to the main oscillator.
-
-`SYNC` enables oscillator hard sync agains the chosen oscillator. To hear the effect detune the oscillator.
 
 
 ## Changelog
