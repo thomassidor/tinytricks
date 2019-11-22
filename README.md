@@ -24,21 +24,21 @@ Mixing and muting:
 * [Random Stereo Mute x8 (RM8s)](/docs/rm8.md)
 * [Random Mix x8 (RX8)](/docs/rx8.md)
 
-Oscillators:
-* Simple oscillators
-  - [Simple Sine Oscillator (SIN)](/docs/simple.md)
-  - [Simple Sawtooth Oscillator (SAW)](/docs/simple.md)
-  - [Simple Square Oscillator (SQR)](/docs/simple.md)
-  - [Simple Triangle Oscillator (TRI)](/docs/simple.md)
-* Less simple oscillators
-  - [Sine+ Oscillator (SIN+)](/docs/plus.md)
-  - [Sawtooth+ Oscillator (SAW+)](/docs/plus.md)
-  - [Square+ Oscillator (SQR+)](/docs/plus.md)
-  - [Triangle+ Oscillator (TRI+)](/docs/plus.md)
-  - Simplex Oscillator (SN-OSC)
-  - [Wavetable Oscillator (WAVE)](/docs/wave.md)
+Simple oscillators
+* [Simple Sine Oscillator (SIN)](/docs/simple.md)
+* [Simple Sawtooth Oscillator (SAW)](/docs/simple.md)
+* [Simple Square Oscillator (SQR)](/docs/simple.md)
+* [Simple Triangle Oscillator (TRI)](/docs/simple.md)
 
-Several [color themes](#color-themes) are included:
+Less simple oscillators
+* [Sine+ Oscillator (SIN+)](/docs/plus.md)
+* [Sawtooth+ Oscillator (SAW+)](/docs/plus.md)
+* [Square+ Oscillator (SQR+)](/docs/plus.md)
+* [Triangle+ Oscillator (TRI+)](/docs/plus.md)
+* Simplex Oscillator (SN-OSC)
+* [Wavetable Oscillator (WAVE)](/docs/wave.md)
+
+Several [color themes](#color-themes) are included for each module:
 
 * Light (Default)
 * River Bed
@@ -46,6 +46,7 @@ Several [color themes](#color-themes) are included:
 * Shark
 * Cod Gray
 * Firefly
+* If you want a specific color theme included, let me know.
 
 Feel free to join the project, copy source code or panel designs.
 
