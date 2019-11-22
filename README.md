@@ -11,7 +11,7 @@ Currently the following are included:
 * Modulation Generator (MG1)
 * Modulation Generator x8 (MG8)
 * Modulation Generator x16 (MG16)
-* [Attenuator x8 (A8)](/blob/master/docs/a8.md)
+* [Attenuator x8 (A8)](/docs/a8.md)
 * [Random Mute x8 (RM8)](#random-mute-x8-rm8--rm8s)
 * [Random Stereo Mute x8 (RM8s)](#random-mute-x8-rm8--rm8s)
 * Simple Sine Oscillator (TT-SINE)
