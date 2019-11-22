@@ -11,7 +11,7 @@ Currently the following are included:
 * Modulation Generator (MG1)
 * Modulation Generator x8 (MG8)
 * Modulation Generator x16 (MG16)
-* [Attenuator x8 (A8)](#attenuator-x8-a8)
+* [Attenuator x8 (A8)](/blob/master/docs/a8.md)
 * [Random Mute x8 (RM8)](#random-mute-x8-rm8--rm8s)
 * [Random Stereo Mute x8 (RM8s)](#random-mute-x8-rm8--rm8s)
 * Simple Sine Oscillator (TT-SINE)
@@ -47,9 +47,6 @@ All the  best, Thomas René Sidor
 
 ### Sample and Hold x16 (SH16)
 Generates 16 dfifferent random bipolar values upon trigger. Values are uniformly spread across the range.
-
-### Attenuator x8 (A8)
-Attenuates eight different signals the same amount.
 
 ### Random Mute x8 (RM8 + RM8s)
 Randomly mutes a specified number of connected inputs.
