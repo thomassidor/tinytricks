@@ -27,4 +27,4 @@ SAW, TRI and SQR includes a `THETA` parameter that makes the shapes less sharp. 
 ![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/TTSQRPLUS.png?raw=true)
 
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/TTTRIPLUS.png?raw=true)
-![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/TTTRIPLUS.png?raw=true)02
+![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/TTTRIPLUS.png?raw=true)
