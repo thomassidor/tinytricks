@@ -90,6 +90,7 @@ screenshots:
 	mkdir -p module-screenshots/default
 	cp /C/Users/mail/Documents/Rack/screenshots/TinyTricks/* module-screenshots/default/
 	rm -f /C/Users/mail/Documents/Rack/screenshots/TinyTricks/*
+	magick convert module-screenshots/default/*.png +append combined-screenshots/default.png
 	# River bed
 	sed -i 's/setSkin(0);/setSkin(1);/g' src/shared/shared.cpp
 	@$(MAKE) -f $(THIS_FILE) install
@@ -97,6 +98,7 @@ screenshots:
 	mkdir -p module-screenshots/river-bed
 	cp /C/Users/mail/Documents/Rack/screenshots/TinyTricks/* module-screenshots/river-bed/
 	rm -f /C/Users/mail/Documents/Rack/screenshots/TinyTricks/*
+	magick convert module-screenshots/river-bed/*.png +append combined-screenshots/river-bed.png
 	# Shark
 	sed -i 's/setSkin(1);/setSkin(2);/g' src/shared/shared.cpp
 	@$(MAKE) -f $(THIS_FILE) install
@@ -104,6 +106,7 @@ screenshots:
 	mkdir -p module-screenshots/shark
 	cp /C/Users/mail/Documents/Rack/screenshots/TinyTricks/* module-screenshots/shark/
 	rm -f /C/Users/mail/Documents/Rack/screenshots/TinyTricks/*
+	magick convert module-screenshots/shark/*.png +append combined-screenshots/shark.png
 	# Oxford blue
 	sed -i 's/setSkin(2);/setSkin(3);/g' src/shared/shared.cpp
 	@$(MAKE) -f $(THIS_FILE) install
@@ -111,6 +114,7 @@ screenshots:
 	mkdir -p module-screenshots/oxford-blue
 	cp /C/Users/mail/Documents/Rack/screenshots/TinyTricks/* module-screenshots/oxford-blue/
 	rm -f /C/Users/mail/Documents/Rack/screenshots/TinyTricks/*
+	magick convert module-screenshots/oxford-blue/*.png +append combined-screenshots/oxford-blue.png
 	# Cod gray
 	sed -i 's/setSkin(3);/setSkin(4);/g' src/shared/shared.cpp
 	@$(MAKE) -f $(THIS_FILE) install
@@ -118,6 +122,7 @@ screenshots:
 	mkdir -p module-screenshots/cod-gray
 	cp /C/Users/mail/Documents/Rack/screenshots/TinyTricks/* module-screenshots/cod-gray/
 	rm -f /C/Users/mail/Documents/Rack/screenshots/TinyTricks/*
+	magick convert module-screenshots/cod-gray/*.png +append combined-screenshots/cod-gray.png
 	# Firefly
 	sed -i 's/setSkin(4);/setSkin(5);/g' src/shared/shared.cpp
 	@$(MAKE) -f $(THIS_FILE) install
@@ -125,6 +130,7 @@ screenshots:
 	mkdir -p module-screenshots/firefly
 	cp /C/Users/mail/Documents/Rack/screenshots/TinyTricks/* module-screenshots/firefly/
 	rm -f /C/Users/mail/Documents/Rack/screenshots/TinyTricks/*
+	magick convert module-screenshots/firefly/*.png +append combined-screenshots/firefly.png
 	# Revert back to default
 	sed -i 's/setSkin(5);/setSkin(0);/g' src/shared/shared.cpp
 	@$(MAKE) -f $(THIS_FILE) install
