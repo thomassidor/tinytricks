@@ -24,6 +24,8 @@ These are seperate oscillators using the same wavetable that can be turned on an
 
 ## Tips
 * You can turn off the scope via the modules context menu (right click) to improve UI performance.
+* The wavetable is saved as part of your save file, so you can pass it on to others easily.
+
 
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/WAVE.png?raw=true)
 ![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/WAVE.png?raw=true)
