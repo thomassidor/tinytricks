@@ -3,6 +3,8 @@
 #include "oscillators/oscillator.cpp"
 
 
+#define POLY_SIZE 16
+
 const int OSC_COUNT = 3;
 struct TTOBasePlus : TinyTricksModule {
 	enum ParamIds {
@@ -31,19 +33,25 @@ struct TTOBasePlus : TinyTricksModule {
 		NUM_LIGHTS
 	};
 
-  TinyOscillator* oscillators;
+  TinyOscillator* oscillators[POLY_SIZE];
   TinyOscillator::OscillatorType oscType;
 	dsp::SchmittTrigger hardsync2Trigger;
 	dsp::SchmittTrigger hardsync3Trigger;
 	bool hardsync2 = false;
 	bool hardsync3 = false;
-  float prevPitch = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
-  float prevTheta = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
-	float prevDetune = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
+  float prevPitch[POLY_SIZE];
+  float prevTheta[POLY_SIZE];
+	float prevDetune[POLY_SIZE];
 
 
   void Initialize(){
-		oscillators = new TinyOscillator[OSC_COUNT];
+    for(auto i=0; i<POLY_SIZE; ++i ) {
+      oscillators[i] = new TinyOscillator[OSC_COUNT];
+      prevPitch[i] = 90000.f;
+      prevTheta[i] = 90000.f;
+      prevDetune[i] = 90000.f;
+    }
+    
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 		configParam(TTOBasePlus::FREQ_PARAM, -3.0f, 3.0f, 0.0f, "Tuning");
     configParam(TTOBasePlus::FREQ_FINE_PARAM, -0.5f, 0.5f, 0.0f, "Fine tuning");
@@ -54,6 +62,7 @@ struct TTOBasePlus : TinyTricksModule {
   }
 
 	TTOBasePlus() {
+    oscType = TinyOscillator::OscillatorType::SIN;
 		Initialize();
 	}
 
@@ -62,6 +71,11 @@ struct TTOBasePlus : TinyTricksModule {
     Initialize();
   }
 
+  ~TTOBasePlus() {
+    for( auto i=0; i<POLY_SIZE; ++i )
+      delete[] oscillators[i];
+  }
+  
 	json_t *dataToJson() override {
 		json_t *rootJ = json_object();
 
@@ -88,92 +102,99 @@ struct TTOBasePlus : TinyTricksModule {
 
 
   void process(const ProcessArgs &args) override{
+    // We want to use the FREQ_CV_INPUT to drive polyphony
+    int nChan = std::max(1, inputs[FREQ_CV_INPUT].getChannels());
+    outputs[OSC_OUTPUT].setChannels(nChan);
 
-    //Setting the pitch
-  	float pitch = params[FREQ_PARAM].getValue();
-		if(inputs[FREQ_CV_INPUT].isConnected())
-      pitch += inputs[FREQ_CV_INPUT].getVoltage();
-    pitch += params[FREQ_FINE_PARAM].getValue();
-    if(inputs[FREQ_FINE_CV_INPUT].isConnected())
-      pitch += inputs[FREQ_FINE_CV_INPUT].getVoltage()/5.f;
-  	pitch = clamp(pitch, -3.5f, 3.5f);
+    // Hardsync is not polyphonic
+    if (hardsync2Trigger.process(params[HARDSYNC2_PARAM].value)) {
+      hardsync2 = !hardsync2;
+    }
+    if (hardsync3Trigger.process(params[HARDSYNC3_PARAM].value)) {
+      hardsync3 = !hardsync3;
+    }
+    
+    lights[HARDSYNC2_LIGHT].value = (hardsync2);
+    lights[HARDSYNC3_LIGHT].value = (hardsync3);
 
-		float detune = params[DETUNE_PARAM].getValue();
-		if(inputs[DETUNE_CV_INPUT].isConnected())
-			detune += (inputs[DETUNE_CV_INPUT].getVoltage()+5.f)/10.f;
-		bool pitchChanged = (pitch != prevPitch || detune != prevDetune);
-		if(pitchChanged){
-	 	 prevPitch = pitch;
-		 prevDetune = detune;
-	 }
+    for( auto c=0; c<nChan; ++c )
+    {
+      //Setting the pitch
+      float pitch = params[FREQ_PARAM].getValue();
+      if(inputs[FREQ_CV_INPUT].isConnected())
+        pitch += inputs[FREQ_CV_INPUT].getVoltage(c);
+      pitch += params[FREQ_FINE_PARAM].getValue();
+      if(inputs[FREQ_FINE_CV_INPUT].isConnected())
+        pitch += inputs[FREQ_FINE_CV_INPUT].getPolyVoltage(c)/5.f;
+      pitch = clamp(pitch, -3.5f, 3.5f);
 
+      float detune = params[DETUNE_PARAM].getValue();
+      if(inputs[DETUNE_CV_INPUT].isConnected())
+        detune += (inputs[DETUNE_CV_INPUT].getPolyVoltage(c)+5.f)/10.f;
 
-		//Setting Theta
-		float theta = params[THETA_PARAM].getValue();
-		if(inputs[THETA_CV_INPUT].isConnected())
-		 theta += inputs[THETA_CV_INPUT].getVoltage()/100.f;
-		theta = clamp(theta,0.0001f,0.1f);
-		bool thetaChanged = (theta != prevTheta);
-		if(thetaChanged)
-		 prevTheta = theta;
-
-		if (hardsync2Trigger.process(params[HARDSYNC2_PARAM].value)) {
- 			hardsync2 = !hardsync2;
- 		}
-		if (hardsync3Trigger.process(params[HARDSYNC3_PARAM].value)) {
-		 hardsync3 = !hardsync3;
-	 	}
-
-		lights[HARDSYNC2_LIGHT].value = (hardsync2);
-		lights[HARDSYNC3_LIGHT].value = (hardsync3);
+      bool pitchChanged = (pitch != prevPitch[c] || detune != prevDetune[c]);
+      if(pitchChanged){
+        prevPitch[c] = pitch;
+        prevDetune[c] = detune;
+      }
 
 
-		//Looping oscillators
-		float value = 0.f;
-		for (int i = 0; i < OSC_COUNT; i++) {
-			TinyOscillator *oscillator = &oscillators[i];
-
-	    if(pitchChanged)
-	      oscillator->setPitch(pitch+(detune*i));
-
-			if(thetaChanged)
- 			 oscillator->setTheta(theta);
-
-	    //Stepping
-	    oscillator->step(args.sampleRate);
-
-			if(i>0){
-				TinyOscillator *prevOscillator = &oscillators[i-1];
-				if(
-					(i==1 && hardsync2 && prevOscillator->isEOC())||
-					(i==2 && hardsync3 && prevOscillator->isEOC())
-				)
-					oscillator->reset();
-			}
+      //Setting Theta
+      float theta = params[THETA_PARAM].getValue();
+      if(inputs[THETA_CV_INPUT].isConnected())
+        theta += inputs[THETA_CV_INPUT].getPolyVoltage(c)/100.f;
+      theta = clamp(theta,0.0001f,0.1f);
+      bool thetaChanged = (theta != prevTheta[c]);
+      if(thetaChanged)
+        prevTheta[c] = theta;
 
 
-	    //Getting the value
-	    switch (oscType) {
-	      case TinyOscillator::OscillatorType::SIN:
-	        value += oscillator->getSin()/OSC_COUNT;
-	        break;
+      //Looping oscillators
+      float value = 0.f;
+      for (int i = 0; i < OSC_COUNT; i++) {
+        TinyOscillator *oscillator = &oscillators[c][i];
 
-	      case TinyOscillator::OscillatorType::SAW:
-	        value += oscillator->getSaw()/OSC_COUNT;
-	        break;
+        if(pitchChanged)
+          oscillator->setPitch(pitch+(detune*i));
 
-	      case TinyOscillator::OscillatorType::SQR:
-	        value += oscillator->getSqr()/OSC_COUNT;
-	        break;
+        if(thetaChanged)
+          oscillator->setTheta(theta);
 
-	      case TinyOscillator::OscillatorType::TRI:
-	        value += oscillator->getTri()/OSC_COUNT;
-	        break;
-	    }
-		}
-    //Setting output
-  	outputs[OSC_OUTPUT].setVoltage(value);
+        //Stepping
+        oscillator->step(args.sampleRate);
 
+        if(i>0){
+          TinyOscillator *prevOscillator = &oscillators[c][i-1];
+          if(
+            (i==1 && hardsync2 && prevOscillator->isEOC())||
+            (i==2 && hardsync3 && prevOscillator->isEOC())
+            )
+            oscillator->reset();
+        }
+
+
+        //Getting the value
+        switch (oscType) {
+        case TinyOscillator::OscillatorType::SIN:
+          value += oscillator->getSin()/OSC_COUNT;
+          break;
+
+        case TinyOscillator::OscillatorType::SAW:
+          value += oscillator->getSaw()/OSC_COUNT;
+          break;
+
+        case TinyOscillator::OscillatorType::SQR:
+          value += oscillator->getSqr()/OSC_COUNT;
+          break;
+
+        case TinyOscillator::OscillatorType::TRI:
+          value += oscillator->getTri()/OSC_COUNT;
+          break;
+        }
+      }
+      //Setting output
+      outputs[OSC_OUTPUT].setVoltage(value, c);
+    }
   }
 };
 

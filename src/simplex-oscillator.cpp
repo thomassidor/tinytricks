@@ -4,6 +4,8 @@
 #include "widgets/mini-scope.cpp"
 
 
+#define POLY_SIZE 16
+
 const float SCALE_MAX = 5.5f;
 const float SCALE_MIN = 0.5f;
 const float DETAIL_MIN = 1.f;
@@ -44,15 +46,13 @@ struct SNOSC : TinyTricksModule {
 
 	MiniScope* scope;
 
-	SimplexOscillator oscillator;
-	float prevPitch = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
-	dsp::SchmittTrigger syncTrigger;
+	SimplexOscillator oscillator[POLY_SIZE];
+	float prevPitch[POLY_SIZE];
+	dsp::SchmittTrigger syncTrigger[POLY_SIZE];
 	dsp::SchmittTrigger mirrorButtonTrigger;
-	dsp::SchmittTrigger mirrorTrigger;
 	bool mirror = false;
 
   void Initialize(){
-		oscillator.setMirror(mirror);
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
     configParam(SNOSC::SCALE_PARAM, SCALE_MIN, SCALE_MAX, 2.5f, "Scale");
     configParam(SNOSC::DETAIL_PARAM, DETAIL_MIN, DETAIL_MAX, DETAIL_MIN, "Level of detail");
@@ -61,6 +61,12 @@ struct SNOSC : TinyTricksModule {
 		configParam(SNOSC::FREQ_PARAM, -3.0f, 3.0f, 0.0f, "Tuning");
     configParam(SNOSC::FREQ_FINE_PARAM, -0.5f, 0.5f, 0.0f, "Fine tuning");
 		configParam(SNOSC::MIRROR_PARAM, 0.f, 1.f, 0.f, "Mirror waveform");
+
+    for( auto i=0; i<POLY_SIZE; ++i )
+    {
+      oscillator[i].setMirror(mirror);
+      prevPitch[i] = 900000.f;
+    }
   }
 
 	SNOSC() {
@@ -70,7 +76,7 @@ struct SNOSC : TinyTricksModule {
 	//Got this approach from https://github.com/Miserlou/RJModules/blob/master/src/ChordSeq.cpp
 	json_t *dataToJson() override {
 		json_t *rootJ = json_object();
-		// Mirror
+		// Mirror. FIXME this becomes an array
 		json_object_set_new(rootJ, "mirror", json_boolean(mirror));
 
 		AppendBaseJson(rootJ);
@@ -85,107 +91,120 @@ struct SNOSC : TinyTricksModule {
 		if (mirrorJ)
 			mirror = json_is_true(mirrorJ);
 
-		oscillator.setMirror(mirror);
+    for( auto i=0; i<POLY_SIZE; ++i )
+      oscillator[i].setMirror(mirror);
 	}
 
 
 	int ticksSinceScopeReset = 0;
   void process(const ProcessArgs &args) override {
+    int nChan = std::max(1, inputs[FREQ_CV_INPUT].getChannels());
+    outputs[OSC_OUTPUT].setChannels(nChan);
+    outputs[SYNC_OUTPUT].setChannels(nChan);
 
-		//Setting mirror
-		if (mirrorButtonTrigger.process(params[MIRROR_PARAM].value) || (inputs[MIRROR_TRIGGER_INPUT].isConnected() && mirrorButtonTrigger.process(inputs[MIRROR_TRIGGER_INPUT].value))){
-			mirror = !mirror;
-			oscillator.setMirror(mirror);
-		}
-		lights[MIRROR_LIGHT].value = (mirror);
-
-		//Setting the pitch
-  	float pitch = params[FREQ_PARAM].getValue();
-    if(inputs[FREQ_CV_INPUT].isConnected())
-      pitch += inputs[FREQ_CV_INPUT].getVoltage();
-    pitch += params[FREQ_FINE_PARAM].getValue();
-    if(inputs[FREQ_FINE_CV_INPUT].isConnected())
-      pitch += inputs[FREQ_FINE_CV_INPUT].getVoltage()/5.f;
-  	pitch = clamp(pitch, -3.5f, 3.5f);
-    if(pitch != prevPitch){
-      oscillator.setPitch(pitch);
-      prevPitch = pitch;
+    //Setting mirror is monophonic
+    if (mirrorButtonTrigger.process(params[MIRROR_PARAM].value) ||
+        (inputs[MIRROR_TRIGGER_INPUT].isConnected() && mirrorButtonTrigger.process(inputs[MIRROR_TRIGGER_INPUT].getVoltage()))){
+      mirror = !mirror;
+      for( auto c=0; c<POLY_SIZE; ++c )
+        oscillator[c].setMirror(mirror);
     }
+    lights[MIRROR_LIGHT].value = (mirror);
+    
+    for( auto c=0; c<nChan; ++c )
+    {
+      //Setting the pitch
+      float pitch = params[FREQ_PARAM].getValue();
+      if(inputs[FREQ_CV_INPUT].isConnected())
+        pitch += inputs[FREQ_CV_INPUT].getVoltage(c);
+      pitch += params[FREQ_FINE_PARAM].getValue();
+      if(inputs[FREQ_FINE_CV_INPUT].isConnected())
+        pitch += inputs[FREQ_FINE_CV_INPUT].getPolyVoltage(c)/5.f;
+      pitch = clamp(pitch, -3.5f, 3.5f);
+      if(pitch != prevPitch[c]){
+        oscillator[c].setPitch(pitch);
+        prevPitch[c] = pitch;
+      }
 
-		//Getting scale
-		float scale = params[SCALE_PARAM].getValue();
-		if(inputs[SCALE_CV_INPUT].isConnected()){
-			scale += inputs[SCALE_CV_INPUT].getVoltage()/4.f;
-			scale = clamp(scale, SCALE_MIN, SCALE_MAX);
-		}
+      //Getting scale
+      float scale = params[SCALE_PARAM].getValue();
+      if(inputs[SCALE_CV_INPUT].isConnected()){
+        scale += inputs[SCALE_CV_INPUT].getPolyVoltage(c)/4.f;
+        scale = clamp(scale, SCALE_MIN, SCALE_MAX);
+      }
 
-		//Getting detail
-		float detail = params[DETAIL_PARAM].getValue();
-		if(inputs[DETAIL_CV_INPUT].isConnected()){
-			detail += inputs[DETAIL_CV_INPUT].getVoltage()*0.8f;
-			detail = clamp(detail, DETAIL_MIN, DETAIL_MAX);
-		}
+      //Getting detail
+      float detail = params[DETAIL_PARAM].getValue();
+      if(inputs[DETAIL_CV_INPUT].isConnected()){
+        detail += inputs[DETAIL_CV_INPUT].getPolyVoltage(c)*0.8f;
+        detail = clamp(detail, DETAIL_MIN, DETAIL_MAX);
+      }
 
-		//Getting x
-		float x = params[X_PARAM].getValue();
-		if(inputs[X_CV_INPUT].isConnected()){
-			x += inputs[X_CV_INPUT].getVoltage()/4.f;
-			x = clamp(x, 0.f, 5.f);
-		}
+      //Getting x
+      float x = params[X_PARAM].getValue();
+      if(inputs[X_CV_INPUT].isConnected()){
+        x += inputs[X_CV_INPUT].getPolyVoltage(c)/4.f;
+        x = clamp(x, 0.f, 5.f);
+      }
 
-		//Getting y
-		float y = params[Y_PARAM].getValue();
-		if(inputs[Y_CV_INPUT].isConnected()){
-			y += inputs[Y_CV_INPUT].getVoltage()/4.f;
-			y = clamp(y, 0.f, 5.f);
-		}
-
-
-		//Resetting if synced
-		bool forwardSyncReset = false;
-		if(inputs[SYNC_INPUT].isConnected()){
-			ticksSinceScopeReset++;
-			float voltage = inputs[SYNC_INPUT].getVoltage();
-			if(syncTrigger.process(voltage)){
-				oscillator.reset();
-				forwardSyncReset = true;
-				if(voltage >= 11.f){
-					scope->reset();
-					ticksSinceScopeReset = 0;
-				}
-			}
-		}
-		else{
-			ticksSinceScopeReset = 0;
-		}
-
-		//Stepping
-		oscillator.step(args.sampleRate);
-		//Getting result
-    float value = oscillator.getNormalizedOsc(detail, x, y, 0.5f, scale);
-    //Setting output
-  	outputs[OSC_OUTPUT].setVoltage(value);
-		//Updating scope
-		scope->addFrame(value);
+      //Getting y
+      float y = params[Y_PARAM].getValue();
+      if(inputs[Y_CV_INPUT].isConnected()){
+        y += inputs[Y_CV_INPUT].getPolyVoltage(c)/4.f;
+        y = clamp(y, 0.f, 5.f);
+      }
 
 
-		//TODO: Clean up this logic. It's not pretty.
-		if(forwardSyncReset){
-			outputs[SYNC_OUTPUT].setVoltage(11.f);
-		}
-		else if(oscillator.isEOC()){
-			if(!inputs[SYNC_INPUT].isConnected())
-    		outputs[SYNC_OUTPUT].setVoltage(11.f);
-			else
-				outputs[SYNC_OUTPUT].setVoltage(10.f);
-			// Normally we'll reset the scope on EOC,
-			// but not if sync is connected - unless it's been too long since last sync
-			if(!inputs[SYNC_INPUT].isConnected() || ticksSinceScopeReset > SimplexOscillator::BUFFER_LENGTH)
-				scope->reset();
-		}
-		else{
-			outputs[SYNC_OUTPUT].setVoltage(0.f);
-		}
+      //Resetting if synced
+      bool forwardSyncReset = false;
+      if(inputs[SYNC_INPUT].isConnected()){
+        ticksSinceScopeReset++;
+        float voltage = inputs[SYNC_INPUT].getPolyVoltage(c);
+        if(syncTrigger[c].process(voltage)){
+          oscillator[c].reset();
+          forwardSyncReset = true;
+          if(voltage >= 11.f){
+            scope->reset();
+            ticksSinceScopeReset = 0;
+          }
+        }
+      }
+      else{
+        ticksSinceScopeReset = 0;
+      }
+
+      //Stepping
+      oscillator[c].step(args.sampleRate);
+      //Getting result
+      float value = oscillator[c].getNormalizedOsc(detail, x, y, 0.5f, scale);
+      //Setting output
+      outputs[OSC_OUTPUT].setVoltage(value, c);
+
+      if( c == 0 )
+      {
+        //Updating scope. FIXME - polyphonic scope?
+        scope->addFrame(value);
+      }
+
+
+      //TODO: Clean up this logic. It's not pretty.
+      if(forwardSyncReset){
+        outputs[SYNC_OUTPUT].setVoltage(11.f, c);
+      }
+      else if(oscillator[c].isEOC()){
+        if(!inputs[SYNC_INPUT].isConnected())
+          outputs[SYNC_OUTPUT].setVoltage(11.f, c);
+        else
+          outputs[SYNC_OUTPUT].setVoltage(10.f, c);
+        // Normally we'll reset the scope on EOC,
+        // but not if sync is connected - unless it's been too long since last sync
+        if(!inputs[SYNC_INPUT].isConnected() || ticksSinceScopeReset > SimplexOscillator::BUFFER_LENGTH)
+          scope->reset();
+      }
+      else{
+        outputs[SYNC_OUTPUT].setVoltage(0.f, c);
+      }
+    }
   }
 };
 

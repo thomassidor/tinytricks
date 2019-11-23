@@ -88,7 +88,7 @@
       "name": "Arithmetic",
       "description": "A bunch of arithmetic tricks on two inputs.",
       "tags": [
-        "utility"
+          "utility", "poly"
       ]
     },
     {
@@ -97,7 +97,7 @@
       "description": "A bunch of logic tricks on two inputs.",
       "tags": [
         "utility",
-        "logic"
+          "logic", "poly"
       ]
     },
     {
@@ -105,7 +105,7 @@
       "name": "Sine Oscillator",
       "description": "A tiny sine based oscillator.",
       "tags": [
-        "oscillator"
+          "oscillator", "poly"
       ]
     },
     {
@@ -113,7 +113,7 @@
       "name": "Saw Oscillator",
       "description": "A tiny saw based oscillator.",
       "tags": [
-        "oscillator"
+          "oscillator", "poly"
       ]
     },
     {
@@ -121,7 +121,7 @@
       "name": "Square Oscillator",
       "description": "A tiny square based oscillator.",
       "tags": [
-        "oscillator"
+          "oscillator", "poly"
       ]
     },
     {
@@ -129,7 +129,7 @@
       "name": "Triangle Oscillator",
       "description": "A tiny triangle based oscillator.",
       "tags": [
-        "oscillator"
+          "oscillator", "poly"
       ]
     },
     {
@@ -137,7 +137,7 @@
       "name": "Sine+ Oscillator",
       "description": "Three sine based oscillators with detune and sync.",
       "tags": [
-        "oscillator"
+          "oscillator", "poly"
       ]
     },
     {
@@ -145,7 +145,7 @@
       "name": "Sawtooth+ Oscillator",
       "description": "Three sawtooth based oscillators with detune and sync.",
       "tags": [
-        "oscillator"
+          "oscillator", "poly"
       ]
     },
     {
@@ -153,7 +153,7 @@
       "name": "Square+ Oscillator",
       "description": "Three square based oscillators with detune and sync.",
       "tags": [
-        "oscillator"
+          "oscillator", "poly"
       ]
     },
     {
@@ -161,7 +161,7 @@
       "name": "Triangle+ Oscillator",
       "description": "Three triangle based oscillators with detune and sync.",
       "tags": [
-        "oscillator"
+          "oscillator", "poly"
       ]
     },
     {
