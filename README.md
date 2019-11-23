@@ -1,71 +1,58 @@
-![The current modules](https://github.com/thomassidor/tinytricks/blob/master/screenshot.png)
+![The current modules](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-light.png?raw=true)
 
 # Tiny Tricks VCV Rack modules
-
 
 Tiny Tricks is a collection of (more or less) tiny modules for VCV Rack.
 
 Currently the following are included:
+
+### Utility modules:
 * Tiny Tricks Arithmetic (TT-A)
 * Tiny Tricks Logic (TT-L)
-* [Sample and Hold x16 (SH16)](#sample-and-hold-x16-sh16)
+* [Sample and Hold x16 (SH16)](/docs/sh16.md)
+* [Attenuator x8 (A8)](/docs/a8.md)
+
+### Modulation sources/LFOs:
 * Modulation Generator (MG1)
 * Modulation Generator x8 (MG8)
 * Modulation Generator x16 (MG16)
-* [Attenuator x8 (A8)](#attenuator-x8-a8)
-* Random Mute x8 (RM8)
-* Random Stereo Mute x8 (RM8s)
-* Simple Sine Oscillator (TT-SINE)
-* Simple Sawtooth Oscillator (TT-SAW)
-* Simple Square Oscillator (TT-SQR)
-* Simple Triangle Oscillator (TT-TRI)
-* Sine+ Oscillator (TT-SINE+)
-* Sawtooth+ Oscillator (TT-SAW+)
-* Square+ Oscillator (TT-SQR+)
-* Triangle+ Oscillator (TT-TRI+)
-* Random Mix x8 (RX8)
-* Simplex Noise (SN1)
-* Simplex Noise x8 (SN8)
+* [Simplex Noise (SN1)](/docs/sn.md)
+* [Simplex Noise x8 (SN8)](/docs/sn.md)
+
+### Mixing and muting:
+* [Random Mute x8 (RM8)](/docs/rm8.md)
+* [Random Stereo Mute x8 (RM8s)](/docs/rm8.md)
+* [Random Mix x8 (RX8)](/docs/rx8.md)
+
+### Simple oscillators
+* [Simple Sine Oscillator (SIN)](/docs/simple.md)
+* [Simple Sawtooth Oscillator (SAW)](/docs/simple.md)
+* [Simple Square Oscillator (SQR)](/docs/simple.md)
+* [Simple Triangle Oscillator (TRI)](/docs/simple.md)
+
+### Less simple oscillators
+* [Sine+ Oscillator (SIN+)](/docs/plus.md)
+* [Sawtooth+ Oscillator (SAW+)](/docs/plus.md)
+* [Square+ Oscillator (SQR+)](/docs/plus.md)
+* [Triangle+ Oscillator (TRI+)](/docs/plus.md)
 * Simplex Oscillator (SN-OSC)
-* [Wavetable Oscillator (WAVE)](#wavetable-oscillator-wave)
+* [Wavetable Oscillator (WAVE)](/docs/wave.md)
+
+Several [color themes](#color-themes) are included for each module:
+
+* Light (Default)
+* River Bed
+* Oxford Blue
+* Shark
+* Cod Gray
+* Firefly
+* If you want a specific color theme included, let me know.
 
 Feel free to join the project, copy source code or panel designs.
 
 Questions, comments, enhancement suggestions, ideas for modules and everything else: [Create a ticket.](https://github.com/thomassidor/tinytricks/issues/new)
 
 All the  best, Thomas René Sidor
-
-## Module descriptions (in progress)
-
-### Sample and Hold x16 (SH16)
-Generates 16 dfifferent random bipolar values upon trigger. Values are uniformly spread across the range.
-
-### Attenuator x8 (A8)
-Attenuates eight different signals the same amount.
-
-### Wavetable Oscillator (WAVE)
-A wavetable style oscillator - with three seperate oscillators - where you can (and need to) capture your own waves.
-
-#### Creating the wavetable
-To capture a wavetable connect audio to `WAVE TOP`, `MIDDLE` and `BOTTOM` and press `CAPTURE`. This will record the incoming audio to the respectively the top, middle and bottom positions in the wavetable. Intermediate values are automatically interpolated.
-
-Connect `SYNC` from your oscillator to sync the recording to one single cycle. If not connected 2048 samples will be recorded.
-
-`MIRROR` mirrors the recorded wave at the halfway point.
-
-#### Main oscillator
-`FREQ` and `FINE` determines the coarse and fine tuning of the output. CV for `FREQ` is 1 volt per octave.
-
-`POS` determines the vertical position in the wavetable.
-
-#### Oscillator 2 and Oscillator 3
-These are seperate oscillators using the same wavetable that can be turned on and off individually using `ENABLE`.
-
-`DETUNE` offsets the pitch reletive to the main oscillator.
-
-`POS` offsets the vertical position in the wavetable relative to the main oscillator.
-
-`SYNC` enables oscillator hard sync agains the chosen oscillator. To hear the effect detune the oscillator.
 
 
 ## Changelog
@@ -133,3 +120,11 @@ Version 1.0.2
 
 Version 1.0.1
 * Intial release
+
+## Color themes
+![Default color theme](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-light.png?raw=true)
+![River Bed](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-river-bed.png?raw=true)
+![Oxford Blue](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-oxford-blue.png?raw=true)
+![Shark](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-shark.png?raw=true)
+![Cod Gray](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-cod-gray.png?raw=true)
+![Firefly](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-firefly.png?raw=true)
