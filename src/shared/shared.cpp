@@ -1,8 +1,33 @@
 //std::cout << "muteCount: " << muteCount << std::endl;
 //std::cout << "Voltage: " << inputs[MUTE_COUNT_CV_INPUT].getVoltage() << std::endl;
+
+struct TinyTricksPortLight : app::SvgPort {
+  TinyTricksPortLight() {
+		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/PortLight.svg")));
+	}
+};
+
+struct TinyTricksPort : app::SvgPort {
+
+	TinyTricksPort() {
+		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/PortLight.svg")));
+	}
+
+  void SetDark(bool value){
+    if(value){
+      setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/PortDark.svg")));
+    }
+    else{
+      setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/PortLight.svg")));
+    }
+
+  }
+};
+
 struct TinyTricksModule : Module {
 
   int APPLIED_SKIN = 0;
+  bool FORCED_BRIGHT = false;
 
   TinyTricksModule(){
   }
@@ -10,13 +35,16 @@ struct TinyTricksModule : Module {
   json_t *dataToJson() override {
     json_t *rootJ = json_object();
     json_object_set_new(rootJ, "skin", json_integer(APPLIED_SKIN));
+    json_object_set_new(rootJ, "forcebright", json_boolean(FORCED_BRIGHT));
     return rootJ;
   }
 
   void dataFromJson(json_t *rootJ) override {
 		json_t *skinJ = json_object_get(rootJ, "skin");
 		if (skinJ) APPLIED_SKIN = (int)json_integer_value(skinJ);
-    //std::cout << "skin from json: " << APPLIED_SKIN << std::endl;
+
+    json_t *forcebrightJ = json_object_get(rootJ, "forcebright");
+    if (forcebrightJ) FORCED_BRIGHT = json_is_true(forcebrightJ);
   }
 
 
@@ -47,7 +75,9 @@ struct TinyTricksModuleWidget : ModuleWidget{
   Widget* topBlack;
   Widget* bottomBlack;
 
-  int currentSkin = 0;
+  int currentSkin;
+
+  bool forceUseLightPorts = false;
 
   TinyTricksModuleWidget(){
 
@@ -74,7 +104,7 @@ struct TinyTricksModuleWidget : ModuleWidget{
     addChild(topBlack);
     addChild(bottomBlack);
 
-    updateScrews();
+    updateScrewsAndPorts();
   }
 
   void setSkin(int skinId){
@@ -88,23 +118,42 @@ struct TinyTricksModuleWidget : ModuleWidget{
     setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/" + SKIN_FOLDERS[skinId] + "/"+SKIN_SVG)));
   }
 
-  void updateScrews(){
+  void updateScrewsAndPorts(){
     topSilver->visible = (currentSkin == 0);
     bottomSilver->visible = (currentSkin == 0);
     topBlack->visible = (currentSkin != 0);
     bottomBlack->visible = (currentSkin != 0);
+
+    if(forceUseLightPorts)
+      updatePorts(false);
+    else
+      updatePorts(currentSkin != 0);
   }
 
+  void updatePorts(bool useDark){
+
+    if(module)
+      dynamic_cast<TinyTricksModule*>(module)->FORCED_BRIGHT = forceUseLightPorts;
+
+    std::list<Widget*>::iterator it;
+    for (it = children.begin(); it != children.end(); ++it){
+      TinyTricksPort* port = dynamic_cast<TinyTricksPort*>((*it));
+      if(port  != nullptr)
+        port->SetDark(useDark);
+    }
+  }
+
+  bool updatedFromModule = false;
   void step() override{
-    //std::cout << "currentSkin: " << currentSkin << std::endl;
-    if(module){
-      int moduleSkin = dynamic_cast<TinyTricksModule*>(module)->APPLIED_SKIN;
-      if(moduleSkin != currentSkin){
-        setSkin(moduleSkin);
-        updateScrews();
+    if(!updatedFromModule && module){
+      TinyTricksModule* castModule = dynamic_cast<TinyTricksModule*>(module);
+      if(castModule != nullptr){
+        updatedFromModule = true;
+        forceUseLightPorts = castModule->FORCED_BRIGHT;
+        setSkin(castModule->APPLIED_SKIN);
+        updateScrewsAndPorts();
       }
     }
-
     ModuleWidget::step();
   }
 
@@ -117,10 +166,9 @@ struct TinyTricksModuleWidget : ModuleWidget{
       int skin;
       void onAction(const event::Action& e) override {
         widget->setSkin(skin);
-        widget->updateScrews();
+        widget->updateScrewsAndPorts();
       }
     };
-
 
     for (int i = 0; i < SKIN_COUNT; i++) {
       ModeItem* modeItem = createMenuItem<ModeItem>(SKIN_NAMES[i]);
@@ -129,5 +177,20 @@ struct TinyTricksModuleWidget : ModuleWidget{
       modeItem->skin = i;
       menu->addChild(modeItem);
     }
+
+    struct PortItem : MenuItem {
+      TinyTricksModuleWidget* widget;
+      int skin;
+      void onAction(const event::Action& e) override {
+        widget->forceUseLightPorts = !widget->forceUseLightPorts;
+        widget->updateScrewsAndPorts();
+      }
+    };
+
+    PortItem* portItem = createMenuItem<PortItem>("- Use light theme for input ports");
+    portItem->rightText = CHECKMARK(forceUseLightPorts == true);
+    portItem->widget = this;
+    menu->addChild(portItem);
+
   }
 };

@@ -112,10 +112,10 @@ struct SNBaseWidget : TinyTricksModuleWidget {
     setModule(module);
 
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,11.051f)), module, SNBase::SPEED_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f, 22.366f)), module, SNBase::SPEED_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(3.567f, 22.366f)), module, SNBase::SPEED_CV_INPUT));
 
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,38.613f)), module, SNBase::JITTER_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f, 49.96f)), module, SNBase::JITTER_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(3.567f, 49.96f)), module, SNBase::JITTER_CV_INPUT));
 
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,67.478f)), module, SNBase::PINNING_PARAM));
   }
@@ -130,10 +130,8 @@ struct SN1 : SNBase{
 
 struct SN1Widget : SNBaseWidget {
 	SN1Widget(SNBase *module) : SNBaseWidget(module) {
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.523f,113.403f)), module, SNBase::SIMPLEX_OUTPUT+0));
     InitializeSkin("SN1.svg");
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.523f,113.403f)), module, SNBase::SIMPLEX_OUTPUT+0));
-
   }
 };
 Model *modelSN1 = createModel<SN1, SN1Widget>("SN1");
@@ -148,14 +146,10 @@ struct SN8 : SNBase{
 
 struct SN8Widget : SNBaseWidget {
 	SN8Widget(SNBase *module) : SNBaseWidget(module) {
-    InitializeSkin("SN8.svg");
-
     for(int i = 0; i < X8_CHANNELS; i++){
-        addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.501f,12.003f + (i*14.f))), module, SNBase::SIMPLEX_OUTPUT + i));
+        addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.501f,12.003f + (i*14.f))), module, SNBase::SIMPLEX_OUTPUT + i));
     }
-
-
-
+    InitializeSkin("SN8.svg");
   }
 };
 Model *modelSN8 = createModel<SN8, SN8Widget>("SN8");

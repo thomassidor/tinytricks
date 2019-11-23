@@ -199,7 +199,7 @@ struct ModulationGeneratorBaseWidget : TinyTricksModuleWidget {
 	ModulationGeneratorBaseWidget(ModulationGeneratorBase *module) {
 		setModule(module);
 
-		addInput(createInput<PJ301MPort>(mm2px(Vec(3.567f,12.003f)), module, ModulationGeneratorBase::TRIG_INPUT));
+		addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.567f,12.003f)), module, ModulationGeneratorBase::TRIG_INPUT));
 
 		addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,29.749f)), module, ModulationGeneratorBase::RANGE_PARAM));
 		addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,49.743f)), module, ModulationGeneratorBase::BIAS_PARAM));
@@ -223,12 +223,8 @@ struct ModulationGeneratorX1 : ModulationGeneratorBase{
 
 struct ModulationGeneratorX1Widget : ModulationGeneratorBaseWidget {
 	ModulationGeneratorX1Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
-
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.567f,113.359f)), module, ModulationGeneratorBase::MOD_OUTPUT+0));
     InitializeSkin("LFO1.svg");
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.567f,113.359f)), module, ModulationGeneratorBase::MOD_OUTPUT+0));
-
-
 	}
 };
 Model *modelModulationGeneratorX1 = createModel<ModulationGeneratorX1, ModulationGeneratorX1Widget>("MG1");
@@ -245,13 +241,10 @@ struct ModulationGeneratorX8 : ModulationGeneratorBase{
 
 struct ModulationGeneratorX8Widget : ModulationGeneratorBaseWidget {
 	ModulationGeneratorX8Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
-
-    InitializeSkin("LFO8.svg");
-
     for(int i = 0; i < X8_CHANNELS; i++){
-        addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.501f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
+        addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.501f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
     }
-
+    InitializeSkin("LFO8.svg");
 	}
 };
 Model *modelModulationGeneratorX8 = createModel<ModulationGeneratorX8, ModulationGeneratorX8Widget>("MG8");
@@ -266,15 +259,13 @@ struct ModulationGeneratorX16 : ModulationGeneratorBase{
 
 struct ModulationGeneratorX16Widget : ModulationGeneratorBaseWidget {
 	ModulationGeneratorX16Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
+    for(int i = 0; i < X16_CHANNELS/2; i++)
+        addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.501,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
 
+    for(int i = 0; i < X16_CHANNELS/2; i++)
+        addOutput(createOutput<TinyTricksPort>(mm2px(Vec(28.818f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i + X16_CHANNELS/2));
+        
     InitializeSkin("LFO16.svg");
-
-    for(int i = 0; i < X16_CHANNELS/2; i++)
-        addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.501,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
-
-    for(int i = 0; i < X16_CHANNELS/2; i++)
-        addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.818f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i + X16_CHANNELS/2));
-
 	}
 };
 Model *modelModulationGeneratorX16 = createModel<ModulationGeneratorX16, ModulationGeneratorX16Widget>("MG16");

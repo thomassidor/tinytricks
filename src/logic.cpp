@@ -67,28 +67,30 @@ struct TTL : TinyTricksModule {
 struct TTLWidget : TinyTricksModuleWidget {
   TTLWidget(TTL *module) {
     setModule(module);
+
+
+    addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.2f, 12.003f)), module, TTL::A_INPUT));
+    addInput(createInput<TinyTricksPortLight>(mm2px(Vec(14.088f, 12.003f)), module, TTL::B_INPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 29.859f)), module, TTL::AND_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 29.859f)), module, TTL::OR_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 46.21f)), module, TTL::XOR_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 46.21f)), module, TTL::NOR_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 62.561f)), module, TTL::ALTB_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 62.561f)), module, TTL::AGTB_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 78.911f)), module, TTL::ALTEB_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 78.911f)), module, TTL::AGTEB_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 95.262f)), module, TTL::AISB_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 95.262f)), module, TTL::AISNOTB_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 111.613f)), module, TTL::NOTA_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 111.613f)), module, TTL::NOTB_OUTPUT));
+
     InitializeSkin("TTL.svg");
-
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.2f, 12.003f)), module, TTL::A_INPUT));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(14.088f, 12.003f)), module, TTL::B_INPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 29.859f)), module, TTL::AND_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 29.859f)), module, TTL::OR_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 46.21f)), module, TTL::XOR_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 46.21f)), module, TTL::NOR_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 62.561f)), module, TTL::ALTB_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 62.561f)), module, TTL::AGTB_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 78.911f)), module, TTL::ALTEB_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 78.911f)), module, TTL::AGTEB_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 95.262f)), module, TTL::AISB_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 95.262f)), module, TTL::AISNOTB_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 111.613f)), module, TTL::NOTA_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 111.613f)), module, TTL::NOTB_OUTPUT));
   }
 };
 

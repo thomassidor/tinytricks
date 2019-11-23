@@ -425,29 +425,27 @@ struct WAVEWidget : TinyTricksModuleWidget {
 
 	WAVEWidget(WAVE *module) {
 		setModule(module);
-		InitializeSkin("WAVE.svg");
-
 
 		//inCaptureMode button
 		addParam(createParam<LEDButton>(mm2px(Vec(7.511f,11.481f)), module, WAVE::CAPTURE_PARAM));
 		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(7.511f+0.45f,11.481f+0.45f)), module, WAVE::CAPTURE_LIGHT));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(6.634f,18.831f)), module, WAVE::CAPTURE_TRIGGER_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(6.634f,18.831f)), module, WAVE::CAPTURE_TRIGGER_INPUT));
 
 		//Inputs
-		addInput(createInput<PJ301MPort>(mm2px(Vec(6.634f,49.167f)), module, WAVE::TOP_INPUT));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(6.634f,59.273f)), module, WAVE::MIDDLE_INPUT));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(6.634f,69.387f)), module, WAVE::BOTTOM_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(6.634f,49.167f)), module, WAVE::TOP_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(6.634f,59.273f)), module, WAVE::MIDDLE_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(6.634f,69.387f)), module, WAVE::BOTTOM_INPUT));
 
 		//Sync
-		addInput(createInput<PJ301MPort>(mm2px(Vec(6.634f,33.821f)), module, WAVE::SYNC_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(6.634f,33.821f)), module, WAVE::SYNC_INPUT));
 
 		//Mirror button
 		addParam(createParam<LEDButton>(mm2px(Vec(7.511f,87.578f)), module, WAVE::MIRROR_PARAM));
 		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(7.511f+0.45f,87.578f+0.45f)), module, WAVE::MIRROR_LIGHT));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(6.634f,94.928f)), module, WAVE::MIRROR_TRIGGER_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(6.634f,94.928f)), module, WAVE::MIRROR_TRIGGER_INPUT));
 
 		//Output
-		addOutput(createOutput<PJ301MPort>(mm2px(Vec(6.634f, 113.255f)), module, WAVE::AUDIO_OUTPUT));
+		addOutput(createOutput<TinyTricksPort>(mm2px(Vec(6.634f, 113.255f)), module, WAVE::AUDIO_OUTPUT));
 
 		if(module){
 			//Top scope
@@ -460,19 +458,18 @@ struct WAVEWidget : TinyTricksModuleWidget {
 
 		}
 
-
 		// Main oscillator ------------------------------------------------
 		//Freq
 		addParam(createParam<RoundBlackKnob>(mm2px(Vec(65.349f,17.068f)), module, WAVE::FREQ_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(66.253f,28.339f)), module, WAVE::FREQ_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(66.253f,28.339f)), module, WAVE::FREQ_CV_INPUT));
 
 		//Fine
 		addParam(createParam<RoundBlackKnob>(mm2px(Vec(78.83f,17.068f)), module, WAVE::FREQ_FINE_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(79.733f,28.339f)), module, WAVE::FREQ_FINE_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(79.733f,28.339f)), module, WAVE::FREQ_FINE_CV_INPUT));
 
 		//Y
 		addParam(createParam<RoundBlackKnob>(mm2px(Vec(92.31f,17.068f)), module, WAVE::Y_MAIN_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(93.213f,28.339f)), module, WAVE::Y_MAIN_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(93.213f,28.339f)), module, WAVE::Y_MAIN_CV_INPUT));
 
 		// Oscillator 2 ------------------------------------------------
 		//Enable
@@ -484,11 +481,11 @@ struct WAVEWidget : TinyTricksModuleWidget {
 
 		//Detune
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(83.794f,53.777f)), module, WAVE::OSC2_DETUNE_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(93.213f,53.68f)), module, WAVE::OSC2_DETUNE_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(93.213f,53.68f)), module, WAVE::OSC2_DETUNE_CV_INPUT));
 
 		//Pos
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(83.794f,68.33f)), module, WAVE::OSC2_Y_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(93.213f,68.232f)), module, WAVE::OSC2_Y_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(93.213f,68.232f)), module, WAVE::OSC2_Y_CV_INPUT));
 
 		// Oscillator 3 ------------------------------------------------
 		//Enable
@@ -500,12 +497,13 @@ struct WAVEWidget : TinyTricksModuleWidget {
 
 		//Detune
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(83.797f,95.186f)), module, WAVE::OSC3_DETUNE_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(93.215f,95.089f)), module, WAVE::OSC3_DETUNE_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(93.215f,95.089f)), module, WAVE::OSC3_DETUNE_CV_INPUT));
 
 		//Pos
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(83.797f,109.738f)), module, WAVE::OSC3_Y_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(93.215f,109.641f)), module, WAVE::OSC3_Y_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(93.215f,109.641f)), module, WAVE::OSC3_Y_CV_INPUT));
 
+		InitializeSkin("WAVE.svg");
 	}
 };
 

@@ -86,6 +86,7 @@ screenshots:
 	# Clean up
 	rm -f /C/Users/mail/Documents/Rack/screenshots/TinyTricks/*
 	#Default theme
+	@$(MAKE) -f $(THIS_FILE) install
 	"/c/Program Files/VCV/Rack/Rack.exe" -t 2.f
 	mkdir -p module-screenshots/default
 	cp /C/Users/mail/Documents/Rack/screenshots/TinyTricks/* module-screenshots/default/
