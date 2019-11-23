@@ -9,7 +9,15 @@ Generates a smooth bipolar value based on simplex noise. Available in versions w
 
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/SN1.png?raw=true)
 ![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/SN1.png?raw=true)
+![Shark theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/shark/SN1.png?raw=true)
+![Oxford blue theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/oxford-blue/SN1.png?raw=true)
+![Cod gray theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/cod-gray/SN1.png?raw=true)
+![Firefly theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/firefly/SN1.png?raw=true)
 
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/SN8.png?raw=true)
 ![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/SN8.png?raw=true)
+![Shark theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/shark/SN8.png?raw=true)
+![Oxford blue theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/oxford-blue/SN8.png?raw=true)
+![Cod gray theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/cod-gray/SN8.png?raw=true)
+![Firefly theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/firefly/SN8.png?raw=true)
 
