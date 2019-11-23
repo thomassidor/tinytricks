@@ -4,7 +4,9 @@
 
 Tiny Tricks is a collection of (more or less) tiny modules for VCV Rack.
 
-Currently the following are included:
+Questions, comments, enhancement suggestions, ideas for modules and everything else: [Create a ticket.](https://github.com/thomassidor/tinytricks/issues/new)
+
+All the  best, Thomas René Sidor
 
 ### Utility modules:
 * Tiny Tricks Arithmetic (TT-A)
@@ -48,11 +50,7 @@ Several [color themes](#color-themes) are included for each module:
 * Firefly
 * If you want a specific color theme included, let me know.
 
-Feel free to join the project, copy source code or panel designs.
-
-Questions, comments, enhancement suggestions, ideas for modules and everything else: [Create a ticket.](https://github.com/thomassidor/tinytricks/issues/new)
-
-All the  best, Thomas René Sidor
+For all themes you can force the input ports to use a light theme, if you prefer the increased contrast. The option is available via right clicking the modules.
 
 
 ## Changelog
