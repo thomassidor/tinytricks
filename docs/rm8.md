@@ -9,6 +9,15 @@ Available in mono (RM8) and stereo (RM8s) versions.
 
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/RM8.png?raw=true)
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/RM8.png?raw=true)
+![Shark theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/shark/RM8.png?raw=true)
+![Oxford blue theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/oxford-blue/RM8.png?raw=true)
+![Cod gray theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/cod-gray/RM8.png?raw=true)
+![Firefly theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/firefly/RM8.png?raw=true)
+
 
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/RM8S.png?raw=true)
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/RM8S.png?raw=true)
+![Shark theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/shark/RM8S.png?raw=true)
+![Oxford blue theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/oxford-blue/RM8S.png?raw=true)
+![Cod gray theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/cod-gray/RM8S.png?raw=true)
+![Firefly theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/firefly/RM8S.png?raw=true)
