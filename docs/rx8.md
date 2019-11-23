@@ -11,3 +11,7 @@ When set to `ON TRIG` the mix changes when a trigger signal is received on `TRIG
 
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/RX8.png?raw=true)
 ![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/RX8.png?raw=true)
+![Shark theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/shark/RX8.png?raw=true)
+![Oxford blue theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/oxford-blue/RX8.png?raw=true)
+![Cod gray theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/cod-gray/RX8.png?raw=true)
+![Firefly theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/firefly/RX8.png?raw=true)
