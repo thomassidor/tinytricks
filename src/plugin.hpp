@@ -31,3 +31,4 @@ extern Model *modelSN1;
 extern Model *modelSN8;
 extern Model *modelSNOSC;
 extern Model *modelWAVE;
+extern Model *modelNOISEWRANGLER;

@@ -2,7 +2,7 @@
   "slug": "TinyTricks",
   "name": "Tiny Tricks",
   "brand": "Tiny Tricks",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "license": "GPLv3",
   "author": "Thomas René Sidor",
   "authorEmail": "mail@thomassidor.com",
@@ -207,6 +207,15 @@
       "description": "A wavetable oscillator where you can record your own waves.",
       "tags": [
         "oscillator"
+      ]
+    },
+    {
+      "slug": "NOISEWRANGLER",
+      "name": "Noise Wrangler",
+      "description": "Noise generation that you control.",
+      "tags": [
+        "random",
+        "noise"
       ]
     }
   ]
