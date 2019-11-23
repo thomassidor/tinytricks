@@ -40,6 +40,8 @@ All the  best, Thomas René Sidor
 * Simplex Oscillator (SN-OSC)
 * [Wavetable Oscillator (WAVE)](/docs/wave.md)
 
+
+### Color themes
 Several [color themes](#color-themes) are included for each module:
 
 * Light (Default)
@@ -51,6 +53,13 @@ Several [color themes](#color-themes) are included for each module:
 * If you want a specific color theme included, let me know.
 
 For all themes you can force the input ports to use a light theme, if you prefer the increased contrast. The option is available via right clicking the modules.
+
+![Default color theme](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/default.png?raw=true)
+![River Bed](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/river-bed.png?raw=true)
+![Oxford Blue](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/oxford-blue.png?raw=true)
+![Shark](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/shark.png?raw=true)
+![Cod Gray](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/cod-gray.png?raw=true)
+![Firefly](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/firefly.png?raw=true)
 
 
 ## Changelog
@@ -118,11 +127,3 @@ Version 1.0.2
 
 Version 1.0.1
 * Intial release
-
-## Color themes
-![Default color theme](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/default.png?raw=true)
-![River Bed](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/river-bed.png?raw=true)
-![Oxford Blue](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/oxford-blue.png?raw=true)
-![Shark](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/shark.png?raw=true)
-![Cod Gray](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/cod-gray.png?raw=true)
-![Firefly](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/firefly.png?raw=true)
