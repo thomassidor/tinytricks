@@ -29,6 +29,10 @@ These are seperate oscillators using the same wavetable that can be turned on an
 
 ![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/WAVE.png?raw=true)
 ![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/WAVE.png?raw=true)
+![Shark theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/shark/WAVE.png?raw=true)
+![Oxford blue theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/oxford-blue/WAVE.png?raw=true)
+![Cod gray theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/cod-gray/WAVE.png?raw=true)
+![Firefly theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/firefly/WAVE.png?raw=true)
 
 
 
