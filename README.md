@@ -1,4 +1,4 @@
-![The current modules](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-light.png?raw=true)
+![The current modules](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/default.png?raw=true)
 
 # Tiny Tricks VCV Rack modules
 
@@ -122,9 +122,9 @@ Version 1.0.1
 * Intial release
 
 ## Color themes
-![Default color theme](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-light.png?raw=true)
-![River Bed](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-river-bed.png?raw=true)
-![Oxford Blue](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-oxford-blue.png?raw=true)
-![Shark](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-shark.png?raw=true)
-![Cod Gray](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-cod-gray.png?raw=true)
-![Firefly](https://github.com/thomassidor/tinytricks/blob/master/screenshots/screenshot-firefly.png?raw=true)
+![Default color theme](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/default.png?raw=true)
+![River Bed](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/river-bed.png?raw=true)
+![Oxford Blue](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/oxford-blue.png?raw=true)
+![Shark](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/shark.png?raw=true)
+![Cod Gray](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/cod-gray.png?raw=true)
+![Firefly](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/firefly.png?raw=true)
