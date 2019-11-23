@@ -195,84 +195,60 @@ struct SNOSCWidget : TinyTricksModuleWidget {
 
 	SNOSCWidget(SNOSC *module) {
 		setModule(module);
-		InitializeSkin("SNOSC.svg");
 
 		if(module){
 			MiniScope *scope = new MiniScope();
 			scope->box.pos = mm2px(Vec(3.571f, 9.0f));
-			scope->box.size = mm2px(Vec(23.337f, 8.366f));
+			scope->box.size = mm2px(Vec(23.337f, 10.366f));
 			scope->setGain(1.0f);
 			addChild(scope);
 			module->scope = scope;
 		}
-
-
+		else{
+			SvgWidget* placeholder = createWidget<SvgWidget>(mm2px(Vec(3.571f, 11.0f)));
+			placeholder->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/Wave.svg")));
+			addChild(placeholder);
+		}
 
 		//Mirror buttons
 		addParam(createParam<LEDButton>(mm2px(Vec(12.065f,25.062f)), module, SNOSC::MIRROR_PARAM));
 		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(12.065f+0.45f,25.062f+0.45f)), module, SNOSC::MIRROR_LIGHT));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,24.184f)), module, SNOSC::MIRROR_TRIGGER_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(20.759f,24.184f)), module, SNOSC::MIRROR_TRIGGER_INPUT));
 
 		//Freq
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,34.816f)), module, SNOSC::FREQ_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,34.763f)), module, SNOSC::FREQ_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(20.759f,34.763f)), module, SNOSC::FREQ_CV_INPUT));
 
 		//Fine
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,45.395f)), module, SNOSC::FREQ_FINE_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,45.342f)), module, SNOSC::FREQ_FINE_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(20.759f,45.342f)), module, SNOSC::FREQ_FINE_CV_INPUT));
 
 		//X
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,55.975f)), module, SNOSC::X_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,55.922f)), module, SNOSC::X_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(20.759f,55.922f)), module, SNOSC::X_CV_INPUT));
 
 		//Y
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,66.554f)), module, SNOSC::Y_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,66.501f)), module, SNOSC::Y_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(20.759f,66.501f)), module, SNOSC::Y_CV_INPUT));
 
 		//Scale
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,77.133f)), module, SNOSC::SCALE_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,77.08f)), module, SNOSC::SCALE_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(20.759f,77.08f)), module, SNOSC::SCALE_CV_INPUT));
 
 		//Detail
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(11.24f,87.712f)), module, SNOSC::DETAIL_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(20.759f,87.659f)), module, SNOSC::DETAIL_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(20.759f,87.659f)), module, SNOSC::DETAIL_CV_INPUT));
 
 		//Sync
-    addInput(createInput<PJ301MPort>(mm2px(Vec(11.143f,98.238f)), module, SNOSC::SYNC_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(11.143f,98.238f)), module, SNOSC::SYNC_INPUT));
 
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(4.617f,113.358f)), module, SNOSC::SYNC_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(4.617f,113.358f)), module, SNOSC::SYNC_OUTPUT));
 
-		addOutput(createOutput<PJ301MPort>(mm2px(Vec(17.669f,113.358f)), module, SNOSC::OSC_OUTPUT));
+		addOutput(createOutput<TinyTricksPort>(mm2px(Vec(17.669f,113.358f)), module, SNOSC::OSC_OUTPUT));
+
+		InitializeSkin("SNOSC.svg");
 	}
 };
-
-/*
-struct BaseFreqItem : MenuItem {
-	SNOSC *osc;
-	void onAction(EventAction &e) override {
-			osc->freqFactor = tiare->freqFactor == 1 ? 100 : 1;
-		}
-	void step() override {
-		rightText = tiare->freqFactor == 1 ? "OSC" : "LFO";
-		MenuItem::step();
-	}
-};
-
-void SNOSCWidget::appendContextMenu(Menu *menu) {
-	MenuLabel *spacerLabel = new MenuLabel();
-	menu->addChild(spacerLabel);
-
-	SNOSC *osc = dynamic_cast<SNOSC*>(module);
-	assert(tiare);
-
-	BaseFreqItem *baseFreqItem = new BaseFreqItem();
-	modeItem->text = "Use A4 as base frequency";
-	modeItem->osc = osc;
-	menu->addChild(modeItem);
-
-	return menu;
-}
-*/
 
 
 Model *modelSNOSC = createModel<SNOSC, SNOSCWidget>("SNOSC");

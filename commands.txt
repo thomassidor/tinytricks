@@ -1,0 +1,4 @@
+cd /c/Users/mail/github/tinytricks/
+RACK_DIR=/c/Rack-SDK make install
+"/c/Program Files/VCV/Rack/Rack.exe"
+"/c/Program Files/VCV/Rack/Rack.exe" -t 2.f

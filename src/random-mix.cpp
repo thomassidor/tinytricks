@@ -145,21 +145,21 @@ struct RX8BaseWidget : TinyTricksModuleWidget {
   RX8BaseWidget(RX8Base *module) {
     setModule(module);
 
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.977f, 12.003f)), module, RX8Base::TRIG_INPUT));
+    addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.977f, 12.003f)), module, RX8Base::TRIG_INPUT));
 
     for (int i = 0; i < NUM_CHANNELS; i++){
       addChild(createLight<SmallLight<GreenLight>>(mm2px(Vec(9.641f, 35.995f + 11.6f * i)), module, RX8Base::LEVEL_LIGHT + i));
-      addInput(createInput<PJ301MPort>(mm2px(Vec(3.933f, 29.5f + 11.6f * i)), module, RX8Base::AUDIO_L_INPUT + i));
+      addInput(createInput<TinyTricksPort>(mm2px(Vec(3.933f, 29.5f + 11.6f * i)), module, RX8Base::AUDIO_L_INPUT + i));
     }
 
     addParam(createParam<CKSS>(mm2px(Vec(19.981f,10.992f)), module, RX8Base::TRIGONLY_PARAM));
 
     //Internal selection controls
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(17.45f,30.677f)), module, RX8Base::SPEED_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(18.389f, 41.992f)), module, RX8Base::SPEED_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(18.389f, 41.992f)), module, RX8Base::SPEED_CV_INPUT));
 
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(17.45f,58.239f)), module, RX8Base::JITTER_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(18.398f, 69.585f)), module, RX8Base::JITTER_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(18.398f, 69.585f)), module, RX8Base::JITTER_CV_INPUT));
 
     /*{
         auto w = createParam<RoundBlackKnob>(mm2px(Vec(17.45f,58.239f)), module, RX8Base::JITTER_PARAM);
@@ -171,7 +171,7 @@ struct RX8BaseWidget : TinyTricksModuleWidget {
 
 
     //Mix output
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(18.354f, 113.358f)), module, RX8Base::MIX_L_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.354f, 113.358f)), module, RX8Base::MIX_L_OUTPUT));
 
   }
 };
@@ -200,11 +200,11 @@ struct RM8StereoWidget : RX8BaseWidget {
 	RM8StereoWidget(RX8Base *module) : RX8BaseWidget(module) {
 		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/panels/RM8S.svg")));
     for (int i = 0; i < NUM_CHANNELS; i++){
-      addInput(createInput<PJ301MPort>(mm2px(Vec(17.788f, 12.003f + 14.f * i)), module, RX8Base::MUTE_L_INPUT + i));
-      addInput(createInput<PJ301MPort>(mm2px(Vec(26.994f, 12.003f + 14.f * i)), module, RX8Base::MUTE_R_INPUT + i));
+      addInput(createInput<TinyTricksPort>(mm2px(Vec(17.788f, 12.003f + 14.f * i)), module, RX8Base::MUTE_L_INPUT + i));
+      addInput(createInput<TinyTricksPort>(mm2px(Vec(26.994f, 12.003f + 14.f * i)), module, RX8Base::MUTE_R_INPUT + i));
       addChild(createLight<SmallLight<GreenLight>>(mm2px(Vec(36.199, 14.992 + 14.f * i)), module, RX8Base::MUTE_LIGHT + i));
-      addOutput(createOutput<PJ301MPort>(mm2px(Vec(39.567f, 12.003f + 14.f * i)), module, RX8Base::MUTE_L_OUTPUT  + i));
-      addOutput(createOutput<PJ301MPort>(mm2px(Vec(48.773f, 12.003f + 14.f * i)), module, RX8Base::MUTE_R_OUTPUT  + i));
+      addOutput(createOutput<TinyTricksPort>(mm2px(Vec(39.567f, 12.003f + 14.f * i)), module, RX8Base::MUTE_L_OUTPUT  + i));
+      addOutput(createOutput<TinyTricksPort>(mm2px(Vec(48.773f, 12.003f + 14.f * i)), module, RX8Base::MUTE_R_OUTPUT  + i));
     }
     //Screws
     addChild(createWidget<ScrewSilver>(Vec(0, 0)));

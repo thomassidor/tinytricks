@@ -185,16 +185,16 @@ struct TTOBasePlusWidget : TinyTricksModuleWidget {
 	TTOBasePlusWidget(TTOBasePlus *module) {
 		setModule(module);
 
-    addInput(createInput<PJ301MPort>(mm2px(Vec(8.667f,22.403f)), module, TTOBasePlus::FREQ_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(8.667f,22.403f)), module, TTOBasePlus::FREQ_CV_INPUT));
 		addParam(createParam<RoundBlackKnob>(mm2px(Vec(7.7f,11.051f)), module, TTOBasePlus::FREQ_PARAM));
 
 		//Fine tuning
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,40.415f)), module, TTOBasePlus::FREQ_FINE_PARAM));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(14.082f,40.015f)), module, TTOBasePlus::FREQ_FINE_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(14.082f,40.015f)), module, TTOBasePlus::FREQ_FINE_CV_INPUT));
 
 		//Detune
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,54.934f)), module, TTOBasePlus::DETUNE_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(14.082f,54.534f)), module, TTOBasePlus::DETUNE_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(14.082f,54.534f)), module, TTOBasePlus::DETUNE_CV_INPUT));
 
 
 		//Hard sync buttons
@@ -205,7 +205,7 @@ struct TTOBasePlusWidget : TinyTricksModuleWidget {
 		addChild(createLight<LargeLight<GreenLight>>(mm2px(Vec(15.004f+0.45f,91.955f+0.45f)), module, TTOBasePlus::HARDSYNC3_LIGHT));
 
 		//Output
-		addOutput(createOutput<PJ301MPort>(mm2px(Vec(8.804f,113.016f)), module, TTOBasePlus::OSC_OUTPUT));
+		addOutput(createOutput<TinyTricksPort>(mm2px(Vec(8.804f,113.016f)), module, TTOBasePlus::OSC_OUTPUT));
 
 
 	}
@@ -234,10 +234,11 @@ struct TTOSawPlus : TTOBasePlus{
 
 struct TTOSawPlusWidget : TTOBasePlusWidget {
 	TTOSawPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
-		InitializeSkin("TTSAWPLUS.svg");
 		//Theta
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,69.452f)), module, TTOBasePlus::THETA_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(14.082f,69.053f)), module, TTOBasePlus::THETA_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(14.082f,69.053f)), module, TTOBasePlus::THETA_CV_INPUT));
+
+		InitializeSkin("TTSAWPLUS.svg");
 	}
 };
 Model *modelTTSAWPLUS = createModel<TTOSawPlus, TTOSawPlusWidget>("TTSAWPLUS");
@@ -251,10 +252,11 @@ struct TTOSqrPlus : TTOBasePlus{
 
 struct TTOSqrPlusWidget : TTOBasePlusWidget {
 	TTOSqrPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
-		InitializeSkin("TTSQRPLUS.svg");
 		//Theta
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,69.452f)), module, TTOBasePlus::THETA_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(14.082f,69.053f)), module, TTOBasePlus::THETA_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(14.082f,69.053f)), module, TTOBasePlus::THETA_CV_INPUT));
+
+		InitializeSkin("TTSQRPLUS.svg");
 	}
 };
 Model *modelTTSQRPLUS = createModel<TTOSqrPlus, TTOSqrPlusWidget>("TTSQRPLUS");
@@ -268,10 +270,11 @@ struct TTOTriPlus : TTOBasePlus{
 
 struct TTOTriPlusWidget : TTOBasePlusWidget {
 	TTOTriPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
-		InitializeSkin("TTTRIPLUS.svg");
 		//Theta
 		addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f,69.452f)), module, TTOBasePlus::THETA_PARAM));
-		addInput(createInput<PJ301MPort>(mm2px(Vec(14.082f,69.053f)), module, TTOBasePlus::THETA_CV_INPUT));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(14.082f,69.053f)), module, TTOBasePlus::THETA_CV_INPUT));
+
+		InitializeSkin("TTTRIPLUS.svg");
 	}
 };
 Model *modelTTTRIPLUS = createModel<TTOTriPlus, TTOTriPlusWidget>("TTTRIPLUS");

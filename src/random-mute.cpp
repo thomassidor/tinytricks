@@ -104,14 +104,14 @@ struct RM8BaseWidget : TinyTricksModuleWidget {
   RM8BaseWidget(RM8Base *module) {
     setModule(module);
 
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.847f, 12.003f)), module, RM8Base::TRIG_INPUT));
+    addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.847f, 12.003f)), module, RM8Base::TRIG_INPUT));
 
     {
         auto w = createParam<RoundSmallBlackKnob>(mm2px(Vec(3.9f,31.62f)), module, RM8Base::MUTE_COUNT_PARAM);
         dynamic_cast<Knob*>(w)->snap = true;
         addParam(w);
     }
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.847, 41.251f)), module, RM8Base::MUTE_COUNT_CV_INPUT));
+    addInput(createInput<TinyTricksPort>(mm2px(Vec(3.847, 41.251f)), module, RM8Base::MUTE_COUNT_CV_INPUT));
   }
 };
 
@@ -124,13 +124,12 @@ struct RM8Mono : RM8Base{
 
 struct RM8MonoWidget : RM8BaseWidget {
 	RM8MonoWidget(RM8Base *module) : RM8BaseWidget(module) {
-    InitializeSkin("RM8.svg");
-
     for (int i = 0; i < NUM_CHANNELS; i++){
-      addInput(createInput<PJ301MPort>(mm2px(Vec(17.424f, 11.782f + 14.f * i)), module, RM8Base::MUTE_L_INPUT + i));
+      addInput(createInput<TinyTricksPort>(mm2px(Vec(17.424f, 11.782f + 14.f * i)), module, RM8Base::MUTE_L_INPUT + i));
       addChild(createLight<SmallLight<GreenLight>>(mm2px(Vec(26.209, 14.701 + 14.f * i)), module, RM8Base::MUTE_LIGHT + i));
-      addOutput(createOutput<PJ301MPort>(mm2px(Vec(29.122f, 11.782f + 14.f * i)), module, RM8Base::MUTE_L_OUTPUT  + i));
+      addOutput(createOutput<TinyTricksPort>(mm2px(Vec(29.122f, 11.782f + 14.f * i)), module, RM8Base::MUTE_L_OUTPUT  + i));
     }
+    InitializeSkin("RM8.svg");
 	}
 };
 Model *modelRM8 = createModel<RM8Mono, RM8MonoWidget>("RM8");
@@ -143,15 +142,14 @@ struct RM8Stereo : RM8Base{
 
 struct RM8StereoWidget : RM8BaseWidget {
 	RM8StereoWidget(RM8Base *module) : RM8BaseWidget(module) {
-    InitializeSkin("RM8S.svg");
-
     for (int i = 0; i < NUM_CHANNELS; i++){
-      addInput(createInput<PJ301MPort>(mm2px(Vec(17.788f, 12.003f + 14.f * i)), module, RM8Base::MUTE_L_INPUT + i));
-      addInput(createInput<PJ301MPort>(mm2px(Vec(26.994f, 12.003f + 14.f * i)), module, RM8Base::MUTE_R_INPUT + i));
+      addInput(createInput<TinyTricksPort>(mm2px(Vec(17.788f, 12.003f + 14.f * i)), module, RM8Base::MUTE_L_INPUT + i));
+      addInput(createInput<TinyTricksPort>(mm2px(Vec(26.994f, 12.003f + 14.f * i)), module, RM8Base::MUTE_R_INPUT + i));
       addChild(createLight<SmallLight<GreenLight>>(mm2px(Vec(36.199, 14.992 + 14.f * i)), module, RM8Base::MUTE_LIGHT + i));
-      addOutput(createOutput<PJ301MPort>(mm2px(Vec(39.567f, 12.003f + 14.f * i)), module, RM8Base::MUTE_L_OUTPUT  + i));
-      addOutput(createOutput<PJ301MPort>(mm2px(Vec(48.773f, 12.003f + 14.f * i)), module, RM8Base::MUTE_R_OUTPUT  + i));
+      addOutput(createOutput<TinyTricksPort>(mm2px(Vec(39.567f, 12.003f + 14.f * i)), module, RM8Base::MUTE_L_OUTPUT  + i));
+      addOutput(createOutput<TinyTricksPort>(mm2px(Vec(48.773f, 12.003f + 14.f * i)), module, RM8Base::MUTE_R_OUTPUT  + i));
     }
+    InitializeSkin("RM8S.svg");
 	}
 };
 Model *modelRM8S = createModel<RM8Stereo, RM8StereoWidget>("RM8S");

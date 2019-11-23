@@ -64,28 +64,30 @@ struct TTAWidget : TinyTricksModuleWidget {
   TTAWidget(TTA *module) {
 
     setModule(module);
+
+
+    addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.2f, 12.003f)), module, TTA::A_INPUT));
+    addInput(createInput<TinyTricksPortLight>(mm2px(Vec(14.088f, 12.003f)), module, TTA::B_INPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 29.859f)), module, TTA::APLUSB_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 29.859f)), module, TTA::AVGAB_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 46.21f)), module, TTA::AMINUSB_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 46.21f)), module, TTA::BMINUSA_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 62.561f)), module, TTA::ADIVB_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 62.561f)), module, TTA::BDIVA_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 78.911f)), module, TTA::AMULB_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 78.911f)), module, TTA::AEXPB_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 95.262f)), module, TTA::ONEOVERA_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 95.262f)), module, TTA::ONEOVERB_OUTPUT));
+
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.2f, 111.613f)), module, TTA::MINUSA_OUTPUT));
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.088f, 111.613f)), module, TTA::MINUSB_OUTPUT));
+
     InitializeSkin("TTA.svg");
-
-    addInput(createInput<PJ301MPort>(mm2px(Vec(3.2f, 12.003f)), module, TTA::A_INPUT));
-    addInput(createInput<PJ301MPort>(mm2px(Vec(14.088f, 12.003f)), module, TTA::B_INPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 29.859f)), module, TTA::APLUSB_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 29.859f)), module, TTA::AVGAB_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 46.21f)), module, TTA::AMINUSB_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 46.21f)), module, TTA::BMINUSA_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 62.561f)), module, TTA::ADIVB_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 62.561f)), module, TTA::BDIVA_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 78.911f)), module, TTA::AMULB_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 78.911f)), module, TTA::AEXPB_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 95.262f)), module, TTA::ONEOVERA_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 95.262f)), module, TTA::ONEOVERB_OUTPUT));
-
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.2f, 111.613f)), module, TTA::MINUSA_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.088f, 111.613f)), module, TTA::MINUSB_OUTPUT));
   }
 };
 

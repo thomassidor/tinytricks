@@ -45,15 +45,17 @@ struct A8 : TinyTricksModule {
 struct A8Widget : TinyTricksModuleWidget {
   A8Widget(A8 *module) {
     setModule(module);
-    InitializeSkin("A8.svg");
+
 
     addParam(createParam<RoundBlackKnob>(mm2px(Vec(7.7f,11.055f)), module, A8::LEVEL_PARAM));
 
     for (int i = 0; i < NUM_CHANNELS; i++)
-      addInput(createInput<PJ301MPort>(mm2px(Vec(3.131f, 29.859f + 11.5f * i)), module, A8::ATT_INPUT + i));
+      addInput(createInput<TinyTricksPort>(mm2px(Vec(3.131f, 29.859f + 11.5f * i)), module, A8::ATT_INPUT + i));
 
     for (int i = 0; i < NUM_CHANNELS; i++)
-      addOutput(createOutput<PJ301MPort>(mm2px(Vec(14.164f, 29.859f + 11.5f * i)), module, A8::ATT_OUTPUT  + i));
+      addOutput(createOutput<TinyTricksPort>(mm2px(Vec(14.164f, 29.859f + 11.5f * i)), module, A8::ATT_OUTPUT  + i));
+
+    InitializeSkin("A8.svg");
   }
 };
 

@@ -56,6 +56,15 @@ All the  best, Thomas René Sidor
 
 
 ## Changelog
+Version 1.4.2
+* Added: Dark ports for dark themes.
+* Added: Option to force light ports on dark themes.
+* Added: Placeholder waveforms added to WAVE and SN-OSC for when displayed in module browser.
+* Added: Help text to WAVE when no wavetable loaded or captured.
+* Changed: License from MIT to GPLv3
+* Fixed: Readjusted scope height in Simplex Oscillator.
+* Behind the scenes: Added automatic screenshot generation.
+
 Version 1.4.1
 * The changes in this release is based on [community feedback](https://community.vcvrack.com/t/tiny-tricks-request-for-feedback/6788). A huge thanks to all who pitched in!
 * Added: Dark themes. Right click module to access them.

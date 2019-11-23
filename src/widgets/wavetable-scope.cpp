@@ -14,7 +14,13 @@ struct WaveTableScope : FramebufferWidget {
 	bool dirty = false;
 	bool mirror = false;
 
+	SvgWidget* helpText;
+
 	WaveTableScope() {
+		helpText = createWidget<SvgWidget>(Vec(0,0));
+		helpText->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/Wavetable-help.svg")));
+		addChild(helpText);
+		helpText->box.pos = Vec(9,3);
 	}
 
 	float spacing = 5.f;
@@ -192,6 +198,8 @@ struct WaveTableScope : FramebufferWidget {
 		if(tick%100 == 0){
 			tick = 0;
 			if(dirty){
+				if(waveEnd != 0)
+					helpText->visible = false;
 				//std::cout << "waveform dirty" << std::endl;
 				FramebufferWidget::dirty = true;
 				dirty = false;
