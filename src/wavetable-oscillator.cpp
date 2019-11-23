@@ -455,7 +455,11 @@ struct WAVEWidget : TinyTricksModuleWidget {
 			scope->initialize(3,10);
 			addChild(scope);
 			module->scope = scope;
-
+		}
+		else{
+			SvgWidget* placeholder = createWidget<SvgWidget>(mm2px(Vec(24.575f, 11.1f)));
+			placeholder->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/Wavetable.svg")));
+			addChild(placeholder);
 		}
 
 		// Main oscillator ------------------------------------------------

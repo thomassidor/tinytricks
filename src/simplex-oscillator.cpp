@@ -204,6 +204,11 @@ struct SNOSCWidget : TinyTricksModuleWidget {
 			addChild(scope);
 			module->scope = scope;
 		}
+		else{
+			SvgWidget* placeholder = createWidget<SvgWidget>(mm2px(Vec(3.571f, 11.0f)));
+			placeholder->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/Wave.svg")));
+			addChild(placeholder);
+		}
 
 		//Mirror buttons
 		addParam(createParam<LEDButton>(mm2px(Vec(12.065f,25.062f)), module, SNOSC::MIRROR_PARAM));
