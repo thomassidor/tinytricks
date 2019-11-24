@@ -1,66 +1,18 @@
-struct WaveTableOscillator{
-
+struct WaveTable{
   static const int WAVEFORM_COUNT = 3;
   static const int MAX_SAMPLE_COUNT = 2048;
-  int TABLE_END = MAX_SAMPLE_COUNT;
+  int WAVETABLE_SIZE = MAX_SAMPLE_COUNT;
   float lookuptables[WAVEFORM_COUNT][MAX_SAMPLE_COUNT] = {{0}};
+  int recordingIndex = 0;
 
-  float currentIndex = 0.f;
-  float tableDelta = 0.f;
-
-	bool isStepEOC = false;
-
-  bool mirror = false;
-  bool reverse = false;
-
-  float prevPitch = 90000.f;
-
-  float phase = 0.f;
-  float freq = 0.f;
-
-  WaveTableOscillator(){
-
-  }
-
-  void step(){
-    isStepEOC = false;
-
-    if(mirror){
-      if(!reverse){
-        currentIndex += tableDelta;
-        if (currentIndex >= TABLE_END/2.f)
-          reverse = true;
-      }
-      else{
-        currentIndex -= tableDelta;
-        if(currentIndex < 0.f){
-          reverse = false;
-          currentIndex = 0.f;
-          isStepEOC = true;
-        }
-      }
-    }
-    else{
-      currentIndex += tableDelta;
-      if (currentIndex >= TABLE_END){
-        currentIndex -= TABLE_END;
-        isStepEOC = true;
-      }
-    }
-  }
-
-  bool isEOC(){
-		return isStepEOC;
-	}
-
-  float getSample(float y){
+  float getSample(float y, float x){
 
     //Getting indexes for current place in table
-    int index0 = (int) currentIndex;
-    int index1 = index0 == (TABLE_END - 1) ? (int) 0 : index0 + 1;
+    int index0 = (int) x;
+    int index1 = index0 == (WAVETABLE_SIZE - 1) ? (int) 0 : index0 + 1;
 
     // How far are we from the index
-    float indexFrac = currentIndex - (float) index0;
+    float indexFrac = x - (float) index0;
 
     //Getting indexes for the levels based on y
     float frac = y * (WAVEFORM_COUNT-1);
@@ -84,16 +36,8 @@ struct WaveTableOscillator{
     return finalValue;
   }
 
-  void addSampleToFrame(float sampleValue, float y){
-    lookuptables[yToLevel(y)][(int)currentIndex] = sampleValue;
-  }
-
-  unsigned int yToLevel(float y){
-    return floor(y*(WAVEFORM_COUNT-1));
-  }
-
-  void endFrame(){
-    currentIndex = currentIndex + 1;
+  void reset(){
+    recordingIndex = 0.f;
   }
 
   void startCapture(){
@@ -101,14 +45,87 @@ struct WaveTableOscillator{
   }
 
   void endCapture(){
-    TABLE_END = currentIndex;
+    WAVETABLE_SIZE = recordingIndex;
     reset();
   }
 
+  void addSampleToFrame(float sampleValue, int waveId){
+    lookuptables[waveId][recordingIndex] = sampleValue;
+  }
+
+  void endFrame(){
+    recordingIndex = recordingIndex + 1;
+  }
+};
+
+struct WaveTableOscillator{
+  WaveTable* waveTable;
+
+  float currentIndex = 0.f;
+  float tableDelta = 0.f;
+
+	bool isStepEOC = false;
+
+  bool mirror = false;
+  bool reverse = false;
+
+  float prevPitch = 90000.f;
+
+  float phase = 0.f;
+  float freq = 0.f;
+
+  WaveTableOscillator(){
+    waveTable = new  WaveTable();
+  }
+
+  float getSample(float y){
+    if(waveTable == nullptr)
+      return 0.f;
+    else
+      return waveTable->getSample(y,currentIndex);
+  }
+
+  void step(){
+    if(waveTable == nullptr)
+      return;
+
+    isStepEOC = false;
+
+    if(mirror){
+      if(!reverse){
+        currentIndex += tableDelta;
+        if (currentIndex >= waveTable->WAVETABLE_SIZE/2.f)
+          reverse = true;
+      }
+      else{
+        currentIndex -= tableDelta;
+        if(currentIndex < 0.f){
+          reverse = false;
+          currentIndex = 0.f;
+          isStepEOC = true;
+        }
+      }
+    }
+    else{
+      currentIndex += tableDelta;
+      if (currentIndex >= waveTable->WAVETABLE_SIZE){
+        currentIndex -= waveTable->WAVETABLE_SIZE;
+        isStepEOC = true;
+      }
+    }
+  }
+
+  bool isEOC(){
+		return isStepEOC;
+	}
+
   void setPitch(float pitch, float sampleRate){
+    if(waveTable == nullptr)
+      return;
+
     if(pitch != prevPitch){
       float frequency = dsp::FREQ_C4 * powf(2.0f, pitch);
-      auto tableSizeOverSampleRate = TABLE_END / sampleRate;
+      auto tableSizeOverSampleRate = waveTable->WAVETABLE_SIZE / sampleRate;
       tableDelta = frequency * tableSizeOverSampleRate;
       prevPitch = pitch;
     }
@@ -123,6 +140,4 @@ struct WaveTableOscillator{
   void reset(){
     currentIndex = 0.f;
   }
-
-
 };
