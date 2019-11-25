@@ -2,7 +2,7 @@ struct WaveTable{
   static const int WAVEFORM_COUNT = 3;
   static const int MAX_SAMPLE_COUNT = 2048;
   int WAVETABLE_SIZE = MAX_SAMPLE_COUNT;
-  float lookuptables[WAVEFORM_COUNT][MAX_SAMPLE_COUNT] = {{0}};
+  float lookuptable[WAVEFORM_COUNT][MAX_SAMPLE_COUNT] = {{0}};
   int recordingIndex = 0;
 
   float getSample(float y, float x){
@@ -21,11 +21,11 @@ struct WaveTable{
     float levelFrac = frac - (float) level0;
 
     //Getting the four samples in the table
-    float Level0Value0 = lookuptables[level0][index0];
-    float Level0Value1 = lookuptables[level0][index1];
+    float Level0Value0 = lookuptable[level0][index0];
+    float Level0Value1 = lookuptable[level0][index1];
 
-    float Level1Value0 = lookuptables[level1][index0];
-    float Level1Value1 = lookuptables[level1][index1];
+    float Level1Value0 = lookuptable[level1][index0];
+    float Level1Value1 = lookuptable[level1][index1];
 
     //Interpolating between the two
     float interpolatedValueForLevel0 = Level0Value0 + indexFrac * (Level0Value1 - Level0Value0);
@@ -50,7 +50,7 @@ struct WaveTable{
   }
 
   void addSampleToFrame(float sampleValue, int waveId){
-    lookuptables[waveId][recordingIndex] = sampleValue;
+    lookuptable[waveId][recordingIndex] = sampleValue;
   }
 
   void endFrame(){

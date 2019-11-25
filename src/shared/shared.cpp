@@ -1,6 +1,3 @@
-//std::cout << "muteCount: " << muteCount << std::endl;
-//std::cout << "Voltage: " << inputs[MUTE_COUNT_CV_INPUT].getVoltage() << std::endl;
-
 struct TinyTricksPortLight : app::SvgPort {
   TinyTricksPortLight() {
 		setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/PortLight.svg")));
