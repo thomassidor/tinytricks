@@ -1,11 +1,13 @@
 # Plus Oscillators (SIN+, SAW+, SQR+. TRI+)
 
-Four three oscillator oscillators with the following waveform shapes:
+Four three-oscillator oscillators with the following waveform shapes:
 
 * SIN+ - Sine
 * TRI+ - Triangle
 * SAW+ - Saw
 * SQR+ - Square
+
+Supports polyphony.
 
 `FREQ` sets the oscillators frequency. CV input for 1v/oct.
 

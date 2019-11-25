@@ -61,8 +61,16 @@ For all themes you can force the input ports to use a light theme, if you prefer
 ![Cod Gray](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/cod-gray.png?raw=true)
 ![Firefly](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/firefly.png?raw=true)
 
+## Authors
+@thomassidor - Project owner.
+@baconpaul - Added polyphony to oscillator, logic and arithmetic modules.
+
 
 ## Changelog
+Version 1.4.3
+* Added: Polyphony to simple oscillators (SIN, SAW, SQR, TRI), plus oscillators (SIN+, SAW+, SQR+, TRI+), Simplex Oscillator (SN-OSC), WAVE, TT-A and TT-L. Huge thanks to @baconpaul for contributing with this to the project!
+* Behind the scenes: Refactored WAVE for performance improvements.
+
 Version 1.4.2
 * Added: Dark ports for dark themes.
 * Added: Option to force light ports on dark themes.

@@ -16,8 +16,6 @@ struct WaveTableScope : FramebufferWidget {
 	float lineWeight = 2.5f;
 	float spacing = 5.f;
 
-	float gainCalculated = 0;
-
 	SvgWidget* helpText;
 
 	std::vector<int> highlights;
