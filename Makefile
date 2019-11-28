@@ -18,6 +18,9 @@ SOURCES += $(wildcard src/*.cpp src/utility/*.cpp)
 DISTRIBUTABLES += res
 DISTRIBUTABLES += $(wildcard LICENSE*)
 
+install-run: install
+	"/c/Program Files/VCV/Rack/Rack.exe"
+
 river-bed-theme:
 	mkdir -p res/panels-river-bed
 	cp res/panels/* res/panels-river-bed/
