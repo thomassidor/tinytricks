@@ -211,8 +211,8 @@
     },
     {
       "slug": "RANDOMWRANGLER",
-      "name": "Noise Wrangler",
-      "description": "Noise generation that you control.",
+      "name": "Random Wrangler",
+      "description": "Random generation that you control.",
       "tags": [
         "random",
         "noise"

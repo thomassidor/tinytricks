@@ -20,6 +20,7 @@ All the  best, Thomas René Sidor
 * Modulation Generator x16 (MG16)
 * [Simplex Noise (SN1)](/docs/sn.md)
 * [Simplex Noise x8 (SN8)](/docs/sn.md)
+* [Random Wrangler (RW)](/docs/rw.md)
 
 ### Mixing and muting:
 * [Random Mute x8 (RM8)](/docs/rm8.md)
@@ -63,6 +64,9 @@ For all themes you can force the input ports to use a light theme, if you prefer
 
 
 ## Changelog
+Version 1.5.0
+* Added: Random Wrangler (RW)
+
 Version 1.4.2
 * Added: Dark ports for dark themes.
 * Added: Option to force light ports on dark themes.
