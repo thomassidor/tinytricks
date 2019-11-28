@@ -345,4 +345,4 @@ struct RANDOMWRANGLERWidget : TinyTricksModuleWidget {
 };
 
 
-Model *modelRANDOMWRANGLER = createModel<RANDOMWRANGLER, RANDOMWRANGLERWidget>("RANDOMWRANGLER");
+Model *modelRANDOMWRANGLER = createModel<RANDOMWRANGLER, RANDOMWRANGLERWidget>("RW");
