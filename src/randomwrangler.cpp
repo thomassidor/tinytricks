@@ -3,7 +3,7 @@
 #include "plugin.hpp"
 #include "shared/shared.cpp"
 #include "widgets/curve-widget.cpp"
-#include "oscillators/oscillator.cpp"
+#include "oscillators/barebone.cpp"
 
 struct RANDOMWRANGLER : TinyTricksModule {
 
@@ -34,7 +34,7 @@ struct RANDOMWRANGLER : TinyTricksModule {
   const float RANDOM_MIN = 0.f;
   const float RANDOM_MAX = 10.f;
 
-  TinyOscillator oscillator;
+  BareboneOscillator oscillator;
 
   const float RATE_MIN = -10.f;
   const float RATE_MAX = 10.f;
@@ -46,9 +46,14 @@ struct RANDOMWRANGLER : TinyTricksModule {
   float smoothFrac = 0.f;
 
   std::default_random_engine generator;
-  std::piecewise_linear_distribution<float>* distribution;
+  std::piecewise_linear_distribution<float>* distributionLinear;
+  std::piecewise_constant_distribution<float>* distributionConstant;
   std::vector<float> intervals;
   std::vector<float> weights;
+
+  const float sensitivity = 0.01;
+
+  bool isLiniearMode = true;
 
   dsp::SchmittTrigger trigTrigger;
 
@@ -56,69 +61,110 @@ struct RANDOMWRANGLER : TinyTricksModule {
   float toOutValue = 5.f;
   float currentOutValue = 5.f;
 
+  int tick = 0;
+
   CurveWidget* curve;
-  std::vector<float> curveParams;
+
+  std::vector<float> tmp;
 
   RANDOMWRANGLER() {
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 
     for (size_t i = 0; i < NUM_CURVE_POINTS; i++) {
       float initValue = RANDOM_MAX/(i+1);
-      configParam(RANDOMWRANGLER::CURVE_PARAM + i, RANDOM_MIN, RANDOM_MAX, initValue, "Point");
-      curveParams.push_back(initValue);
+      configParam(RANDOMWRANGLER::CURVE_PARAM + i, RANDOM_MIN, RANDOM_MAX, initValue, "Probability weight");
+      weights.push_back(9000);
+      tmp.push_back(9000);
     }
 
     configParam(RANDOMWRANGLER::RATE_PARAM, RATE_MIN, RATE_MAX, RATE_MAX, "Rate");
     configParam(RANDOMWRANGLER::SMOOTH_RATE_PARAM, SMOOTH_RATE_MIN, SMOOTH_RATE_MAX, SMOOTH_RATE_MIN, "Smoothing amout");
     configParam(RANDOMWRANGLER::LIN_SMOOTH_PARAM, 0.0f, 1.0f, 1.0f, "Smooth shape");
 
-    processCurveParams();
+    initIntervals();
     //regenerateDistribution();
   }
 
+  void onReset() override{
+    processCurveParams(true);
+  }
+
+  void onRandomize() override{
+    processCurveParams(true);
+  }
+
+  json_t *dataToJson() override {
+		json_t *rootJ = json_object();
+		// Mode
+		json_object_set_new(rootJ, "isLiniearMode", json_boolean(isLiniearMode));
+
+		AppendBaseJson(rootJ);
+		return rootJ;
+	}
+
+	void dataFromJson(json_t *rootJ) override {
+		TinyTricksModule::dataFromJson(rootJ);
+
+    //Mode
+    json_t *isLiniearModeJ = json_object_get(rootJ, "isLiniearMode");
+    if (isLiniearModeJ) isLiniearMode = json_is_true(isLiniearModeJ);
+    curve->setMode(isLiniearMode);
+    //processCurveParams(true);
+  }
+
+  void toggleMode(){
+    isLiniearMode = !isLiniearMode;
+    curve->setMode(isLiniearMode);
+    regenerateDistribution();
+  }
+
+  void initIntervals(){
+    intervals.reserve(NUM_CURVE_POINTS);
+    for (size_t i = 0; i < NUM_CURVE_POINTS; i++) {
+      float interval = (i/(float)(NUM_CURVE_POINTS-1))*RANDOM_MAX;
+      intervals.push_back(interval);
+    }
+  }
 
   void regenerateDistribution(){
     //std::cout << "regenerating" << std::endl;
-    intervals.clear();
-    intervals.reserve(NUM_CURVE_POINTS);
-
-    weights.clear();
-    weights.reserve(NUM_CURVE_POINTS);
-
-    size_t points =  curveParams.size();
-    //std::cout << "points: " << points << std::endl;
-
-    for (size_t i = 0; i < points; i++) {
-      float interval = (i/(float)(points-1))*RANDOM_MAX;
-      float weight = curveParams[i];
-
-      //std::cout << "interval: " << interval << std::endl;
-      //std::cout << "weight: " << weight << std::endl;
-
-      intervals.push_back(interval);
-      weights.push_back(weight);
-    }
-
-    distribution = new std::piecewise_linear_distribution<float>(intervals.begin(),intervals.end(),weights.begin());
+    if(isLiniearMode)
+      distributionLinear = new std::piecewise_linear_distribution<float>(intervals.begin(),intervals.end(),weights.begin());
+    else
+      distributionConstant = new std::piecewise_constant_distribution<float>(intervals.begin(),intervals.end(),weights.begin());
 
     /*
-    std::cout << "min: " << (*distribution).min() << std::endl;
-    std::cout << "max: " << (*distribution).max() << std::endl;
+    std::cout << "min: " << (*distributionLinear).min() << std::endl;
+    std::cout << "max: " << (*distributionLinear).max() << std::endl;
     std::cout << "intervals : ";
-    for (double x:(*distribution).intervals()) std::cout << x << " ";
+    for (double x:(*distributionLinear).intervals()) std::cout << x << " ";
     std::cout << std::endl;
     std::cout << "densities : ";
-    for (double x:(*distribution).densities()) std::cout << x << " ";
+    for (double x:(*distributionLinear).densities()) std::cout << x << " ";
     std::cout << std::endl;
     */
   }
 
   float getRandom(){
-    return (*distribution)(generator);
+    if(isLiniearMode && distributionLinear != nullptr)
+      return (*distributionLinear)(generator);
+    else if(distributionConstant != nullptr)
+      return (*distributionConstant)(generator);
+    else
+      return 0.f;
   }
 
-  void processCurveParams(){
-    std::vector<float> tmp;
+  void updateCurve(){
+    //Only update every 100 samples to increase performance
+    if(tick%1000==0){
+      tick = 0;
+      processCurveParams(false);
+    }
+    tick++;
+  }
+
+
+  void processCurveParams(bool regenerate){
     bool dirty = false;
     for (size_t i = 0; i < NUM_CURVE_POINTS; i++) {
       float value = params[CURVE_PARAM + i].getValue();
@@ -127,15 +173,17 @@ struct RANDOMWRANGLER : TinyTricksModule {
         value += inputs[CURVE_CV_INPUT + i].getVoltage();
       value = clamp(value, 0.f, 10.f);
 
-      if(value != curveParams[i])
+      if(abs(value-weights[i]) > sensitivity)
         dirty = true;
 
-      tmp.push_back(value);
+      tmp[i] = value;
     }
     if(dirty){
-      curveParams = tmp;
-      regenerateDistribution();
-      curve->setPoints(curveParams);
+      curve->setPoints(tmp);
+      if(regenerate){
+        weights = tmp;
+        regenerateDistribution();
+      }
     }
   }
 
@@ -147,7 +195,7 @@ struct RANDOMWRANGLER : TinyTricksModule {
 
     if(rate != prevRate){
       oscillator.setPitch(rate);
-      oscillator.reset();
+      //oscillator.reset();
       prevRate = rate;
     }
   }
@@ -155,10 +203,9 @@ struct RANDOMWRANGLER : TinyTricksModule {
   void updateSmoothRate(){
     smoothRate = params[SMOOTH_RATE_PARAM].getValue();
     if(inputs[SMOOTH_RATE_CV_INPUT].isConnected())
-      smoothRate += inputs[SMOOTH_RATE_CV_INPUT].getVoltage()*2.f;
+      smoothRate += inputs[SMOOTH_RATE_CV_INPUT].getVoltage()/10.f;
     smoothRate = clamp(smoothRate, SMOOTH_RATE_MIN, SMOOTH_RATE_MAX);
   }
-
 
   void resetSmooth(){
     smoothFrac = 0.f;
@@ -175,11 +222,8 @@ struct RANDOMWRANGLER : TinyTricksModule {
       float frac = smoothFrac / smoothRate;
       frac = clamp(frac,0.f,1.f);
 
-
-      if (params[LIN_SMOOTH_PARAM].getValue() != 1.f) {
-          frac = rescale(std::pow(50.f, frac), 1.f, 50.f, 0.f, 1.f);
-      }
-
+      if (params[LIN_SMOOTH_PARAM].getValue() != 1.f)
+        frac = rescale(std::pow(50.f, frac), 1.f, 50.f, 0.f, 1.f);
 
       float diff = toOutValue - fromOutValue;
       return fromOutValue + (diff*frac);
@@ -191,22 +235,27 @@ struct RANDOMWRANGLER : TinyTricksModule {
     updateRate();
     updateSmoothRate();
 
+
     //Stepping oscillator
     oscillator.step(args.sampleRate);
 
     //Determining whether to generate new value or not
-    bool generate = false;
+    bool generate;
     if(inputs[TRIG_INPUT].isConnected())
       generate = trigTrigger.process(inputs[TRIG_INPUT].getVoltage());
     else
       generate = oscillator.isEOC();
 
+
     //Generating new value
     if(generate){
-      processCurveParams();
+      processCurveParams(true);
       fromOutValue = toOutValue;
       toOutValue = getRandom();
       resetSmooth();
+    }
+    else{
+      updateCurve();
     }
 
     //Getting smoothing to add
@@ -221,8 +270,34 @@ struct RANDOMWRANGLER : TinyTricksModule {
 
 struct RANDOMWRANGLERWidget : TinyTricksModuleWidget {
   CurveWidget* curve;
+  RANDOMWRANGLER* randModule;
   const float widgetSpacing = 10.807f;
-  RANDOMWRANGLERWidget(RANDOMWRANGLER *module) {
+
+  void appendContextMenu(Menu* menu) override {
+		menu->addChild(new MenuEntry);
+		menu->addChild(createMenuLabel("Mode"));
+
+		struct LocalItem : MenuItem {
+			RANDOMWRANGLER* module;
+			void onAction(const event::Action& e) override {
+				module->toggleMode();
+			}
+		};
+
+
+		LocalItem* localItem = createMenuItem<LocalItem>("Constant distribution (instead of linear)");
+		localItem->rightText = CHECKMARK(!randModule->isLiniearMode);
+		localItem->module = randModule;
+		menu->addChild(localItem);
+
+
+		TinyTricksModuleWidget::appendContextMenu(menu);
+	}
+
+  RANDOMWRANGLERWidget(RANDOMWRANGLER* module) {
+    if(module)
+      randModule = module;
+
     setModule(module);
 
     //Top row

@@ -14,7 +14,7 @@ All the  best, Thomas René Sidor
 * [Sample and Hold x16 (SH16)](/docs/sh16.md)
 * [Attenuator x8 (A8)](/docs/a8.md)
 
-### Modulation sources/LFOs:
+### Modulation sources, random generators, LFOs:
 * Modulation Generator (MG1)
 * Modulation Generator x8 (MG8)
 * Modulation Generator x16 (MG16)

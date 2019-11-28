@@ -215,7 +215,9 @@
       "description": "Random generation that you control.",
       "tags": [
         "random",
-        "noise"
+        "noise",
+        "low-frequency oscillator",
+        "sample and hold"
       ]
     }
   ]
