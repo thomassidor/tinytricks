@@ -19,9 +19,9 @@ If `TRIG` is connected the internal clock is disabled and values only update upo
 
 
 
-![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/RW.png?raw=true)
-![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/RW.png?raw=true)
-![Shark theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/shark/RW.png?raw=true)
-![Oxford blue theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/oxford-blue/RW.png?raw=true)
-![Cod gray theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/cod-gray/RW.png?raw=true)
-![Firefly theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/firefly/RW.png?raw=true)
+![Default theme](/module-screenshots/default/RW.png?raw=true)
+![River bed theme](/module-screenshots/river-bed/RW.png?raw=true)
+![Shark theme](/module-screenshots/shark/RW.png?raw=true)
+![Oxford blue theme](/module-screenshots/oxford-blue/RW.png?raw=true)
+![Cod gray theme](/module-screenshots/cod-gray/RW.png?raw=true)
+![Firefly theme](/module-screenshots/firefly/RW.png?raw=true)
