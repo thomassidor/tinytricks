@@ -43,7 +43,7 @@ All the  best, Thomas René Sidor
 
 
 ### Color themes
-Several [color themes](#color-themes) are included for each module:
+Several color themes are included for each module:
 
 * Light (Default)
 * River Bed
