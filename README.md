@@ -15,9 +15,9 @@ All the  best, Thomas René Sidor
 * [Attenuator x8 (A8)](/docs/a8.md)
 
 ### Modulation sources, random generators, LFOs:
-* Modulation Generator (MG1)
-* Modulation Generator x8 (MG8)
-* Modulation Generator x16 (MG16)
+* [Modulation Generator (MG1)](/docs/mg.md)
+* [Modulation Generator x8 (MG8)](/docs/mg.md)
+* [Modulation Generator x16 (MG16)](/docs/mg.md)
 * [Simplex Noise (SN1)](/docs/sn.md)
 * [Simplex Noise x8 (SN8)](/docs/sn.md)
 * [Random Wrangler (RW)](/docs/rw.md)
