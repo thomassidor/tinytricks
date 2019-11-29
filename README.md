@@ -1,4 +1,4 @@
-![The current modules](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/default.png?raw=true)
+![The current modules](/combined-screenshots/default.png?raw=true)
 
 # Tiny Tricks VCV Rack modules
 
@@ -55,17 +55,18 @@ Several [color themes](#color-themes) are included for each module:
 
 For all themes you can force the input ports to use a light theme, if you prefer the increased contrast. The option is available via right clicking the modules.
 
-![Default color theme](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/default.png?raw=true)
-![River Bed](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/river-bed.png?raw=true)
-![Oxford Blue](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/oxford-blue.png?raw=true)
-![Shark](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/shark.png?raw=true)
-![Cod Gray](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/cod-gray.png?raw=true)
-![Firefly](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/firefly.png?raw=true)
+![Default color theme](/combined-screenshots/default.png?raw=true)
+![River Bed](/combined-screenshots/river-bed.png?raw=true)
+![Oxford Blue](/combined-screenshots/oxford-blue.png?raw=true)
+![Shark](/combined-screenshots/shark.png?raw=true)
+![Cod Gray](/combined-screenshots/cod-gray.png?raw=true)
+![Firefly](/combined-screenshots/firefly.png?raw=true)
 
 
 ## Changelog
 Version 1.5.0
-* Added: Random Wrangler (RW)
+* Added: [Random Wrangler (RW)](/docs/rw.md)
+* Behind the scenes: Improved screenshot generation
 
 Version 1.4.2
 * Added: Dark ports for dark themes.
