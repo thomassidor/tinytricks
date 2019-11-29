@@ -55,11 +55,22 @@ Several [color themes](#color-themes) are included for each module:
 
 For all themes you can force the input ports to use a light theme, if you prefer the increased contrast. The option is available via right clicking the modules.
 
+#### Light (Default)
 ![Default color theme](/combined-screenshots/default.png?raw=true)
+
+#### River Bed
 ![River Bed](/combined-screenshots/river-bed.png?raw=true)
+
+#### Oxford Blue
 ![Oxford Blue](/combined-screenshots/oxford-blue.png?raw=true)
+
+#### Shark
 ![Shark](/combined-screenshots/shark.png?raw=true)
+
+#### Cod Gray
 ![Cod Gray](/combined-screenshots/cod-gray.png?raw=true)
+
+#### Firefly
 ![Firefly](/combined-screenshots/firefly.png?raw=true)
 
 
