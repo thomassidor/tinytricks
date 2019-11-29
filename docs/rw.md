@@ -1,4 +1,4 @@
-# Random Wrangler (A8)
+# Random Wrangler (RW)
 Random generator where you can define the probability of specific intervals from -5v to 5v.
 
 Knobs `[A-I]` sets the probability of the module returning a value from the corresponding interval.
