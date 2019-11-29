@@ -4,7 +4,7 @@ Randomly generated modulation sorces in 1x, 8x and 16x versions.
 Upon a trigger on `TRIG` the module generates either:
 
 1. A LFO with random frequency and shape.
-2 Or a random S&H value (only if the `S&H` switch is at 1. There’s a 50/50 chance you’ll get either a LFO or a constant S&H)
+2. Or a random S&H value (only if the `S&H` switch is at 1. There’s a 50/50 chance you’ll get either a LFO or a constant S&H)
 
 `VAR` (variance) sets how different the settings for the LFO and S&H will be when regenerated. E.g. setting VAR to 0 will give you a LFO with the same frequency everytime (although the shape of the LFO changes).
 
