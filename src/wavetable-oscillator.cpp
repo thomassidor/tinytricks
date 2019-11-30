@@ -5,6 +5,8 @@
 #include "widgets/wavetable-scope.cpp"
 
 
+#define POLY_SIZE 16
+
 struct WAVE : TinyTricksModule {
 	enum ParamIds {
   	FREQ_PARAM,
@@ -50,13 +52,12 @@ struct WAVE : TinyTricksModule {
 		NUM_LIGHTS
 	};
 
-	WaveTableOscillator oscillator1;
-	WaveTableOscillator oscillator2;
-	WaveTableOscillator oscillator3;
+	WaveTableOscillator oscillator1[POLY_SIZE];
+	WaveTableOscillator oscillator2[POLY_SIZE];
+	WaveTableOscillator oscillator3[POLY_SIZE];
 	
-	WaveTableScope* scope;
-
-	WaveTable* waveTable;
+	WaveTableScope* scope = nullptr;
+	WaveTable* waveTable = nullptr;
 
 	dsp::SchmittTrigger syncTrigger;
 
@@ -98,15 +99,21 @@ struct WAVE : TinyTricksModule {
 		configParam(WAVE::OSC3_SYNC_PARAM, 0.0f, 2.0f, 0.0f, "Sync mode");
 
 		waveTable = new WaveTable();
-		oscillator1.waveTable = waveTable;
-		oscillator2.waveTable = waveTable;
-		oscillator3.waveTable = waveTable;
+    for( auto i=0; i<POLY_SIZE; ++i )
+    {
+      oscillator1[i].waveTable = waveTable;
+      oscillator2[i].waveTable = waveTable;
+      oscillator3[i].waveTable = waveTable;
+    }
   }
 
 	WAVE() {
 		Initialize();
 	}
 
+  ~WAVE() {
+    delete waveTable;
+  }
 
 	json_t *dataToJson() override {
 		json_t *rootJ = json_object();
@@ -166,9 +173,12 @@ struct WAVE : TinyTricksModule {
 		json_t *mirrorJ = json_object_get(rootJ, "mirror");
 		if (mirrorJ) mirror = json_is_true(mirrorJ);
 		lights[MIRROR_LIGHT].value = mirror;
-		oscillator1.setMirror(mirror);
-		oscillator2.setMirror(mirror);
-		oscillator3.setMirror(mirror);
+    for( auto i=0; i<POLY_SIZE; ++i )
+    {
+      oscillator1[i].setMirror(mirror);
+      oscillator2[i].setMirror(mirror);
+      oscillator3[i].setMirror(mirror);
+    }
 		scope->setMirror(mirror);
 
 		//Osc2
@@ -242,9 +252,12 @@ struct WAVE : TinyTricksModule {
 				inCaptureMode = false;
 				recording = false;
 				finalizeRecording = false;
-				oscillator1.prevPitch = 0.f;
-				oscillator2.prevPitch = 0.f;
-				oscillator3.prevPitch = 0.f;
+        for( auto i=0; i<POLY_SIZE; ++i )
+        {
+          oscillator1[i].prevPitch = 0.f;
+          oscillator2[i].prevPitch = 0.f;
+          oscillator3[i].prevPitch = 0.f;
+        }
 
 				scope->generate(waveTable,10);
 			}
@@ -254,11 +267,15 @@ struct WAVE : TinyTricksModule {
 
   void process(const ProcessArgs &args) override{
 		//Setting mirror
-		if (mirrorButtonTrigger.process(params[MIRROR_PARAM].value) || (inputs[MIRROR_TRIGGER_INPUT].isConnected() && mirrorButtonTrigger.process(inputs[MIRROR_TRIGGER_INPUT].value))) {
+		if (mirrorButtonTrigger.process(params[MIRROR_PARAM].value) ||
+        (inputs[MIRROR_TRIGGER_INPUT].isConnected() && mirrorButtonTrigger.process(inputs[MIRROR_TRIGGER_INPUT].value))) {
 			mirror = !mirror;
-			oscillator1.setMirror(mirror);
-			oscillator2.setMirror(mirror);
-			oscillator3.setMirror(mirror);
+      for( auto i=0; i<POLY_SIZE; ++i )
+      {
+        oscillator1[i].setMirror(mirror);
+        oscillator2[i].setMirror(mirror);
+        oscillator3[i].setMirror(mirror);
+      }
 			scope->setMirror(mirror);
 		}
 		lights[MIRROR_LIGHT].value = mirror;
@@ -266,112 +283,122 @@ struct WAVE : TinyTricksModule {
 		//Setting osc2 enable
 		if (osc2EnableTrigger.process(params[OSC2_ENABLE_PARAM].value)) {
 			osc2Enabled = !osc2Enabled;
-			oscillator2.reset();
+      for( auto i=0; i<POLY_SIZE; ++i )
+        oscillator2[i].reset();
 		}
 		lights[OSC2_ENABLE_LIGHT].value = osc2Enabled;
 
 		//Setting osc2 enable
 		if (osc3EnableTrigger.process(params[OSC3_ENABLE_PARAM].value)) {
 			osc3Enabled = !osc3Enabled;
-			oscillator3.reset();
+      for( auto i=0; i<POLY_SIZE; ++i )
+        oscillator3[i].reset();
 		}
 		lights[OSC3_ENABLE_LIGHT].value = osc3Enabled;
 
 		//Manage capture...
 		manageinCaptureMode();
 
-		if(!inCaptureMode){
-			//Setting the pitch
-	  	float pitch = params[FREQ_PARAM].getValue();
-	    if(inputs[FREQ_CV_INPUT].isConnected())
-	      pitch += inputs[FREQ_CV_INPUT].getVoltage();
-	    pitch += params[FREQ_FINE_PARAM].getValue();
-	    if(inputs[FREQ_FINE_CV_INPUT].isConnected())
-	      pitch += inputs[FREQ_FINE_CV_INPUT].getVoltage()/5.f;
-	  	pitch = clamp(pitch, -3.5f, 3.5f);
-	    oscillator1.setPitch(pitch, args.sampleRate);
+    // Polyphony is driven here by the FREQ_CV_INPUT
 
+    int nChan = std::max(1, inputs[FREQ_CV_INPUT].getChannels());
+    outputs[AUDIO_OUTPUT].setChannels(nChan);
 
-			float osc2Detune = pitch + params[OSC2_DETUNE_PARAM].getValue();
-			if(inputs[OSC2_DETUNE_CV_INPUT].isConnected())
-	      osc2Detune += inputs[OSC2_DETUNE_CV_INPUT].getVoltage()/5.f;
-			oscillator2.setPitch(osc2Detune, args.sampleRate);
-
-
-			float osc3Detune = osc2Detune + params[OSC3_DETUNE_PARAM].getValue();
-			if(inputs[OSC3_DETUNE_CV_INPUT].isConnected())
-	      osc3Detune += inputs[OSC3_DETUNE_CV_INPUT].getVoltage()/5.f;
-			oscillator3.setPitch(osc3Detune, args.sampleRate);
-
-
-			//Getting y
-			std::vector<float> ys;
-			ys.reserve(3);
-
-
-			float osc1Y = params[OSC1_Y_PARAM].getValue();
-			if(inputs[OSC1_Y_CV_INPUT].isConnected()){
-				osc1Y += inputs[OSC1_Y_CV_INPUT].getVoltage()/10.f;
-				osc1Y = clamp(osc1Y, 0.f, 1.f);
-			}
-			ys.push_back(osc1Y);
-
-			float osc2Y;
-			if(osc2Enabled){
-				osc2Y = osc1Y + params[OSC2_Y_PARAM].getValue();
-				if(inputs[OSC2_Y_CV_INPUT].isConnected())
-					osc2Y += inputs[OSC2_Y_CV_INPUT].getVoltage()/10.f;
-				osc2Y = clamp(osc2Y, 0.f, 1.f);
-				ys.push_back(osc2Y);
-			}
-
-			float osc3Y;
-			if(osc3Enabled){
-				osc3Y = osc1Y + params[OSC3_Y_PARAM].getValue();
-				if(inputs[OSC3_Y_CV_INPUT].isConnected())
-					osc3Y += inputs[OSC3_Y_CV_INPUT].getVoltage()/10.f;
-				osc3Y = clamp(osc3Y, 0.f, 1.f);
-				ys.push_back(osc3Y);
-			}
-
-			scope->setYs(ys);
-
-
-			//Stepping and syncing
-			bool syncOsc2ToMain = (params[OSC2_SYNC_PARAM].getValue() == 1.f);
-			int osc3SyncMode = params[OSC3_SYNC_PARAM].getValue();
-			oscillator1.step();
-
-			//Syncing osc2
-			if(syncOsc2ToMain && oscillator1.isEOC())
-				oscillator2.reset();
-			oscillator2.step();
-
-			if(osc3SyncMode != 0.f){
-				if(osc3SyncMode == 1.f && osc2Enabled && oscillator2.isEOC())
-					oscillator3.reset();
-				else if(osc3SyncMode == 2.f && oscillator1.isEOC())
-					oscillator3.reset();
-			}
-			oscillator3.step();
-
-			//Getting samples
-			int divisor = 1;
-			float out = oscillator1.getSample(osc1Y);
-			if(osc2Enabled){
-				out += oscillator2.getSample(osc2Y);
-				divisor++;
-			}
-			if(osc3Enabled){
-				out += oscillator3.getSample(osc3Y);
-				divisor++;
-			}
-			float mix = (out)/(float)divisor;
-			//Setting the mix out
-    	outputs[AUDIO_OUTPUT].setVoltage(mix);
-		}
-		else
-			outputs[AUDIO_OUTPUT].setVoltage(0.f);
+    for( int c=0; c<nChan; ++c )
+    {
+      if(!inCaptureMode){
+        //Setting the pitch
+        float pitch = params[FREQ_PARAM].getValue();
+        if(inputs[FREQ_CV_INPUT].isConnected())
+          pitch += inputs[FREQ_CV_INPUT].getVoltage(c);
+        pitch += params[FREQ_FINE_PARAM].getValue();
+        if(inputs[FREQ_FINE_CV_INPUT].isConnected())
+          pitch += inputs[FREQ_FINE_CV_INPUT].getPolyVoltage(c)/5.f;
+        pitch = clamp(pitch, -3.5f, 3.5f);
+        oscillator1[c].setPitch(pitch, args.sampleRate);
+        
+        
+        float osc2Detune = pitch + params[OSC2_DETUNE_PARAM].getValue();
+        if(inputs[OSC2_DETUNE_CV_INPUT].isConnected())
+          osc2Detune += inputs[OSC2_DETUNE_CV_INPUT].getPolyVoltage(c)/5.f;
+        oscillator2[c].setPitch(osc2Detune, args.sampleRate);
+        
+        
+        float osc3Detune = osc2Detune + params[OSC3_DETUNE_PARAM].getValue();
+        if(inputs[OSC3_DETUNE_CV_INPUT].isConnected())
+          osc3Detune += inputs[OSC3_DETUNE_CV_INPUT].getPolyVoltage(c)/5.f;
+        oscillator3[c].setPitch(osc3Detune, args.sampleRate);
+        
+        
+        //Getting y
+        std::vector<float> ys;
+        ys.reserve(3);
+        
+        
+        float osc1Y = params[OSC1_Y_PARAM].getValue();
+        if(inputs[OSC1_Y_CV_INPUT].isConnected()){
+          osc1Y += inputs[OSC1_Y_CV_INPUT].getPolyVoltage(c)/10.f;
+          osc1Y = clamp(osc1Y, 0.f, 1.f);
+        }
+        ys.push_back(osc1Y);
+        
+        float osc2Y;
+        if(osc2Enabled){
+          osc2Y = osc1Y + params[OSC2_Y_PARAM].getValue();
+          if(inputs[OSC2_Y_CV_INPUT].isConnected())
+            osc2Y += inputs[OSC2_Y_CV_INPUT].getPolyVoltage(c)/10.f;
+          osc2Y = clamp(osc2Y, 0.f, 1.f);
+          ys.push_back(osc2Y);
+        }
+        
+        float osc3Y;
+        if(osc3Enabled){
+          osc3Y = osc1Y + params[OSC3_Y_PARAM].getValue();
+          if(inputs[OSC3_Y_CV_INPUT].isConnected())
+            osc3Y += inputs[OSC3_Y_CV_INPUT].getPolyVoltage(c)/10.f;
+          osc3Y = clamp(osc3Y, 0.f, 1.f);
+          ys.push_back(osc3Y);
+        }
+        
+        scope->setYs(ys);
+        
+        
+        //Stepping and syncing
+        bool syncOsc2ToMain = (params[OSC2_SYNC_PARAM].getValue() == 1.f);
+        int osc3SyncMode = params[OSC3_SYNC_PARAM].getValue();
+        oscillator1[c].step();
+        
+        //Syncing osc2
+        if(syncOsc2ToMain && oscillator1[c].isEOC())
+          oscillator2[c].reset();
+        oscillator2[c].step();
+        
+        if(osc3SyncMode != 0.f){
+          if(osc3SyncMode == 1.f && osc2Enabled && oscillator2[c].isEOC())
+            oscillator3[c].reset();
+          else if(osc3SyncMode == 2.f && oscillator1[c].isEOC())
+            oscillator3[c].reset();
+        }
+        oscillator3[c].step();
+        
+        //Getting samples
+        int divisor = 1;
+        float out = oscillator1[c].getSample(osc1Y);
+        if(osc2Enabled){
+          out += oscillator2[c].getSample(osc2Y);
+          divisor++;
+        }
+        if(osc3Enabled){
+          out += oscillator3[c].getSample(osc3Y);
+          divisor++;
+        }
+        float mix = (out)/(float)divisor;
+        //Setting the mix out
+        outputs[AUDIO_OUTPUT].setVoltage(mix, c);
+      }
+      else
+        outputs[AUDIO_OUTPUT].setVoltage(0.f, c);
+    }
   }
 };
 
