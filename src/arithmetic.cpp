@@ -36,25 +36,30 @@ struct TTA : TinyTricksModule {
   }
 
   void process(const ProcessArgs &args) override {
-  	if (inputs[A_INPUT].isConnected() && inputs[B_INPUT].isConnected()) {
-      float a = inputs[A_INPUT].getVoltage();
-      float b = inputs[B_INPUT].getVoltage();
+    int nChan = std::max(1, inputs[A_INPUT].getChannels());
+    for( int op=APLUSB_OUTPUT; op < NUM_OUTPUTS; op++ )
+        outputs[op].setChannels(nChan);
 
-      outputs[APLUSB_OUTPUT].setVoltage(a+b);
-      outputs[AVGAB_OUTPUT].setVoltage((a+b)/2);
-      outputs[AMINUSB_OUTPUT].setVoltage(a-b);
-      outputs[BMINUSA_OUTPUT].setVoltage(b-a);
-      outputs[ADIVB_OUTPUT].setVoltage((b==0.f?0.f:a/b));
-      outputs[BDIVA_OUTPUT].setVoltage((a==0.f?0.f:b/a));
-      outputs[AMULB_OUTPUT].setVoltage(a*b);
-      outputs[AEXPB_OUTPUT].setVoltage(pow(a,b));
-      outputs[ONEOVERA_OUTPUT].setVoltage((a==0.f?0.f:1/a));
-      outputs[ONEOVERB_OUTPUT].setVoltage((b==0.f?0.f:1/b));
-      outputs[MINUSA_OUTPUT].setVoltage(-a);
-      outputs[MINUSB_OUTPUT].setVoltage(-b);
+    for( auto c=0; c<nChan; ++c )
+    {
+      if (inputs[A_INPUT].isConnected() && inputs[B_INPUT].isConnected()) {
+        float a = inputs[A_INPUT].getVoltage(c);
+        float b = inputs[B_INPUT].getPolyVoltage(c);
 
-
-  	}
+        outputs[APLUSB_OUTPUT].setVoltage(a+b, c);
+        outputs[AVGAB_OUTPUT].setVoltage((a+b)/2, c);
+        outputs[AMINUSB_OUTPUT].setVoltage(a-b, c);
+        outputs[BMINUSA_OUTPUT].setVoltage(b-a, c);
+        outputs[ADIVB_OUTPUT].setVoltage((b==0.f?0.f:a/b), c);
+        outputs[BDIVA_OUTPUT].setVoltage((a==0.f?0.f:b/a), c);
+        outputs[AMULB_OUTPUT].setVoltage(a*b, c);
+        outputs[AEXPB_OUTPUT].setVoltage(pow(a,b), c);
+        outputs[ONEOVERA_OUTPUT].setVoltage((a==0.f?0.f:1/a), c);
+        outputs[ONEOVERB_OUTPUT].setVoltage((b==0.f?0.f:1/b), c);
+        outputs[MINUSA_OUTPUT].setVoltage(-a, c);
+        outputs[MINUSB_OUTPUT].setVoltage(-b, c);
+      }
+    }
   }
 };
 

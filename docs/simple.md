@@ -7,6 +7,8 @@ Four basic 3HP oscillators. Waveform shapes:
 * SAW - Saw
 * SQR - Square
 
+Supports polyphony.
+
 `FREQ` sets the oscillators frequency. CV input for 1v/oct.
 
 `FINE` is for fine tuning the frequency.

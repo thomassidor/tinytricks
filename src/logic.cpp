@@ -36,29 +36,33 @@ struct TTL : TinyTricksModule {
   }
 
   void process(const ProcessArgs &args) override {
-  	if (inputs[A_INPUT].isConnected() && inputs[B_INPUT].isConnected()) {
-      float a = inputs[A_INPUT].getVoltage();
-      float b = inputs[B_INPUT].getVoltage();
+    int nChan = std::max(1, inputs[A_INPUT].getChannels());
+    for( int op=AND_OUTPUT; op < NUM_OUTPUTS; op++ )
+        outputs[op].setChannels(nChan);
 
-      bool isA = (a!=0.f);
-      bool isB = (b!=0.f);
+    for( auto c=0; c<nChan; ++c )
+    {
+        if (inputs[A_INPUT].isConnected() && inputs[B_INPUT].isConnected()) {
+            float a = inputs[A_INPUT].getVoltage(c);
+            float b = inputs[B_INPUT].getPolyVoltage(c);
 
-      outputs[AND_OUTPUT].setVoltage((isA && isB?10.f:0.f));
-      outputs[OR_OUTPUT].setVoltage((isA || isB?10.f:0.f));
-      outputs[XOR_OUTPUT].setVoltage((isA != isB?10.f:0.f));
-      outputs[NOR_OUTPUT].setVoltage((!(a || b)?10.f:0.f));
-      outputs[ALTB_OUTPUT].setVoltage((a<b?10.f:0.f));
-      outputs[AGTB_OUTPUT].setVoltage((a>b?10.f:0.f));
-      outputs[ALTEB_OUTPUT].setVoltage((a<=b?10.f:0.f));
-      outputs[AGTEB_OUTPUT].setVoltage((a>=b?10.f:0.f));
-      outputs[AISB_OUTPUT].setVoltage((a==b?10.f:0.f));
-      outputs[AISNOTB_OUTPUT].setVoltage((a!=b?10.f:0.f));
-      outputs[NOTA_OUTPUT].setVoltage(!a);
-      outputs[NOTB_OUTPUT].setVoltage(!b);
+            bool isA = (a!=0.f);
+            bool isB = (b!=0.f);
 
-
-
-  	}
+            outputs[AND_OUTPUT].setVoltage((isA && isB?10.f:0.f), c);
+            outputs[OR_OUTPUT].setVoltage((isA || isB?10.f:0.f), c);
+            outputs[XOR_OUTPUT].setVoltage((isA != isB?10.f:0.f), c);
+            outputs[NOR_OUTPUT].setVoltage((!(a || b)?10.f:0.f), c);
+            outputs[ALTB_OUTPUT].setVoltage((a<b?10.f:0.f), c);
+            outputs[AGTB_OUTPUT].setVoltage((a>b?10.f:0.f), c);
+            outputs[ALTEB_OUTPUT].setVoltage((a<=b?10.f:0.f), c);
+            outputs[AGTEB_OUTPUT].setVoltage((a>=b?10.f:0.f), c);
+            outputs[AISB_OUTPUT].setVoltage((a==b?10.f:0.f), c);
+            outputs[AISNOTB_OUTPUT].setVoltage((a!=b?10.f:0.f), c);
+            outputs[NOTA_OUTPUT].setVoltage(!a, c);
+            outputs[NOTB_OUTPUT].setVoltage(!b, c);
+        }
+    }
   }
 };
 

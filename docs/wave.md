@@ -1,6 +1,8 @@
 # Wavetable Oscillator (WAVE)
 A wavetable style oscillator - with three seperate oscillators - where you can (and need to) capture your own waves.
 
+Supports polyphony.
+
 ## Creating the wavetable
 To capture a wavetable connect audio to `WAVE TOP`, `MIDDLE` and `BOTTOM` and press `CAPTURE`. This will record the incoming audio to the respectively the top, middle and bottom positions in the wavetable. Intermediate values are automatically interpolated.
 
@@ -33,6 +35,3 @@ These are seperate oscillators using the same wavetable that can be turned on an
 ![Oxford blue theme](/module-screenshots/oxford-blue/WAVE.png?raw=true)
 ![Cod gray theme](/module-screenshots/cod-gray/WAVE.png?raw=true)
 ![Firefly theme](/module-screenshots/firefly/WAVE.png?raw=true)
-
-
-

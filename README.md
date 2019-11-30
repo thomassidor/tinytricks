@@ -73,10 +73,17 @@ For all themes you can force the input ports to use a light theme, if you prefer
 #### Firefly
 ![Firefly](/combined-screenshots/firefly.png?raw=true)
 
+## Authors
+@thomassidor - Project owner.
+@baconpaul - Added polyphony to oscillator, logic and arithmetic modules.
+
 
 ## Changelog
+
 Version 1.5.0
 * Added: [Random Wrangler (RW)](/docs/rw.md)
+* Added: Polyphony to simple oscillators (SIN, SAW, SQR, TRI), plus oscillators (SIN+, SAW+, SQR+, TRI+), Simplex Oscillator (SN-OSC), WAVE, TT-A and TT-L. Huge thanks to @baconpaul for contributing with this to the project!
+* Behind the scenes: Refactored WAVE for performance improvements.
 * Behind the scenes: Improved screenshot generation
 
 Version 1.4.2

@@ -2,6 +2,8 @@
 #include "shared/shared.cpp"
 #include "oscillators/oscillator.cpp"
 
+#define POLY_SIZE 16
+
 struct TTOBase : TinyTricksModule {
 	enum ParamIds {
 		FREQ_PARAM,
@@ -25,20 +27,27 @@ struct TTOBase : TinyTricksModule {
 		NUM_LIGHTS
 	};
 
-  TinyOscillator oscillator;
+  TinyOscillator oscillator[POLY_SIZE];
   TinyOscillator::OscillatorType oscType;
-  float prevPitch = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
-  float prevTheta = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
-  dsp::SchmittTrigger syncTrigger;
+  float prevPitch[POLY_SIZE];
+  float prevTheta[POLY_SIZE];
+  dsp::SchmittTrigger syncTrigger[POLY_SIZE];
 
   void Initialize(){
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
     configParam(TTOBase::FREQ_PARAM, -3.0f, 3.0f, 0.0f, "Tuning");
     configParam(TTOBase::FREQ_FINE_PARAM, -0.5f, 0.5f, 0.0f, "Fine tuning");
     configParam(TTOBase::THETA_PARAM, 0.0001f, 0.1f, 0.01f, "Theta (smoothness)");
+
+    for( auto i=0; i<POLY_SIZE; ++i )
+    {
+      prevPitch[i] = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
+      prevTheta[i] = 900000.f; //Crude fix for making sure that oscillators oscillate upon module init
+    }
   }
 
 	TTOBase() {
+    oscType = TinyOscillator::OscillatorType::SIN;
 		Initialize();
 	}
 
@@ -49,69 +58,78 @@ struct TTOBase : TinyTricksModule {
 
 
   void process(const ProcessArgs &args) override{
-
-    //Setting the pitch
-  	float pitch = params[FREQ_PARAM].getValue();
-    if(inputs[FREQ_CV_INPUT].isConnected())
-      pitch += inputs[FREQ_CV_INPUT].getVoltage();
-    pitch += params[FREQ_FINE_PARAM].getValue();
-    if(inputs[FREQ_FINE_CV_INPUT].isConnected())
-      pitch += inputs[FREQ_FINE_CV_INPUT].getVoltage()/5.f;
-  	pitch = clamp(pitch, -3.5f, 3.5f);
-
-    if(pitch != prevPitch){
-      oscillator.setPitch(pitch);
-      prevPitch = pitch;
-    }
-
-
-    //Setting Theta
-    float theta = params[THETA_PARAM].getValue();
-
-    if(inputs[THETA_CV_INPUT].isConnected())
-      theta += inputs[THETA_CV_INPUT].getVoltage()/100.f;
-
-    theta = clamp(theta,0.0001f,0.1f);
-
-    if(theta != prevTheta){
-      oscillator.setTheta(theta);
-      prevTheta = theta;
-    }
-
-
-
-    //Stepping
-    oscillator.step(args.sampleRate);
-
-    //Resetting if synced
-    if(inputs[SYNC_INPUT].isConnected() && syncTrigger.process(inputs[SYNC_INPUT].getVoltage()))
-      oscillator.reset();
-
-
-    //Getting the value
-    float value = 0.f;
-    switch (oscType) {
+    // We want to use the FREQ_CV_INPUT to drive polyphony
+    int nChan = std::max(1, inputs[FREQ_CV_INPUT].getChannels());
+    outputs[OSC_OUTPUT].setChannels(nChan);
+    outputs[SYNC_OUTPUT].setChannels(nChan);
+      
+    for( int c=0; c<nChan; ++c )
+    {
+      //Setting the pitch
+      float pitch = params[FREQ_PARAM].getValue();
+      if(inputs[FREQ_CV_INPUT].isConnected())
+        pitch += inputs[FREQ_CV_INPUT].getPolyVoltage(c);
+          
+      pitch += params[FREQ_FINE_PARAM].getValue();
+      if(inputs[FREQ_FINE_CV_INPUT].isConnected())
+        pitch += inputs[FREQ_FINE_CV_INPUT].getPolyVoltage(c)/5.f;
+          
+      pitch = clamp(pitch, -3.5f, 3.5f);
+          
+      if(pitch != prevPitch[c]){
+        oscillator[c].setPitch(pitch);
+        prevPitch[c] = pitch;
+      }
+          
+          
+      //Setting Theta
+      float theta = params[THETA_PARAM].getValue();
+          
+      if(inputs[THETA_CV_INPUT].isConnected())
+        theta += inputs[THETA_CV_INPUT].getPolyVoltage(c)/100.f;
+          
+      theta = clamp(theta,0.0001f,0.1f);
+          
+      if(theta != prevTheta[c]){
+        oscillator[c].setTheta(theta);
+        prevTheta[c] = theta;
+      }
+          
+          
+          
+      //Stepping
+      oscillator[c].step(args.sampleRate);
+          
+      //Resetting if synced
+      if(inputs[SYNC_INPUT].isConnected() && syncTrigger[c].process(inputs[SYNC_INPUT].getPolyVoltage(c)))
+        oscillator[c].reset();
+          
+          
+      //Getting the value
+      float value = 0.f;
+      switch (oscType) {
       case TinyOscillator::OscillatorType::SIN:
-        value = oscillator.getSin();
+        value = oscillator[c].getSin();
         break;
-
+              
       case TinyOscillator::OscillatorType::SAW:
-        value = oscillator.getSaw();
+        value = oscillator[c].getSaw();
         break;
-
+              
       case TinyOscillator::OscillatorType::SQR:
-        value = oscillator.getSqr();
+        value = oscillator[c].getSqr();
         break;
-
+              
       case TinyOscillator::OscillatorType::TRI:
-        value = oscillator.getTri();
+        value = oscillator[c].getTri();
         break;
+      }
+      //Setting output
+      outputs[OSC_OUTPUT].setVoltage(value, c);
+          
+      if(outputs[SYNC_OUTPUT].isConnected())
+        outputs[SYNC_OUTPUT].setVoltage(oscillator[c].isEOC() ? 10.f : 0.f, c);
     }
-    //Setting output
-  	outputs[OSC_OUTPUT].setVoltage(value);
-
-    if(outputs[SYNC_OUTPUT].isConnected())
-        outputs[SYNC_OUTPUT].setVoltage(oscillator.isEOC() ? 10.f : 0.f);
   }
 };
 
