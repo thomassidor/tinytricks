@@ -52,47 +52,41 @@ struct MiniScope : TransparentWidget {
 	}
 
   void draw(const DrawArgs &args) override {
-		//std::cout << "drawing: " << id <<std::endl;
 		if(!stopped){
 			Rect b = Rect(Vec(0, 0), box.size);
-			drawWave(args, b, gainCalculated, buffer, waveEnd, lineWeight*(alpha), (int)ceil(255.f*alpha));
+			nvgSave(args.vg);
+
+			//Draw scope
+			nvgBeginPath(args.vg);
+			nvgStrokeColor(args.vg, nvgRGBA(255,255,255,(int)ceil(255.f*alpha)));
+			nvgStrokeWidth(args.vg, lineWeight*(alpha));
+
+			float halfway = waveEnd/2.f;
+
+			//Adding the points
+			for (int i = 0; i < waveEnd; i++) {
+				int adjustedIndex = i;
+				if(mirror && i > halfway){
+					adjustedIndex = halfway - (i-halfway);
+				}
+				Vec v;
+				v.x = (float) i / (waveEnd - 1);
+				v.y = buffer[adjustedIndex] * gainCalculated / 2.f + 0.5f;
+				Vec p;
+				p.x = rescale(v.x, 0.f, 1.f, b.pos.x, b.pos.x + b.size.x);
+				p.y = rescale(v.y, 0.f, 1.f, b.pos.y + b.size.y, b.pos.y);
+				if (i == 0)
+					nvgMoveTo(args.vg, p.x, p.y);
+				else
+					nvgLineTo(args.vg, p.x, p.y);
+			}
+			nvgLineCap(args.vg, NVG_ROUND);
+			nvgLineJoin(args.vg, NVG_ROUND);
+			nvgStroke(args.vg);
+			nvgClosePath(args.vg);
+			//Done with scope
+
+			nvgRestore(args.vg);
 		}
   }
-
-	void drawWave(const DrawArgs &args, Rect b, float gain, float* buffer, int waveEnd, float lineWeight, int alpha){
-
-		nvgSave(args.vg);
-
-		//Draw scope
-		nvgBeginPath(args.vg);
-		nvgStrokeColor(args.vg, nvgRGBA(255,255,255,alpha));
-		nvgStrokeWidth(args.vg, lineWeight);
-
-		float halfway = waveEnd/2.f;
-
-		//Adding the points
-		for (int i = 0; i < waveEnd; i++) {
-			int adjustedIndex = i;
-			if(mirror && i > halfway){
-				adjustedIndex = halfway - (i-halfway);
-			}
-			Vec v;
-			v.x = (float) i / (waveEnd - 1);
-			v.y = buffer[adjustedIndex] * gain / 2.f + 0.5f;
-			Vec p;
-			p.x = rescale(v.x, 0.f, 1.f, b.pos.x, b.pos.x + b.size.x);
-			p.y = rescale(v.y, 0.f, 1.f, b.pos.y + b.size.y, b.pos.y);
-			if (i == 0)
-				nvgMoveTo(args.vg, p.x, p.y);
-			else
-				nvgLineTo(args.vg, p.x, p.y);
-		}
-		nvgLineCap(args.vg, NVG_ROUND);
-		nvgLineJoin(args.vg, NVG_ROUND);
-		nvgStroke(args.vg);
-		nvgClosePath(args.vg);
-		//Done with scope
-
-		nvgRestore(args.vg);
-	}
 };
