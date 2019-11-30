@@ -41,8 +41,13 @@ All the  best, Thomas René Sidor
 * Simplex Oscillator (SN-OSC)
 * [Wavetable Oscillator (WAVE)](/docs/wave.md)
 
+## Authors
+@thomassidor - Project owner.
 
-### Color themes
+@baconpaul - Added polyphony to oscillator, logic and arithmetic modules.
+
+
+## Color themes
 Several color themes are included for each module:
 
 * Light (Default)
@@ -73,9 +78,6 @@ For all themes you can force the input ports to use a light theme, if you prefer
 #### Firefly
 ![Firefly](/combined-screenshots/firefly.png?raw=true)
 
-## Authors
-@thomassidor - Project owner.
-@baconpaul - Added polyphony to oscillator, logic and arithmetic modules.
 
 
 ## Changelog
