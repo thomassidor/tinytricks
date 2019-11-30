@@ -55,7 +55,7 @@ struct WAVE : TinyTricksModule {
 	WaveTableOscillator oscillator1[POLY_SIZE];
 	WaveTableOscillator oscillator2[POLY_SIZE];
 	WaveTableOscillator oscillator3[POLY_SIZE];
-	
+
 	WaveTableScope* scope = nullptr;
 	WaveTable* waveTable = nullptr;
 
@@ -316,63 +316,67 @@ struct WAVE : TinyTricksModule {
           pitch += inputs[FREQ_FINE_CV_INPUT].getPolyVoltage(c)/5.f;
         pitch = clamp(pitch, -3.5f, 3.5f);
         oscillator1[c].setPitch(pitch, args.sampleRate);
-        
-        
+
+
         float osc2Detune = pitch + params[OSC2_DETUNE_PARAM].getValue();
         if(inputs[OSC2_DETUNE_CV_INPUT].isConnected())
           osc2Detune += inputs[OSC2_DETUNE_CV_INPUT].getPolyVoltage(c)/5.f;
         oscillator2[c].setPitch(osc2Detune, args.sampleRate);
-        
-        
+
+
         float osc3Detune = osc2Detune + params[OSC3_DETUNE_PARAM].getValue();
         if(inputs[OSC3_DETUNE_CV_INPUT].isConnected())
           osc3Detune += inputs[OSC3_DETUNE_CV_INPUT].getPolyVoltage(c)/5.f;
         oscillator3[c].setPitch(osc3Detune, args.sampleRate);
-        
-        
+
+
         //Getting y
         std::vector<float> ys;
-        ys.reserve(3);
-        
-        
+				if(c==0)
+        	ys.reserve(3);
+
+
         float osc1Y = params[OSC1_Y_PARAM].getValue();
         if(inputs[OSC1_Y_CV_INPUT].isConnected()){
           osc1Y += inputs[OSC1_Y_CV_INPUT].getPolyVoltage(c)/10.f;
           osc1Y = clamp(osc1Y, 0.f, 1.f);
         }
         ys.push_back(osc1Y);
-        
+
         float osc2Y;
         if(osc2Enabled){
           osc2Y = osc1Y + params[OSC2_Y_PARAM].getValue();
           if(inputs[OSC2_Y_CV_INPUT].isConnected())
             osc2Y += inputs[OSC2_Y_CV_INPUT].getPolyVoltage(c)/10.f;
           osc2Y = clamp(osc2Y, 0.f, 1.f);
-          ys.push_back(osc2Y);
+					if(c==0)
+          	ys.push_back(osc2Y);
         }
-        
+
         float osc3Y;
         if(osc3Enabled){
           osc3Y = osc1Y + params[OSC3_Y_PARAM].getValue();
           if(inputs[OSC3_Y_CV_INPUT].isConnected())
             osc3Y += inputs[OSC3_Y_CV_INPUT].getPolyVoltage(c)/10.f;
           osc3Y = clamp(osc3Y, 0.f, 1.f);
-          ys.push_back(osc3Y);
+					if(c==0)
+          	ys.push_back(osc3Y);
         }
-        
-        scope->setYs(ys);
-        
-        
+
+				if(c==0)
+        	scope->setYs(ys);
+
+
         //Stepping and syncing
         bool syncOsc2ToMain = (params[OSC2_SYNC_PARAM].getValue() == 1.f);
         int osc3SyncMode = params[OSC3_SYNC_PARAM].getValue();
         oscillator1[c].step();
-        
+
         //Syncing osc2
         if(syncOsc2ToMain && oscillator1[c].isEOC())
           oscillator2[c].reset();
         oscillator2[c].step();
-        
+
         if(osc3SyncMode != 0.f){
           if(osc3SyncMode == 1.f && osc2Enabled && oscillator2[c].isEOC())
             oscillator3[c].reset();
@@ -380,7 +384,7 @@ struct WAVE : TinyTricksModule {
             oscillator3[c].reset();
         }
         oscillator3[c].step();
-        
+
         //Getting samples
         int divisor = 1;
         float out = oscillator1[c].getSample(osc1Y);

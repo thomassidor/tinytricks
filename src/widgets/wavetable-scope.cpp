@@ -99,9 +99,8 @@ struct WaveTableScope : FramebufferWidget {
 					alpha = alpha + 0.5f;
 				drawWave(args, b, i, alpha);
 			}
-			FramebufferWidget::draw(args);
 		}
-
+		FramebufferWidget::draw(args);
 	}
 
 	void drawWave(const DrawArgs &args, Rect b, int level, float alpha){

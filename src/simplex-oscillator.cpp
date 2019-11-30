@@ -109,7 +109,7 @@ struct SNOSC : TinyTricksModule {
         oscillator[c].setMirror(mirror);
     }
     lights[MIRROR_LIGHT].value = (mirror);
-    
+
     for( auto c=0; c<nChan; ++c )
     {
       //Setting the pitch
@@ -157,19 +157,23 @@ struct SNOSC : TinyTricksModule {
       //Resetting if synced
       bool forwardSyncReset = false;
       if(inputs[SYNC_INPUT].isConnected()){
-        ticksSinceScopeReset++;
+
+				if(c == 0)
+        	ticksSinceScopeReset++;
+
         float voltage = inputs[SYNC_INPUT].getPolyVoltage(c);
         if(syncTrigger[c].process(voltage)){
           oscillator[c].reset();
           forwardSyncReset = true;
-          if(voltage >= 11.f){
+          if(voltage >= 11.f && c==0){
             scope->reset();
             ticksSinceScopeReset = 0;
           }
         }
       }
       else{
-        ticksSinceScopeReset = 0;
+				if(c==0)
+        	ticksSinceScopeReset = 0;
       }
 
       //Stepping
@@ -179,12 +183,8 @@ struct SNOSC : TinyTricksModule {
       //Setting output
       outputs[OSC_OUTPUT].setVoltage(value, c);
 
-      if( c == 0 )
-      {
-        //Updating scope. To Consider - polyphonic scope?
+      if(c == 0) //Updating scope. To Consider - polyphonic scope?
         scope->addFrame(value);
-      }
-
 
       //TODO: Clean up this logic. It's not pretty.
       if(forwardSyncReset){
@@ -197,7 +197,7 @@ struct SNOSC : TinyTricksModule {
           outputs[SYNC_OUTPUT].setVoltage(10.f, c);
         // Normally we'll reset the scope on EOC,
         // but not if sync is connected - unless it's been too long since last sync
-        if(!inputs[SYNC_INPUT].isConnected() || ticksSinceScopeReset > SimplexOscillator::BUFFER_LENGTH)
+        if(c==0 && (!inputs[SYNC_INPUT].isConnected() || ticksSinceScopeReset > SimplexOscillator::BUFFER_LENGTH))
           scope->reset();
       }
       else{
