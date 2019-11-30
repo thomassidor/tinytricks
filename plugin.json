@@ -2,7 +2,7 @@
   "slug": "TinyTricks",
   "name": "Tiny Tricks",
   "brand": "Tiny Tricks",
-  "version": "1.4.3",
+  "version": "1.5.3",
   "license": "GPL-3.0-only",
   "author": "Thomas René Sidor",
   "authorEmail": "mail@thomassidor.com",
@@ -207,6 +207,17 @@
       "description": "A wavetable oscillator where you can record your own waves.",
       "tags": [
         "oscillator"
+      ]
+    },
+    {
+      "slug": "RW",
+      "name": "Random Wrangler",
+      "description": "Random generation that you control.",
+      "tags": [
+        "random",
+        "noise",
+        "low-frequency oscillator",
+        "sample and hold"
       ]
     }
   ]
