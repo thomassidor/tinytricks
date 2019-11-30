@@ -76,7 +76,6 @@ struct SNOSC : TinyTricksModule {
 	//Got this approach from https://github.com/Miserlou/RJModules/blob/master/src/ChordSeq.cpp
 	json_t *dataToJson() override {
 		json_t *rootJ = json_object();
-		// Mirror. FIXME this becomes an array
 		json_object_set_new(rootJ, "mirror", json_boolean(mirror));
 
 		AppendBaseJson(rootJ);
@@ -182,7 +181,7 @@ struct SNOSC : TinyTricksModule {
 
       if( c == 0 )
       {
-        //Updating scope. FIXME - polyphonic scope?
+        //Updating scope. To Consider - polyphonic scope?
         scope->addFrame(value);
       }
 
