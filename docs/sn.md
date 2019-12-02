@@ -7,17 +7,17 @@ Generates a smooth bipolar value based on simplex noise. Available in versions w
 
 `PINNING` sets the amount of time the value is pinned to either +5 or -5. The higher pinning the more of the time a channel will be either at minimum or maximum rather than somewhere in the middle. High pinning values also speeds up the rate at which the change moves from maximum to minimum.
 
-![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/SN1.png?raw=true)
-![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/SN1.png?raw=true)
-![Shark theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/shark/SN1.png?raw=true)
-![Oxford blue theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/oxford-blue/SN1.png?raw=true)
-![Cod gray theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/cod-gray/SN1.png?raw=true)
-![Firefly theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/firefly/SN1.png?raw=true)
+![Default theme](/module-screenshots/default/SN1.png?raw=true)
+![River bed theme](/module-screenshots/river-bed/SN1.png?raw=true)
+![Shark theme](/module-screenshots/shark/SN1.png?raw=true)
+![Oxford blue theme](/module-screenshots/oxford-blue/SN1.png?raw=true)
+![Cod gray theme](/module-screenshots/cod-gray/SN1.png?raw=true)
+![Firefly theme](/module-screenshots/firefly/SN1.png?raw=true)
 
-![Default theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/default/SN8.png?raw=true)
-![River bed theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/river-bed/SN8.png?raw=true)
-![Shark theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/shark/SN8.png?raw=true)
-![Oxford blue theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/oxford-blue/SN8.png?raw=true)
-![Cod gray theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/cod-gray/SN8.png?raw=true)
-![Firefly theme](https://github.com/thomassidor/tinytricks/blob/master/module-screenshots/firefly/SN8.png?raw=true)
+![Default theme](/module-screenshots/default/SN8.png?raw=true)
+![River bed theme](/module-screenshots/river-bed/SN8.png?raw=true)
+![Shark theme](/module-screenshots/shark/SN8.png?raw=true)
+![Oxford blue theme](/module-screenshots/oxford-blue/SN8.png?raw=true)
+![Cod gray theme](/module-screenshots/cod-gray/SN8.png?raw=true)
+![Firefly theme](/module-screenshots/firefly/SN8.png?raw=true)
 

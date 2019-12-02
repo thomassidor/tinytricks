@@ -1,4 +1,8 @@
 cd /c/Users/mail/github/tinytricks/
+RACK_DIR=/c/Rack-SDK make install-run
 RACK_DIR=/c/Rack-SDK make install
 "/c/Program Files/VCV/Rack/Rack.exe"
 "/c/Program Files/VCV/Rack/Rack.exe" -t 2.f
+
+//std::cout << "muteCount: " << muteCount << std::endl;
+//std::cout << "Voltage: " << inputs[MUTE_COUNT_CV_INPUT].getVoltage() << std::endl;

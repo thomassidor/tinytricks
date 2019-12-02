@@ -1,4 +1,4 @@
-![The current modules](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/default.png?raw=true)
+![The current modules](/combined-screenshots/default.png?raw=true)
 
 # Tiny Tricks VCV Rack modules
 
@@ -14,12 +14,13 @@ All the  best, Thomas René Sidor
 * [Sample and Hold x16 (SH16)](/docs/sh16.md)
 * [Attenuator x8 (A8)](/docs/a8.md)
 
-### Modulation sources/LFOs:
-* Modulation Generator (MG1)
-* Modulation Generator x8 (MG8)
-* Modulation Generator x16 (MG16)
+### Modulation sources, random generators, LFOs:
+* [Modulation Generator (MG1)](/docs/mg.md)
+* [Modulation Generator x8 (MG8)](/docs/mg.md)
+* [Modulation Generator x16 (MG16)](/docs/mg.md)
 * [Simplex Noise (SN1)](/docs/sn.md)
 * [Simplex Noise x8 (SN8)](/docs/sn.md)
+* [Random Wrangler (RW)](/docs/rw.md)
 
 ### Mixing and muting:
 * [Random Mute x8 (RM8)](/docs/rm8.md)
@@ -40,9 +41,14 @@ All the  best, Thomas René Sidor
 * Simplex Oscillator (SN-OSC)
 * [Wavetable Oscillator (WAVE)](/docs/wave.md)
 
+## Authors
+@thomassidor - Project owner.
 
-### Color themes
-Several [color themes](#color-themes) are included for each module:
+@baconpaul - Added polyphony to oscillator, logic and arithmetic modules.
+
+
+## Color themes
+Several color themes are included for each module:
 
 * Light (Default)
 * River Bed
@@ -54,15 +60,34 @@ Several [color themes](#color-themes) are included for each module:
 
 For all themes you can force the input ports to use a light theme, if you prefer the increased contrast. The option is available via right clicking the modules.
 
-![Default color theme](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/default.png?raw=true)
-![River Bed](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/river-bed.png?raw=true)
-![Oxford Blue](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/oxford-blue.png?raw=true)
-![Shark](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/shark.png?raw=true)
-![Cod Gray](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/cod-gray.png?raw=true)
-![Firefly](https://github.com/thomassidor/tinytricks/blob/master/combined-screenshots/firefly.png?raw=true)
+#### Light (Default)
+![Default color theme](/combined-screenshots/default.png?raw=true)
+
+#### River Bed
+![River Bed](/combined-screenshots/river-bed.png?raw=true)
+
+#### Oxford Blue
+![Oxford Blue](/combined-screenshots/oxford-blue.png?raw=true)
+
+#### Shark
+![Shark](/combined-screenshots/shark.png?raw=true)
+
+#### Cod Gray
+![Cod Gray](/combined-screenshots/cod-gray.png?raw=true)
+
+#### Firefly
+![Firefly](/combined-screenshots/firefly.png?raw=true)
+
 
 
 ## Changelog
+
+Version 1.5.0
+* Added: [Random Wrangler (RW)](/docs/rw.md)
+* Added: Polyphony to simple oscillators (SIN, SAW, SQR, TRI), plus oscillators (SIN+, SAW+, SQR+, TRI+), Simplex Oscillator (SN-OSC), Wavetable Oscillator (WAVE), TT-A and TT-L. Huge thanks to @baconpaul for contributing with this!
+* Behind the scenes: Refactored WAVE for performance improvements.
+* Behind the scenes: Improved screenshot generation
+
 Version 1.4.2
 * Added: Dark ports for dark themes.
 * Added: Option to force light ports on dark themes.

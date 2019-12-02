@@ -28,6 +28,8 @@ void init(Plugin *p) {
   p->addModel(modelSN8);
   p->addModel(modelSNOSC);
   p->addModel(modelWAVE);
+  p->addModel(modelRANDOMWRANGLER);
+
 
   // Any other pluginInstance initialization may go here.
   // As an alternative, consider lazy-loading assets and lookup tables when your module is created to reduce startup times of Rack.

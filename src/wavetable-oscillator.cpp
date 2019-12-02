@@ -5,11 +5,13 @@
 #include "widgets/wavetable-scope.cpp"
 
 
+#define POLY_SIZE 16
+
 struct WAVE : TinyTricksModule {
 	enum ParamIds {
   	FREQ_PARAM,
 		FREQ_FINE_PARAM,
-		Y_MAIN_PARAM,
+		OSC1_Y_PARAM,
 		CAPTURE_PARAM,
 		MIRROR_PARAM,
 		OSC2_ENABLE_PARAM,
@@ -25,7 +27,7 @@ struct WAVE : TinyTricksModule {
 	enum InputIds {
 		FREQ_CV_INPUT,
 		FREQ_FINE_CV_INPUT,
-		Y_MAIN_CV_INPUT,
+		OSC1_Y_CV_INPUT,
 		TOP_INPUT,
 		MIDDLE_INPUT,
 		BOTTOM_INPUT,
@@ -50,12 +52,12 @@ struct WAVE : TinyTricksModule {
 		NUM_LIGHTS
 	};
 
-	WaveTableOscillator oscillatorMain;
-	WaveTableOscillator oscillator2;
-	WaveTableOscillator oscillator3;
-	WaveTableScope* scope;
+	WaveTableOscillator oscillator1[POLY_SIZE];
+	WaveTableOscillator oscillator2[POLY_SIZE];
+	WaveTableOscillator oscillator3[POLY_SIZE];
 
-
+	WaveTableScope* scope = nullptr;
+	WaveTable* waveTable = nullptr;
 
 	dsp::SchmittTrigger syncTrigger;
 
@@ -84,7 +86,7 @@ struct WAVE : TinyTricksModule {
 		//Main oscillator
   	configParam(WAVE::FREQ_PARAM, -3.0f, 3.0f, 0.0f, "Tuning");
 		configParam(WAVE::FREQ_FINE_PARAM, -0.5f, 0.5f, 0.0f, "Fine tuning");
-		configParam(WAVE::Y_MAIN_PARAM, 0.0f, 1.0f, 0.5f, "Pos");
+		configParam(WAVE::OSC1_Y_PARAM, 0.0f, 1.0f, 0.5f, "Pos");
 
 		//Oscillator 2
 		configParam(WAVE::OSC2_DETUNE_PARAM, 0.0f, 1.0f, 0.0f, "Detune amount");
@@ -96,11 +98,22 @@ struct WAVE : TinyTricksModule {
 		configParam(WAVE::OSC3_Y_PARAM, -1.0f, 1.0f, 0.0f, "Pos");
 		configParam(WAVE::OSC3_SYNC_PARAM, 0.0f, 2.0f, 0.0f, "Sync mode");
 
+		waveTable = new WaveTable();
+    for( auto i=0; i<POLY_SIZE; ++i )
+    {
+      oscillator1[i].waveTable = waveTable;
+      oscillator2[i].waveTable = waveTable;
+      oscillator3[i].waveTable = waveTable;
+    }
   }
 
 	WAVE() {
 		Initialize();
 	}
+
+  ~WAVE() {
+    delete waveTable;
+  }
 
 	json_t *dataToJson() override {
 		json_t *rootJ = json_object();
@@ -110,25 +123,25 @@ struct WAVE : TinyTricksModule {
 		json_object_set_new(rootJ, "osc2Enabled", json_boolean(osc2Enabled));
 		json_object_set_new(rootJ, "osc3Enabled", json_boolean(osc3Enabled));
 
-		//std::cout << "writing wavetable to json" <<std::endl;
 
-		json_object_set_new(rootJ, "waveEnd", json_integer(oscillatorMain.TABLE_END));
+		json_object_set_new(rootJ, "waveEnd", json_integer(waveTable->WAVETABLE_SIZE));
 		json_t *wavetableJ = json_array();
-		for (int v = 0; v < WaveTableOscillator::WAVEFORM_COUNT; v++) {
+		for (int v = 0; v < waveTable->WAVEFORM_COUNT; v++) {
 			json_t *waveformJ = json_array();
-			for (int s = 0; s < oscillatorMain.TABLE_END; s++) {
-				json_t *sampleJ = json_real(oscillatorMain.lookuptables[v][s]);
+			for (int s = 0; s < waveTable->WAVETABLE_SIZE; s++) {
+				json_t *sampleJ = json_real(waveTable->lookuptable[v][s]);
 				json_array_append_new(waveformJ, sampleJ);
 			}
 			json_array_append_new(wavetableJ, waveformJ);
 
 		}
 		json_object_set_new(rootJ, "wavetable", wavetableJ);
-		//std::cout << "done writing" <<std::endl;
 
 		AppendBaseJson(rootJ);
 		return rootJ;
 	}
+
+
 
 	void dataFromJson(json_t *rootJ) override {
 		TinyTricksModule::dataFromJson(rootJ);
@@ -141,44 +154,34 @@ struct WAVE : TinyTricksModule {
 		if (waveEndJ)	waveEnd = (int)json_integer_value(waveEndJ);
 
 		json_t *wavetableJ = json_object_get(rootJ, "wavetable");
-		//std::cout << "reading json" <<std::endl;
 		if(wavetableJ){
-			oscillatorMain.startCapture();
-			oscillator2.startCapture();
-			oscillator3.startCapture();
-			scope->startCapture();
-			//std::cout << "wavetable is in json" <<std::endl;
 			for (int s = 0; s < waveEnd; s++) {
-				for (int v = 0; v < WaveTableOscillator::WAVEFORM_COUNT; v++) {
+				for (int v = 0; v < WaveTable::WAVEFORM_COUNT; v++) {
 					json_t *waveJ = json_array_get(wavetableJ, v);
 					if(waveJ){
-						float y = v/(float)(WaveTableOscillator::WAVEFORM_COUNT-1);
 						float value = json_number_value(json_array_get(waveJ, s));
-						oscillatorMain.addSampleToFrame(value,y);
-						oscillator2.addSampleToFrame(value,y);
-						oscillator3.addSampleToFrame(value,y);
-						scope->addFrame(value, y);
+						waveTable->addSampleToFrame(value,v);
 					}
 				}
-				oscillatorMain.endFrame();
-				oscillator2.endFrame();
-				oscillator3.endFrame();
-				scope->endFrame();
+				waveTable->endFrame();
 			}
-			oscillatorMain.endCapture();
-			oscillator2.endCapture();
-			oscillator3.endCapture();
-			scope->endCapture();
+			waveTable->endCapture();
+      if( scope )
+        scope->generate(waveTable,10);
 		}
 
 		// Mirror
 		json_t *mirrorJ = json_object_get(rootJ, "mirror");
 		if (mirrorJ) mirror = json_is_true(mirrorJ);
 		lights[MIRROR_LIGHT].value = mirror;
-		oscillatorMain.setMirror(mirror);
-		oscillator2.setMirror(mirror);
-		oscillator3.setMirror(mirror);
-		scope->setMirror(mirror);
+    for( auto i=0; i<POLY_SIZE; ++i )
+    {
+      oscillator1[i].setMirror(mirror);
+      oscillator2[i].setMirror(mirror);
+      oscillator3[i].setMirror(mirror);
+    }
+    if( scope )
+      scope->impl->setMirror(mirror);
 
 		//Osc2
 		json_t *osc2EnabledJ = json_object_get(rootJ, "osc2Enabled");
@@ -190,6 +193,7 @@ struct WAVE : TinyTricksModule {
 		if (osc3EnabledJ) osc3Enabled = json_is_true(osc3EnabledJ);
 		lights[OSC3_ENABLE_LIGHT].value = osc3Enabled;
 	}
+
 
 
 	//Capture management
@@ -204,10 +208,9 @@ struct WAVE : TinyTricksModule {
 			finalizeRecording = false;
 			useSync = inputs[SYNC_INPUT].isConnected();
 
-			oscillatorMain.startCapture();
-			oscillator2.startCapture();
-			oscillator3.startCapture();
-			scope->startCapture();
+			waveTable->startCapture();
+      if( scope )
+        scope->impl->stop();
 
 			if(useSync)
 				recording = false;
@@ -224,7 +227,7 @@ struct WAVE : TinyTricksModule {
 				recording = true;
 			//Stopping recording on second sync or if no more room for recording
 			else if(
-					(ticksSinceRecordingStarted >= WaveTableOscillator::MAX_SAMPLE_COUNT)
+					(ticksSinceRecordingStarted >= WaveTable::MAX_SAMPLE_COUNT)
 				||
 					(useSync && recording && syncTrigger.process(inputs[SYNC_INPUT].getVoltage()))
 				){
@@ -233,43 +236,35 @@ struct WAVE : TinyTricksModule {
 			}
 			if(recording){
 				float topV = inputs[TOP_INPUT].getNormalVoltage(0.0f);
-				oscillatorMain.addSampleToFrame(topV,1.0f);
-				oscillator2.addSampleToFrame(topV,1.0f);
-				oscillator3.addSampleToFrame(topV,1.0f);
-				scope->addFrame(topV, 1.0f);
+				waveTable->addSampleToFrame(topV,0);
 
 				float middleV = inputs[MIDDLE_INPUT].getNormalVoltage(0.0f);
-				oscillatorMain.addSampleToFrame(middleV,0.5f);
-				oscillator2.addSampleToFrame(middleV,0.5f);
-				oscillator3.addSampleToFrame(middleV,0.5f);
-				scope->addFrame(middleV, 0.5f);
-
+				waveTable->addSampleToFrame(middleV,1);
 
 				float bottomV = inputs[BOTTOM_INPUT].getNormalVoltage(0.0f);
-				oscillatorMain.addSampleToFrame(bottomV,0.0f);
-				oscillator2.addSampleToFrame(bottomV,0.0f);
-				oscillator3.addSampleToFrame(bottomV,0.0f);
-				scope->addFrame(bottomV, 0.0f);
+				waveTable->addSampleToFrame(bottomV,2);
 
-				scope->endFrame();
-				oscillatorMain.endFrame();
-				oscillator2.endFrame();
-				oscillator3.endFrame();
+				waveTable->endFrame();
 
 				ticksSinceRecordingStarted++;
 			}
 
 			if(finalizeRecording){
-				oscillatorMain.endCapture();
-				oscillator2.endCapture();
-				oscillator3.endCapture();
-				scope->endCapture();
+				waveTable->endCapture();
+        if( scope )
+          scope->impl->start();
 				inCaptureMode = false;
 				recording = false;
 				finalizeRecording = false;
-				oscillatorMain.prevPitch = 0.f;
-				oscillator2.prevPitch = 0.f;
-				oscillator3.prevPitch = 0.f;
+        for( auto i=0; i<POLY_SIZE; ++i )
+        {
+          oscillator1[i].prevPitch = 0.f;
+          oscillator2[i].prevPitch = 0.f;
+          oscillator3[i].prevPitch = 0.f;
+        }
+
+        if( scope )
+          scope->generate(waveTable,10);
 			}
 		}
 	}
@@ -277,121 +272,141 @@ struct WAVE : TinyTricksModule {
 
   void process(const ProcessArgs &args) override{
 		//Setting mirror
-		if (mirrorButtonTrigger.process(params[MIRROR_PARAM].value) || (inputs[MIRROR_TRIGGER_INPUT].isConnected() && mirrorButtonTrigger.process(inputs[MIRROR_TRIGGER_INPUT].value))) {
+		if (mirrorButtonTrigger.process(params[MIRROR_PARAM].value) ||
+        (inputs[MIRROR_TRIGGER_INPUT].isConnected() && mirrorButtonTrigger.process(inputs[MIRROR_TRIGGER_INPUT].value))) {
 			mirror = !mirror;
-			oscillatorMain.setMirror(mirror);
-			oscillator2.setMirror(mirror);
-			oscillator3.setMirror(mirror);
-			scope->setMirror(mirror);
+      for( auto i=0; i<POLY_SIZE; ++i )
+      {
+        oscillator1[i].setMirror(mirror);
+        oscillator2[i].setMirror(mirror);
+        oscillator3[i].setMirror(mirror);
+      }
+      if( scope )
+        scope->impl->setMirror(mirror);
 		}
 		lights[MIRROR_LIGHT].value = mirror;
 
 		//Setting osc2 enable
 		if (osc2EnableTrigger.process(params[OSC2_ENABLE_PARAM].value)) {
 			osc2Enabled = !osc2Enabled;
-			oscillator2.reset();
+      for( auto i=0; i<POLY_SIZE; ++i )
+        oscillator2[i].reset();
 		}
 		lights[OSC2_ENABLE_LIGHT].value = osc2Enabled;
 
-		//Setting osc2 enable
+		//Setting osc3 enable
 		if (osc3EnableTrigger.process(params[OSC3_ENABLE_PARAM].value)) {
 			osc3Enabled = !osc3Enabled;
-			oscillator3.reset();
+      for( auto i=0; i<POLY_SIZE; ++i )
+        oscillator3[i].reset();
 		}
 		lights[OSC3_ENABLE_LIGHT].value = osc3Enabled;
 
 		//Manage capture...
 		manageinCaptureMode();
 
-		if(!inCaptureMode){
-			//Setting the pitch
-	  	float pitch = params[FREQ_PARAM].getValue();
-	    if(inputs[FREQ_CV_INPUT].isConnected())
-	      pitch += inputs[FREQ_CV_INPUT].getVoltage();
-	    pitch += params[FREQ_FINE_PARAM].getValue();
-	    if(inputs[FREQ_FINE_CV_INPUT].isConnected())
-	      pitch += inputs[FREQ_FINE_CV_INPUT].getVoltage()/5.f;
-	  	pitch = clamp(pitch, -3.5f, 3.5f);
-	    oscillatorMain.setPitch(pitch, args.sampleRate);
+    // Polyphony is driven here by the FREQ_CV_INPUT
+    int nChan = std::max(1, inputs[FREQ_CV_INPUT].getChannels());
+    outputs[AUDIO_OUTPUT].setChannels(nChan);
+
+    for( int c=0; c<nChan; ++c )
+    {
+      if(!inCaptureMode){
+        //Setting the pitch
+        float pitch = params[FREQ_PARAM].getValue();
+        if(inputs[FREQ_CV_INPUT].isConnected())
+          pitch += inputs[FREQ_CV_INPUT].getPolyVoltage(c);
+        pitch += params[FREQ_FINE_PARAM].getValue();
+        if(inputs[FREQ_FINE_CV_INPUT].isConnected())
+          pitch += inputs[FREQ_FINE_CV_INPUT].getPolyVoltage(c)/5.f;
+        pitch = clamp(pitch, -3.5f, 3.5f);
+        oscillator1[c].setPitch(pitch, args.sampleRate);
 
 
-			float osc2Detune = pitch + params[OSC2_DETUNE_PARAM].getValue();
-			if(inputs[OSC2_DETUNE_CV_INPUT].isConnected())
-	      osc2Detune += inputs[OSC2_DETUNE_CV_INPUT].getVoltage()/5.f;
-			oscillator2.setPitch(osc2Detune, args.sampleRate);
+        float osc2Detune = pitch + params[OSC2_DETUNE_PARAM].getValue();
+        if(inputs[OSC2_DETUNE_CV_INPUT].isConnected())
+          osc2Detune += inputs[OSC2_DETUNE_CV_INPUT].getPolyVoltage(c)/5.f;
+        oscillator2[c].setPitch(osc2Detune, args.sampleRate);
 
 
-			float osc3Detune = osc2Detune + params[OSC3_DETUNE_PARAM].getValue();
-			if(inputs[OSC3_DETUNE_CV_INPUT].isConnected())
-	      osc3Detune += inputs[OSC3_DETUNE_CV_INPUT].getVoltage()/5.f;
-			oscillator3.setPitch(osc3Detune, args.sampleRate);
+        float osc3Detune = osc2Detune + params[OSC3_DETUNE_PARAM].getValue();
+        if(inputs[OSC3_DETUNE_CV_INPUT].isConnected())
+          osc3Detune += inputs[OSC3_DETUNE_CV_INPUT].getPolyVoltage(c)/5.f;
+        oscillator3[c].setPitch(osc3Detune, args.sampleRate);
 
 
-			//Getting y
-			float y = params[Y_MAIN_PARAM].getValue();
-			if(inputs[Y_MAIN_CV_INPUT].isConnected()){
-				y += inputs[Y_MAIN_CV_INPUT].getVoltage()/10.f;
-				y = clamp(y, 0.f, 1.f);
-			}
-
-			float osc2Y = y + params[OSC2_Y_PARAM].getValue();
-			if(inputs[OSC2_Y_CV_INPUT].isConnected())
-				osc2Y += inputs[OSC2_Y_CV_INPUT].getVoltage()/10.f;
-			osc2Y = clamp(osc2Y, 0.f, 1.f);
+        //Getting y
+        std::vector<float> ys;
+				if(c == 0)
+        	ys.reserve(3);
 
 
-			float osc3Y = y + params[OSC3_Y_PARAM].getValue();
-			if(inputs[OSC3_Y_CV_INPUT].isConnected())
-				osc3Y += inputs[OSC3_Y_CV_INPUT].getVoltage()/10.f;
-			osc3Y = clamp(osc3Y, 0.f, 1.f);
+        float osc1Y = params[OSC1_Y_PARAM].getValue();
+        if(inputs[OSC1_Y_CV_INPUT].isConnected()){
+          osc1Y += inputs[OSC1_Y_CV_INPUT].getPolyVoltage(c)/10.f;
+          osc1Y = clamp(osc1Y, 0.f, 1.f);
+        }
+        ys.push_back(osc1Y);
 
-			//TODO: update to update if osc2 or osc3 y changes
-			if(!osc2Enabled && !osc3Enabled)
-				scope->setY1(y);
-			else if (osc2Enabled && !osc3Enabled)
-				scope->setY2(y,osc2Y);
-			else if (!osc2Enabled && osc3Enabled)
-				scope->setY2(y,osc3Y);
-			else if (osc2Enabled && osc3Enabled)
-				scope->setY3(y, osc2Y, osc3Y);
+        float osc2Y;
+        if(osc2Enabled){
+          osc2Y = osc1Y + params[OSC2_Y_PARAM].getValue();
+          if(inputs[OSC2_Y_CV_INPUT].isConnected())
+            osc2Y += inputs[OSC2_Y_CV_INPUT].getPolyVoltage(c)/10.f;
+          osc2Y = clamp(osc2Y, 0.f, 1.f);
+					if(c == 0)
+          	ys.push_back(osc2Y);
+        }
 
-			//Stepping and syncing
-			bool syncOsc2ToMain = (params[OSC2_SYNC_PARAM].getValue() == 1.f);
-			int osc3SyncMode = params[OSC3_SYNC_PARAM].getValue();
-			oscillatorMain.step();
+        float osc3Y;
+        if(osc3Enabled){
+          osc3Y = osc1Y + params[OSC3_Y_PARAM].getValue();
+          if(inputs[OSC3_Y_CV_INPUT].isConnected())
+            osc3Y += inputs[OSC3_Y_CV_INPUT].getPolyVoltage(c)/10.f;
+          osc3Y = clamp(osc3Y, 0.f, 1.f);
+					if(c == 0)
+          	ys.push_back(osc3Y);
+        }
 
-			//Syncing osc2
-			if(syncOsc2ToMain && oscillatorMain.isEOC())
-				oscillator2.reset();
-			oscillator2.step();
+        if(c == 0 && scope)
+          scope->impl->setYs(ys);
 
-			if(osc3SyncMode != 0.f){
-				if(osc3SyncMode == 1.f && osc2Enabled && oscillator2.isEOC())
-					oscillator3.reset();
-				else if(osc3SyncMode == 2.f && oscillatorMain.isEOC())
-					oscillator3.reset();
-			}
-			oscillator3.step();
+        //Stepping and syncing
+        bool syncOsc2ToMain = (params[OSC2_SYNC_PARAM].getValue() == 1.f);
+        int osc3SyncMode = params[OSC3_SYNC_PARAM].getValue();
+        oscillator1[c].step();
 
-			//Getting samples
-			int divisor = 1.f;
-			float currentSample1 = oscillatorMain.getSample(y);
-			float currentSample2 = 0.f;
-			if(osc2Enabled){
-				currentSample2 = oscillator2.getSample(osc2Y);
-				divisor += 1.f;
-			}
-			float currentSample3 = 0.f;
-			if(osc3Enabled){
-				currentSample3 = oscillator3.getSample(osc3Y);
-				divisor += 1.f;
-			}
-			float mix = (currentSample1+currentSample2+currentSample3)/divisor;
-			//Setting the mix out
-    	outputs[AUDIO_OUTPUT].setVoltage(mix);
-		}
-		else
-			outputs[AUDIO_OUTPUT].setVoltage(0.f);
+        //Syncing osc2
+        if(syncOsc2ToMain && oscillator1[c].isEOC())
+          oscillator2[c].reset();
+        oscillator2[c].step();
+
+        if(osc3SyncMode != 0.f){
+          if(osc3SyncMode == 1.f && osc2Enabled && oscillator2[c].isEOC())
+            oscillator3[c].reset();
+          else if(osc3SyncMode == 2.f && oscillator1[c].isEOC())
+            oscillator3[c].reset();
+        }
+        oscillator3[c].step();
+
+        //Getting samples
+        int divisor = 1;
+        float out = oscillator1[c].getSample(osc1Y);
+        if(osc2Enabled){
+          out += oscillator2[c].getSample(osc2Y);
+          divisor++;
+        }
+        if(osc3Enabled){
+          out += oscillator3[c].getSample(osc3Y);
+          divisor++;
+        }
+        float mix = (out)/(float)divisor;
+        //Setting the mix out
+        outputs[AUDIO_OUTPUT].setVoltage(mix, c);
+      }
+      else
+        outputs[AUDIO_OUTPUT].setVoltage(0.f, c);
+    }
   }
 };
 
@@ -408,7 +423,8 @@ struct WAVEWidget : TinyTricksModuleWidget {
 		struct ScopeItem : MenuItem {
 			WAVEWidget* widget;
 			void onAction(const event::Action& e) override {
-				widget->scope->visible = !widget->scope->visible;
+        if( widget->scope )
+          widget->scope->visible = !widget->scope->visible;
 			}
 		};
 
@@ -452,7 +468,7 @@ struct WAVEWidget : TinyTricksModuleWidget {
 			scope = new WaveTableScope();
 			scope->box.pos = mm2px(Vec(23.775f, 9.1f));
 			scope->box.size = mm2px(Vec(35.807f, 110.354f));
-			scope->initialize(3,10);
+      scope->setup();
 			addChild(scope);
 			module->scope = scope;
 		}
@@ -472,8 +488,8 @@ struct WAVEWidget : TinyTricksModuleWidget {
 		addInput(createInput<TinyTricksPort>(mm2px(Vec(79.733f,28.339f)), module, WAVE::FREQ_FINE_CV_INPUT));
 
 		//Y
-		addParam(createParam<RoundBlackKnob>(mm2px(Vec(92.31f,17.068f)), module, WAVE::Y_MAIN_PARAM));
-		addInput(createInput<TinyTricksPort>(mm2px(Vec(93.213f,28.339f)), module, WAVE::Y_MAIN_CV_INPUT));
+		addParam(createParam<RoundBlackKnob>(mm2px(Vec(92.31f,17.068f)), module, WAVE::OSC1_Y_PARAM));
+		addInput(createInput<TinyTricksPort>(mm2px(Vec(93.213f,28.339f)), module, WAVE::OSC1_Y_CV_INPUT));
 
 		// Oscillator 2 ------------------------------------------------
 		//Enable

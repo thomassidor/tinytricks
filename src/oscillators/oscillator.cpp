@@ -18,7 +18,7 @@ struct TinyOscillator{
       //phase+= freq;
       phase+= freq / dt;
       if (phase >= 1.0f){
-        phase -= 1.0f;
+        phase -= 1.f;
         isStepEOC = true;
       }
       else

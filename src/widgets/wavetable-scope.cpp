@@ -1,210 +1,183 @@
-#include "mini-scope.cpp"
 
-struct WaveTableScope : FramebufferWidget {
+struct WaveTableScopeInternals : OpaqueWidget {
+  FramebufferWidget *parentAsFb = nullptr;
+
+	float SAMPLE_COUNT = 0;
+
 	float** buffer;
-	int bufferIndex = 0;
-	int waveEnd = 0;
+
+  Rect* rects;
+
+	bool stopped = false;
 
 	int waves;
 	int subDivisions;
 	int totalScopes;
 
-	MiniScope **scopes;
-
-	bool dirty = false;
 	bool mirror = false;
 
-	SvgWidget* helpText;
+	float lineWeight = 2.5f;
+	float spacing = 5.f;
 
-	WaveTableScope() {
-		helpText = createWidget<SvgWidget>(Vec(0,0));
-		helpText->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/Wavetable-help.svg")));
-		addChild(helpText);
-		helpText->box.pos = Vec(9,3);
+	std::vector<int> highlights;
+
+	WaveTableScopeInternals() {
+
 	}
 
-	float spacing = 5.f;
-	void initialize(int _waves, int _subDivisions){
-		//std::cout << "scope init" <<std::endl;
+	int getScopeIndex(float y){
+			return (int)floor(y*(totalScopes-1));
+		}
 
-		waves = _waves;
+	void setYs(std::vector<float> ys){
+		std::vector<int> tmp;
+		tmp.reserve(3);
+		for(std::vector<float>::iterator it = ys.begin(); it != ys.end(); it++)
+			tmp.push_back(getScopeIndex((*it)));
+
+		std::sort(tmp.begin(), tmp.end());
+
+    if(tmp != highlights)
+      dirtyParent();
+
+		highlights = tmp;
+	}
+
+	void generate(WaveTable* waveTable, int _subDivisions){
+		//Setting up size variables
+		SAMPLE_COUNT = waveTable->WAVETABLE_SIZE;
+		waves = waveTable->WAVEFORM_COUNT;
 		subDivisions = _subDivisions;
 		totalScopes = (waves-1)*(subDivisions+1)+1;
 
 		//Initializing mem for wavetable
 		buffer = new float*[totalScopes];
+
+    // And mem for boxes
+    rects = new Rect[totalScopes];
+    float scopeHeight = ( (box.size.y - ((totalScopes-1) * spacing) )/ (float) totalScopes);
+
+    //Copying wavetable and creating boxes for drawing
 		for(int i = 0; i < totalScopes; i++){
-	  	buffer[i] = new float[MiniScope::SCOPE_BUFFER_SIZE];
+	  	buffer[i] = new float[waveTable->WAVETABLE_SIZE];
+
+      Vec pos = Vec(0,(scopeHeight + spacing)*i);
+      Vec size = Vec(box.size.x, scopeHeight);
+      Rect b = Rect(pos, size);
+      rects[i] = b;
 		}
 
-		//Creating the scopes
-		scopes = new MiniScope*[totalScopes];
-		float scopeHeight = (box.size.y/(float)totalScopes)-spacing;
-		//std::cout << "y: " << box.size.y <<std::endl;
-
-		for (int i = 0; i < totalScopes; i++) {
-			MiniScope *scope = new MiniScope(i);
-			scopes[(totalScopes-1)-i] = scope;
-			scope->box.pos = Vec(0,scopeHeight*i+(spacing*i));
-			scope->box.size = Vec(box.size.x, scopeHeight);
-			scope->lineWeight = 2.5f;
-			scope->setGain(1.0f);
-			//std::cout << "craeted scope: " << scopeHeight*i <<std::endl;
-			addChild(scope);
+    //Generating all intermediate waveforms
+		for (int y = 0; y < totalScopes; y++) {
+			float level = (float)y/((float)totalScopes-1);
+			for (int x = 0; x < SAMPLE_COUNT; x++) {
+				float value = waveTable->getSample(level,(float)x);
+				buffer[y][x] = value;
+			}
 		}
+    dirtyParent();
 	}
-
-	void addFrame(float value, float y){
-		if(bufferIndex >= MiniScope::SCOPE_BUFFER_SIZE)
-			bufferIndex = 0;
-
-		int index = getScopeIndex(y);
-		buffer[index][bufferIndex] = value;
-		scopes[index]->addFrame(value);
-	}
-
-
-	void setAlpha(float alpha, int index){
-		//If it not already highlighted we need a redraw
-		if(scopes[index]->alpha != alpha)
-			dirty = true;
-
-		scopes[index]->alpha = alpha;
-	}
-
-	/*void setY(float y){
-		//std::cout << "setY: " << y <<std::endl;
-		//float spread = totalScopes/5.f;
-		float index = (float)getScopeIndex(y);
-
-		for (int i = 0; i < totalScopes; i++) {
-		 //float dist = abs(i-index);
-		 //float limited = std::min(dist,spread);
-		 //float a = (spread-limited)/spread;
-		 //float alpha = std::max(a,0.5f);
-		 //float alpha = i == index ? 1.f : 0.5f;
-		 //std::cout << "alpha: " << alpha <<std::endl;
-		 float alpha = i == index ? 1.f : 0.5f;
-		 setAlpha(alpha,i);
-		}
-	}*/
-
-	void setY1(float y1){
-		int index = getScopeIndex(y1);
-
-		for (int i = 0; i < totalScopes; i++) {
-		 float alpha = (i == index) ? 1.f : 0.5f;
-		 setAlpha(alpha,i);
-		}
-	}
-
-	void setY2(float y1, float y2){
-		int index = getScopeIndex(y1);
-		int index2 = getScopeIndex(y2);
-
-		for (int i = 0; i < totalScopes; i++) {
-		 float alpha = (i == index || i == index2) ? 1.f : 0.5f;
-		 setAlpha(alpha,i);
-		}
-	}
-
-	void setY3(float y1, float y2, float y3){
-		int index = getScopeIndex(y1);
-		int index2 = getScopeIndex(y2);
-		int index3 = getScopeIndex(y3);
-
-		for (int i = 0; i < totalScopes; i++) {
-		 float alpha = (i == index || i == index2 || i == index3) ? 1.f : 0.5f;
-		 setAlpha(alpha,i);
-		}
-	}
-
 
 	void setMirror(bool _mirror){
 		if(_mirror != mirror){
-			dirty = true;
 			mirror = _mirror;
-			for (int i = 0; i < totalScopes; i++) {
-				scopes[i]->setMirror(mirror);
-			}
+      dirtyParent();
 		}
-	}
-
-	void endFrame(){
-		bufferIndex++;
-	}
-
-	void startCapture(){
-		//std::cout << "starting" << std::endl;
-		bufferIndex = 0;
-		waveEnd = MiniScope::SCOPE_BUFFER_SIZE-1;
-	}
-
-	void endCapture(){
-		waveEnd = bufferIndex-1;
-		bufferIndex = 0;
-		//std::cout << "ending on: " << waveEnd << std::endl;
-
-		if(subDivisions > 0){
-			for(int w = 0; w < waves-1; w++){
-				//std::cout << "-----------------------------------------" <<std::endl;
-				//std::cout << "w: " << w <<std::endl;
-
-				int mainLevel0 = w*(subDivisions+1);
-				int mainLevel1 = mainLevel0+(subDivisions+1);
-
-				//std::cout << "mainLevel0: " << mainLevel0 <<std::endl;
-				//std::cout << "mainLevel1: " << mainLevel1 <<std::endl;
-
-				for (int s = 1; s <= subDivisions; s++){
-					int subDivisionLevel = mainLevel0+s;
-					float levelFrac = (float)s/(float)(subDivisions+1);
-
-					//std::cout << "--------" <<std::endl;
-					//std::cout << "s: " << s <<std::endl;
-					//std::cout << "subDivisionLevel: " << subDivisionLevel <<std::endl;
-					//std::cout << "levelFrac: " << levelFrac <<std::endl;
-					//std::cout << "scope id: " << scopes[subDivisionLevel]->id <<std::endl;
-
-
-					for (int i = 0; i <= waveEnd; i++) {
-						float interpolatedValue = buffer[mainLevel0][i] + levelFrac * (buffer[mainLevel1][i] - buffer[mainLevel0][i]);
-						scopes[subDivisionLevel]->addFrame(interpolatedValue);
-					}
-				}
-			}
-		}
-
-		for (int i = 0; i < totalScopes; i++)
-			scopes[i]->reset();
-
-		dirty = true;
 	}
 
 	void stop(){
-		for (int i = 0; i < totalScopes; i++)
-			scopes[i]->stop();
-
-		dirty = false;
+		stopped = true;
+    dirtyParent();
 	}
 
-	int getScopeIndex(float y){
-		return (int)floor(y*(totalScopes-1));
+	void start(){
+		stopped = false;
+    dirtyParent();
 	}
 
-	unsigned int tick = 0;
-	void step() override{
+  void dirtyParent() {
+    if( parentAsFb )
+      parentAsFb->dirty = true;
+  }
 
-		if(tick%100 == 0){
-			tick = 0;
-			if(dirty){
-				if(waveEnd != 0)
-					helpText->visible = false;
-				//std::cout << "waveform dirty" << std::endl;
-				FramebufferWidget::dirty = true;
-				dirty = false;
+	void draw(const DrawArgs &args) override {
+    //INFO( "DRAW WAV IMPL" ); // uncomment this to make sure double buffering still works (it does).
+    //std::cout << "Drawing" << std::endl;
+		if(!stopped){
+			for(int i = 0; i < totalScopes; i++){
+				float alpha = 0.5f;
+				if(std::find(highlights.begin(), highlights.end(), i) != highlights.end())
+					alpha = alpha + 0.5f;
+				drawWave(args, rects[i], i, alpha);
 			}
-			FramebufferWidget::step();
 		}
 	}
+
+	void drawWave(const DrawArgs &args, Rect b, int level, float alpha){
+
+		nvgSave(args.vg);
+
+		//Draw scope
+		nvgBeginPath(args.vg);
+		nvgStrokeColor(args.vg, nvgRGBA(255,255,255,(int)ceil(255.f*alpha)));
+		nvgStrokeWidth(args.vg, lineWeight*(alpha));
+
+		float halfway = SAMPLE_COUNT/2.f;
+
+		//Adding the points
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			int adjustedIndex = i;
+				if(mirror && i > halfway){
+				adjustedIndex = halfway - (i-halfway);
+			}
+			Vec v;
+			v.x = (float) i / (SAMPLE_COUNT - 1);
+			v.y = buffer[level][adjustedIndex] * 0.2f / 2.f + 0.5f;
+			Vec p;
+			p.x = rescale(v.x, 0.f, 1.f, b.pos.x, b.pos.x + b.size.x);
+			p.y = rescale(v.y, 0.f, 1.f, b.pos.y + b.size.y, b.pos.y);
+			if (i == 0)
+				nvgMoveTo(args.vg, p.x, p.y);
+			else
+				nvgLineTo(args.vg, p.x, p.y);
+		}
+		nvgLineCap(args.vg, NVG_ROUND);
+		nvgLineJoin(args.vg, NVG_ROUND);
+		nvgStroke(args.vg);
+		nvgClosePath(args.vg);
+		//Done with scope
+
+		nvgRestore(args.vg);
+	}
+};
+
+
+struct WaveTableScope : FramebufferWidget {
+
+  WaveTableScopeInternals *impl = nullptr;
+  SvgWidget* helpText;
+
+  WaveTableScope(){
+  }
+
+  void generate(WaveTable* waveTable, int subDivisions){
+    //Marking dirty and removing help text
+    helpText->visible = false;
+    impl->visible = true;
+    impl->generate(waveTable, subDivisions);
+  }
+
+  void setup() {
+    helpText = createWidget<SvgWidget>(Vec(0,0));
+    helpText->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/Wavetable-help.svg")));
+    addChild(helpText);
+    helpText->box.pos = Vec(9,3);
+
+    impl = new WaveTableScopeInternals();
+    impl->box.pos = Vec(0,0);
+    impl->box.size = box.size;
+    impl->parentAsFb = this;
+    impl->visible = false;
+    addChild(impl);
+  }
 };
