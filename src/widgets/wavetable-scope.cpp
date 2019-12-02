@@ -1,5 +1,7 @@
 
-struct WaveTableScope : FramebufferWidget {
+struct WaveTableScopeInternals : OpaqueWidget {
+  FramebufferWidget *parentAsFb = nullptr;
+  
 	float SAMPLE_COUNT = 0;
 
 	float** buffer;
@@ -10,7 +12,6 @@ struct WaveTableScope : FramebufferWidget {
 	int subDivisions;
 	int totalScopes;
 
-	bool dirty = false;
 	bool mirror = false;
 
 	float lineWeight = 2.5f;
@@ -20,7 +21,7 @@ struct WaveTableScope : FramebufferWidget {
 
 	std::vector<int> highlights;
 
-	WaveTableScope() {
+	WaveTableScopeInternals() {
 		helpText = createWidget<SvgWidget>(Vec(0,0));
 		helpText->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/Wavetable-help.svg")));
 		addChild(helpText);
@@ -40,7 +41,7 @@ struct WaveTableScope : FramebufferWidget {
 		std::sort(tmp.begin(), tmp.end());
 
     if(tmp != highlights)
-			dirty = true;
+      dirtyParent();
 
 		highlights = tmp;
 	}
@@ -48,7 +49,6 @@ struct WaveTableScope : FramebufferWidget {
 	void generate(WaveTable* waveTable, int _subDivisions){
 
 		//Marking dirty and removing help text
-		FramebufferWidget::dirty = true;
 		helpText->visible = false;
 
 		//Setting up size variables
@@ -70,25 +70,35 @@ struct WaveTableScope : FramebufferWidget {
 				buffer[y][x] = value;
 			}
 		}
+
+    dirtyParent();
 	}
 
 	void setMirror(bool _mirror){
 		if(_mirror != mirror){
-			dirty = true;
 			mirror = _mirror;
+      dirtyParent();
 		}
 	}
 
 	void stop(){
 		stopped = true;
+    dirtyParent();
 	}
 
 	void start(){
 		stopped = false;
+    dirtyParent();
 	}
 
+  void dirtyParent() {
+    if( parentAsFb )
+      parentAsFb->dirty = true;
+  }
+  
 	void draw(const DrawArgs &args) override {
-		if(!stopped && dirty){
+    // INFO( "DRAW WAV IMPL" ); // uncomment this to make sure double buffering still works (it does).
+		if(!stopped){
 			float scopeHeight = (box.size.y/(float)totalScopes)-spacing;
 			for(int i = 0; i < totalScopes; i++){
 				Vec pos = Vec(0,scopeHeight*i+(spacing*i));
@@ -100,7 +110,6 @@ struct WaveTableScope : FramebufferWidget {
 				drawWave(args, b, i, alpha);
 			}
 		}
-		FramebufferWidget::draw(args);
 	}
 
 	void drawWave(const DrawArgs &args, Rect b, int level, float alpha){
@@ -139,4 +148,17 @@ struct WaveTableScope : FramebufferWidget {
 
 		nvgRestore(args.vg);
 	}
+};
+
+
+struct WaveTableScope : FramebufferWidget {
+  WaveTableScopeInternals *impl = nullptr; 
+
+  void setup() {
+    impl = new WaveTableScopeInternals();
+    impl->box.pos = Vec(0,0);
+    impl->box.size = box.size;
+    impl->parentAsFb = this;
+    addChild(impl);
+  }
 };
