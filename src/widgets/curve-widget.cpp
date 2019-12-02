@@ -1,25 +1,10 @@
-struct CurveWidget : FramebufferWidget {
+struct CurveWidgetInternal : OpaqueWidget{
 	std::vector<float> ys;
 	float lineWeight = 1.5f;
 	bool isLiniearMode = true;
 
-	CurveWidget(){
+	CurveWidgetInternal(){
 	}
-
-	void setMode(bool isLinear){
-		isLiniearMode = isLinear;
-		dirty = true;
-	}
-
-	void setPoints(std::vector<float> _ys){
-		ys = _ys;
-		dirty = true;
-	}
-
-	void rePaint(){
-		dirty = true;
-	}
-
 
   void draw(const DrawArgs &args) override {
 		Rect b = Rect(Vec(0, 0), box.size);
@@ -69,4 +54,34 @@ struct CurveWidget : FramebufferWidget {
 
 		nvgRestore(args.vg);
   }
+};
+
+struct CurveWidget : FramebufferWidget {
+	CurveWidgetInternal* internal;
+
+	CurveWidget(){
+
+	}
+
+	void setMode(bool isLinear){
+		internal->isLiniearMode = isLinear;
+		dirty = true;
+	}
+
+	void setPoints(std::vector<float> _ys){
+		internal->ys = _ys;
+		dirty = true;
+	}
+
+	void rePaint(){
+		dirty = true;
+	}
+
+	void setup(){
+		internal = new CurveWidgetInternal();
+		internal->box.pos = Vec(0,0);
+		internal->box.size = box.size;
+		addChild(internal);
+	}
+
 };

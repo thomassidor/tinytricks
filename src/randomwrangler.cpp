@@ -311,6 +311,7 @@ struct RANDOMWRANGLERWidget : TinyTricksModuleWidget {
     curve = new CurveWidget();
     curve->box.pos = mm2px(Vec(8.868f, 33.396f));
     curve->box.size = mm2px(Vec(43.224f, 18.396f));
+    curve->setup();
     addChild(curve);
     if(module)
       module->curve = curve;

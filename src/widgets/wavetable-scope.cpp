@@ -1,10 +1,12 @@
 
 struct WaveTableScopeInternals : OpaqueWidget {
   FramebufferWidget *parentAsFb = nullptr;
-  
+
 	float SAMPLE_COUNT = 0;
 
 	float** buffer;
+
+  Rect* rects;
 
 	bool stopped = false;
 
@@ -17,15 +19,10 @@ struct WaveTableScopeInternals : OpaqueWidget {
 	float lineWeight = 2.5f;
 	float spacing = 5.f;
 
-	SvgWidget* helpText;
-
 	std::vector<int> highlights;
 
 	WaveTableScopeInternals() {
-		helpText = createWidget<SvgWidget>(Vec(0,0));
-		helpText->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/Wavetable-help.svg")));
-		addChild(helpText);
-		helpText->box.pos = Vec(9,3);
+
 	}
 
 	int getScopeIndex(float y){
@@ -47,10 +44,6 @@ struct WaveTableScopeInternals : OpaqueWidget {
 	}
 
 	void generate(WaveTable* waveTable, int _subDivisions){
-
-		//Marking dirty and removing help text
-		helpText->visible = false;
-
 		//Setting up size variables
 		SAMPLE_COUNT = waveTable->WAVETABLE_SIZE;
 		waves = waveTable->WAVEFORM_COUNT;
@@ -59,10 +52,22 @@ struct WaveTableScopeInternals : OpaqueWidget {
 
 		//Initializing mem for wavetable
 		buffer = new float*[totalScopes];
+
+    // And mem for boxes
+    rects = new Rect[totalScopes];
+    float scopeHeight = ( (box.size.y - ((totalScopes-1) * spacing) )/ (float) totalScopes);
+
+    //Copying wavetable and creating boxes for drawing
 		for(int i = 0; i < totalScopes; i++){
 	  	buffer[i] = new float[waveTable->WAVETABLE_SIZE];
+
+      Vec pos = Vec(0,(scopeHeight + spacing)*i);
+      Vec size = Vec(box.size.x, scopeHeight);
+      Rect b = Rect(pos, size);
+      rects[i] = b;
 		}
 
+    //Generating all intermediate waveforms
 		for (int y = 0; y < totalScopes; y++) {
 			float level = (float)y/((float)totalScopes-1);
 			for (int x = 0; x < SAMPLE_COUNT; x++) {
@@ -70,7 +75,6 @@ struct WaveTableScopeInternals : OpaqueWidget {
 				buffer[y][x] = value;
 			}
 		}
-
     dirtyParent();
 	}
 
@@ -95,19 +99,16 @@ struct WaveTableScopeInternals : OpaqueWidget {
     if( parentAsFb )
       parentAsFb->dirty = true;
   }
-  
+
 	void draw(const DrawArgs &args) override {
-    // INFO( "DRAW WAV IMPL" ); // uncomment this to make sure double buffering still works (it does).
+    //INFO( "DRAW WAV IMPL" ); // uncomment this to make sure double buffering still works (it does).
+    //std::cout << "Drawing" << std::endl;
 		if(!stopped){
-			float scopeHeight = (box.size.y/(float)totalScopes)-spacing;
 			for(int i = 0; i < totalScopes; i++){
-				Vec pos = Vec(0,scopeHeight*i+(spacing*i));
-				Vec size = Vec(box.size.x, scopeHeight);
-				Rect b = Rect(pos, size);
 				float alpha = 0.5f;
 				if(std::find(highlights.begin(), highlights.end(), i) != highlights.end())
 					alpha = alpha + 0.5f;
-				drawWave(args, b, i, alpha);
+				drawWave(args, rects[i], i, alpha);
 			}
 		}
 	}
@@ -152,13 +153,31 @@ struct WaveTableScopeInternals : OpaqueWidget {
 
 
 struct WaveTableScope : FramebufferWidget {
-  WaveTableScopeInternals *impl = nullptr; 
+
+  WaveTableScopeInternals *impl = nullptr;
+  SvgWidget* helpText;
+
+  WaveTableScope(){
+  }
+
+  void generate(WaveTable* waveTable, int subDivisions){
+    //Marking dirty and removing help text
+    helpText->visible = false;
+    impl->visible = true;
+    impl->generate(waveTable, subDivisions);
+  }
 
   void setup() {
+    helpText = createWidget<SvgWidget>(Vec(0,0));
+    helpText->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/components/Wavetable-help.svg")));
+    addChild(helpText);
+    helpText->box.pos = Vec(9,3);
+
     impl = new WaveTableScopeInternals();
     impl->box.pos = Vec(0,0);
     impl->box.size = box.size;
     impl->parentAsFb = this;
+    impl->visible = false;
     addChild(impl);
   }
 };
