@@ -46,6 +46,11 @@ All the  best, Thomas René Sidor
 
 @baconpaul - Added polyphony to oscillator, logic and arithmetic modules.
 
+## Showcase
+* A piece made with a bunch of the Tiny Tricks modules as well as other free modules: [YouTube](https://www.youtube.com/watch?v=H_Re-JwXp9E), [Patchstorage](https://patchstorage.com/tiny-tricks-piece/)
+* Mentions in videos by Omri Cohen: [An Overview of new modules and collections in VCV Rack - October 2019](https://www.youtube.com/watch?v=gZjwwsUKmBY&t=1049s), [An Overview of new modules and collections in VCV Rack - November 2019](https://www.youtube.com/watch?v=0EnhdQqmEQ4&t=849s)
+* Other patches using Tiny Tricks: [Patchstorage](https://patchstorage.com/explore/?search_query=&tax_post_tag%5B%5D=tiny-tricks&orderby=modified)
+* Want your patch, demo, etc. listed? Create reach out in an issue.
 
 ## Color themes
 Several color themes are included for each module:
@@ -77,8 +82,6 @@ For all themes you can force the input ports to use a light theme, if you prefer
 
 #### Firefly
 ![Firefly](/combined-screenshots/firefly.png?raw=true)
-
-
 
 ## Changelog
 
