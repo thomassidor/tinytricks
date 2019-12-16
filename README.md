@@ -50,6 +50,7 @@ All the  best, Thomas René Sidor
 * A piece made with a bunch of the Tiny Tricks modules as well as other free modules: [YouTube](https://www.youtube.com/watch?v=H_Re-JwXp9E), [Patchstorage](https://patchstorage.com/tiny-tricks-piece/)
 * Mentions in videos by Omri Cohen: [An Overview of new modules and collections in VCV Rack - October 2019](https://www.youtube.com/watch?v=gZjwwsUKmBY&t=1049s), [An Overview of new modules and collections in VCV Rack - November 2019](https://www.youtube.com/watch?v=0EnhdQqmEQ4&t=849s)
 * Other patches using Tiny Tricks: [Patchstorage](https://patchstorage.com/explore/?search_query=&tax_post_tag%5B%5D=tiny-tricks&orderby=modified)
+* The Wavetable Oscillator (WAVE) in action: [Nocturnal Espionage](https://www.youtube.com/watch?v=h3CTKaiRJsE)
 * Want your patch, demo, etc. listed? Create reach out in an issue.
 
 ## Color themes
