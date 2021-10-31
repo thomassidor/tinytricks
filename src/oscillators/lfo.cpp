@@ -7,7 +7,7 @@ struct LowFrequencyOscillator {
     float freq = 1.0f;
     bool offset = false;
     bool invert = false;
-    SchmittTrigger resetTrigger;
+    rack::dsp::SchmittTrigger resetTrigger;
     LowFrequencyOscillator() {}
     void setPitch(float pitch) {
         pitch = fminf(pitch, 8.0f);

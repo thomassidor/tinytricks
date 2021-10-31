@@ -1,6 +1,5 @@
-#include "rack0.hpp"
-#include "window.hpp"
-
+#pragma once
+#include "rack.hpp"
 
 
 using namespace rack;
