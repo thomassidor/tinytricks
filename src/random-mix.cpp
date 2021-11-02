@@ -67,7 +67,7 @@ struct RX8Base : TinyTricksModule {
   float t = 0.f;
   bool reverse = false;
   float summedLevels = 0.f;
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
     bool freeflow = (params[TRIGONLY_PARAM].getValue() == 0.f);
 
 
@@ -145,7 +145,7 @@ struct RX8Base : TinyTricksModule {
 
 
 struct RX8BaseWidget : TinyTricksModuleWidget {
-  RX8BaseWidget(RX8Base* module) {
+  RX8BaseWidget(RX8Base *module) {
     setModule(module);
 
     addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.977f, 12.003f)), module, RX8Base::TRIG_INPUT));
@@ -187,11 +187,11 @@ struct RX8Mono : RX8Base {
 };
 
 struct RX8MonoWidget : RX8BaseWidget {
-  RX8MonoWidget(RX8Base* module) : RX8BaseWidget(module) {
+  RX8MonoWidget(RX8Base *module) : RX8BaseWidget(module) {
     InitializeSkin("RX8.svg");
   }
 };
-Model* modelRX8 = createModel<RX8Mono, RX8MonoWidget>("RX8");
+Model *modelRX8 = createModel<RX8Mono, RX8MonoWidget>("RX8");
 
 // Stereo --------------------------------------------------------------------------------------------------------------
 /*struct RM8Stereo : RX8Base{

@@ -56,8 +56,8 @@ struct WAVE : TinyTricksModule {
   WaveTableOscillator oscillator2[POLY_SIZE];
   WaveTableOscillator oscillator3[POLY_SIZE];
 
-  WaveTableScope* scope = nullptr;
-  WaveTable* waveTable = nullptr;
+  WaveTableScope *scope = nullptr;
+  WaveTable *waveTable = nullptr;
 
   dsp::SchmittTrigger syncTrigger;
 
@@ -128,8 +128,8 @@ struct WAVE : TinyTricksModule {
     delete waveTable;
   }
 
-  json_t* dataToJson() override {
-    json_t* rootJ = json_object();
+  json_t *dataToJson() override {
+    json_t *rootJ = json_object();
     JSON_REAL_PRECISION(31);
     // Mirror
     json_object_set_new(rootJ, "mirror", json_boolean(mirror));
@@ -138,11 +138,11 @@ struct WAVE : TinyTricksModule {
 
 
     json_object_set_new(rootJ, "waveEnd", json_integer(waveTable->WAVETABLE_SIZE));
-    json_t* wavetableJ = json_array();
+    json_t *wavetableJ = json_array();
     for (int v = 0; v < waveTable->WAVEFORM_COUNT; v++) {
-      json_t* waveformJ = json_array();
+      json_t *waveformJ = json_array();
       for (int s = 0; s < waveTable->WAVETABLE_SIZE; s++) {
-        json_t* sampleJ = json_real(waveTable->lookuptable[v][s]);
+        json_t *sampleJ = json_real(waveTable->lookuptable[v][s]);
         json_array_append_new(waveformJ, sampleJ);
       }
       json_array_append_new(wavetableJ, waveformJ);
@@ -156,22 +156,22 @@ struct WAVE : TinyTricksModule {
 
 
 
-  void dataFromJson(json_t* rootJ) override {
+  void dataFromJson(json_t *rootJ) override {
     TinyTricksModule::dataFromJson(rootJ);
 
     JSON_REAL_PRECISION(31);
 
     //Reading wavetable
     int waveEnd = 0;
-    json_t* waveEndJ = json_object_get(rootJ, "waveEnd");
+    json_t *waveEndJ = json_object_get(rootJ, "waveEnd");
     if (waveEndJ)
       waveEnd = (int)json_integer_value(waveEndJ);
 
-    json_t* wavetableJ = json_object_get(rootJ, "wavetable");
+    json_t *wavetableJ = json_object_get(rootJ, "wavetable");
     if (wavetableJ) {
       for (int s = 0; s < waveEnd; s++) {
         for (int v = 0; v < WaveTable::WAVEFORM_COUNT; v++) {
-          json_t* waveJ = json_array_get(wavetableJ, v);
+          json_t *waveJ = json_array_get(wavetableJ, v);
           if (waveJ) {
             float value = json_number_value(json_array_get(waveJ, s));
             waveTable->addSampleToFrame(value, v);
@@ -185,7 +185,7 @@ struct WAVE : TinyTricksModule {
     }
 
     // Mirror
-    json_t* mirrorJ = json_object_get(rootJ, "mirror");
+    json_t *mirrorJ = json_object_get(rootJ, "mirror");
     if (mirrorJ)
       mirror = json_is_true(mirrorJ);
     lights[MIRROR_LIGHT].value = mirror;
@@ -198,13 +198,13 @@ struct WAVE : TinyTricksModule {
       scope->impl->setMirror(mirror);
 
     //Osc2
-    json_t* osc2EnabledJ = json_object_get(rootJ, "osc2Enabled");
+    json_t *osc2EnabledJ = json_object_get(rootJ, "osc2Enabled");
     if (osc2EnabledJ)
       osc2Enabled = json_is_true(osc2EnabledJ);
     lights[OSC2_ENABLE_LIGHT].value = osc2Enabled;
 
     //Osc3
-    json_t* osc3EnabledJ = json_object_get(rootJ, "osc3Enabled");
+    json_t *osc3EnabledJ = json_object_get(rootJ, "osc3Enabled");
     if (osc3EnabledJ)
       osc3Enabled = json_is_true(osc3EnabledJ);
     lights[OSC3_ENABLE_LIGHT].value = osc3Enabled;
@@ -285,7 +285,7 @@ struct WAVE : TinyTricksModule {
   }
 
 
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
     //Setting mirror
     if (mirrorButtonTrigger.process(params[MIRROR_PARAM].value) ||
         (inputs[MIRROR_TRIGGER_INPUT].isConnected() && mirrorButtonTrigger.process(inputs[MIRROR_TRIGGER_INPUT].value))) {
@@ -427,22 +427,22 @@ struct WAVE : TinyTricksModule {
 
 
 struct WAVEWidget : TinyTricksModuleWidget {
-  WaveTableScope* scope;
+  WaveTableScope *scope;
 
-  void appendContextMenu(Menu* menu) override {
+  void appendContextMenu(Menu *menu) override {
     menu->addChild(new MenuEntry);
     menu->addChild(createMenuLabel("Scope"));
 
     struct ScopeItem : MenuItem {
-      WAVEWidget* widget;
-      void onAction(const event::Action& e) override {
+      WAVEWidget *widget;
+      void onAction(const event::Action &e) override {
         if (widget->scope)
           widget->scope->visible = !widget->scope->visible;
       }
     };
 
 
-    ScopeItem* modeItem = createMenuItem<ScopeItem>("Hide scope (increases performance)");
+    ScopeItem *modeItem = createMenuItem<ScopeItem>("Hide scope (increases performance)");
     modeItem->rightText = CHECKMARK(!scope->visible);
     modeItem->widget = this;
     menu->addChild(modeItem);
@@ -452,7 +452,7 @@ struct WAVEWidget : TinyTricksModuleWidget {
   }
 
 
-  WAVEWidget(WAVE* module) {
+  WAVEWidget(WAVE *module) {
     setModule(module);
 
     //inCaptureMode button
@@ -486,7 +486,7 @@ struct WAVEWidget : TinyTricksModuleWidget {
       module->scope = scope;
     }
     else {
-      SvgWidget* placeholder = createWidget<SvgWidget>(mm2px(Vec(24.575f, 11.1f)));
+      SvgWidget *placeholder = createWidget<SvgWidget>(mm2px(Vec(24.575f, 11.1f)));
       placeholder->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/components/Wavetable.svg")));
       addChild(placeholder);
     }
@@ -540,4 +540,4 @@ struct WAVEWidget : TinyTricksModuleWidget {
   }
 };
 
-Model* modelWAVE = createModel<WAVE, WAVEWidget>("WAVE");
+Model *modelWAVE = createModel<WAVE, WAVEWidget>("WAVE");

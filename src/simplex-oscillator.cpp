@@ -44,7 +44,7 @@ struct SNOSC : TinyTricksModule {
   };
 
 
-  MiniScope* scope;
+  MiniScope *scope;
 
   SimplexOscillator oscillator[POLY_SIZE];
   float prevPitch[POLY_SIZE];
@@ -83,19 +83,19 @@ struct SNOSC : TinyTricksModule {
   }
 
   //Got this approach from https://github.com/Miserlou/RJModules/blob/master/src/ChordSeq.cpp
-  json_t* dataToJson() override {
-    json_t* rootJ = json_object();
+  json_t *dataToJson() override {
+    json_t *rootJ = json_object();
     json_object_set_new(rootJ, "mirror", json_boolean(mirror));
 
     AppendBaseJson(rootJ);
     return rootJ;
   }
 
-  void dataFromJson(json_t* rootJ) override {
+  void dataFromJson(json_t *rootJ) override {
     TinyTricksModule::dataFromJson(rootJ);
 
     // Mirror
-    json_t* mirrorJ = json_object_get(rootJ, "mirror");
+    json_t *mirrorJ = json_object_get(rootJ, "mirror");
     if (mirrorJ)
       mirror = json_is_true(mirrorJ);
 
@@ -105,7 +105,7 @@ struct SNOSC : TinyTricksModule {
 
 
   int ticksSinceScopeReset = 0;
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
     int nChan = std::max(1, inputs[FREQ_CV_INPUT].getChannels());
     outputs[OSC_OUTPUT].setChannels(nChan);
     outputs[SYNC_OUTPUT].setChannels(nChan);
@@ -219,11 +219,11 @@ struct SNOSC : TinyTricksModule {
 struct SNOSCWidget : TinyTricksModuleWidget {
   //void appendContextMenu(Menu *menu) override;
 
-  SNOSCWidget(SNOSC* module) {
+  SNOSCWidget(SNOSC *module) {
     setModule(module);
 
     if (module) {
-      MiniScope* scope = new MiniScope();
+      MiniScope *scope = new MiniScope();
       scope->box.pos = mm2px(Vec(3.571f, 9.0f));
       scope->box.size = mm2px(Vec(23.337f, 10.366f));
       scope->setGain(1.0f);
@@ -231,7 +231,7 @@ struct SNOSCWidget : TinyTricksModuleWidget {
       module->scope = scope;
     }
     else {
-      SvgWidget* placeholder = createWidget<SvgWidget>(mm2px(Vec(3.571f, 11.0f)));
+      SvgWidget *placeholder = createWidget<SvgWidget>(mm2px(Vec(3.571f, 11.0f)));
       placeholder->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/components/Wave.svg")));
       addChild(placeholder);
     }
@@ -277,4 +277,4 @@ struct SNOSCWidget : TinyTricksModuleWidget {
 };
 
 
-Model* modelSNOSC = createModel<SNOSC, SNOSCWidget>("SNOSC");
+Model *modelSNOSC = createModel<SNOSC, SNOSCWidget>("SNOSC");

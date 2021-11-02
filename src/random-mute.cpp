@@ -61,7 +61,7 @@ struct RM8Base : TinyTricksModule {
   }
 
 
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
 
     if (inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage())) {
       int muteCount = 0;
@@ -114,14 +114,14 @@ struct RM8Base : TinyTricksModule {
 
 
 struct RM8BaseWidget : TinyTricksModuleWidget {
-  RM8BaseWidget(RM8Base* module) {
+  RM8BaseWidget(RM8Base *module) {
     setModule(module);
 
     addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.847f, 12.003f)), module, RM8Base::TRIG_INPUT));
 
     {
       auto w = createParam<RoundSmallBlackKnob>(mm2px(Vec(3.9f, 31.62f)), module, RM8Base::MUTE_COUNT_PARAM);
-      dynamic_cast<Knob*>(w)->snap = true;
+      dynamic_cast<Knob *>(w)->snap = true;
       addParam(w);
     }
     addInput(createInput<TinyTricksPort>(mm2px(Vec(3.847, 41.251f)), module, RM8Base::MUTE_COUNT_CV_INPUT));
@@ -136,7 +136,7 @@ struct RM8Mono : RM8Base {
 };
 
 struct RM8MonoWidget : RM8BaseWidget {
-  RM8MonoWidget(RM8Base* module) : RM8BaseWidget(module) {
+  RM8MonoWidget(RM8Base *module) : RM8BaseWidget(module) {
     for (int i = 0; i < NUM_CHANNELS; i++) {
       addInput(createInput<TinyTricksPort>(mm2px(Vec(17.424f, 11.782f + 14.f * i)), module, RM8Base::MUTE_L_INPUT + i));
       addChild(createLight<SmallLight<GreenLight>>(mm2px(Vec(26.209, 14.701 + 14.f * i)), module, RM8Base::MUTE_LIGHT + i));
@@ -145,7 +145,7 @@ struct RM8MonoWidget : RM8BaseWidget {
     InitializeSkin("RM8.svg");
   }
 };
-Model* modelRM8 = createModel<RM8Mono, RM8MonoWidget>("RM8");
+Model *modelRM8 = createModel<RM8Mono, RM8MonoWidget>("RM8");
 
 // Stereo --------------------------------------------------------------------------------------------------------------
 struct RM8Stereo : RM8Base {
@@ -154,7 +154,7 @@ struct RM8Stereo : RM8Base {
 };
 
 struct RM8StereoWidget : RM8BaseWidget {
-  RM8StereoWidget(RM8Base* module) : RM8BaseWidget(module) {
+  RM8StereoWidget(RM8Base *module) : RM8BaseWidget(module) {
     for (int i = 0; i < NUM_CHANNELS; i++) {
       addInput(createInput<TinyTricksPort>(mm2px(Vec(17.788f, 12.003f + 14.f * i)), module, RM8Base::MUTE_L_INPUT + i));
       addInput(createInput<TinyTricksPort>(mm2px(Vec(26.994f, 12.003f + 14.f * i)), module, RM8Base::MUTE_R_INPUT + i));
@@ -165,4 +165,4 @@ struct RM8StereoWidget : RM8BaseWidget {
     InitializeSkin("RM8S.svg");
   }
 };
-Model* modelRM8S = createModel<RM8Stereo, RM8StereoWidget>("RM8S");
+Model *modelRM8S = createModel<RM8Stereo, RM8StereoWidget>("RM8S");

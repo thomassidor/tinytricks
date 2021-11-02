@@ -59,7 +59,7 @@ struct WaveTable {
 };
 
 struct WaveTableOscillator {
-  WaveTable* waveTable;
+  WaveTable *waveTable;
 
   float currentIndex = 0.f;
   float tableDelta = 0.f;

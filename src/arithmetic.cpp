@@ -49,7 +49,7 @@ struct TTA : TinyTricksModule {
     configOutput(MINUSB_OUTPUT, "-B");
   }
 
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
     int nChan = std::max(1, inputs[A_INPUT].getChannels());
     for (int op = APLUSB_OUTPUT; op < NUM_OUTPUTS; op++)
       outputs[op].setChannels(nChan);
@@ -79,7 +79,7 @@ struct TTA : TinyTricksModule {
 
 
 struct TTAWidget : TinyTricksModuleWidget {
-  TTAWidget(TTA* module) {
+  TTAWidget(TTA *module) {
 
     setModule(module);
 
@@ -110,4 +110,4 @@ struct TTAWidget : TinyTricksModuleWidget {
 };
 
 
-Model* modelTTA = createModel<TTA, TTAWidget>("TT-A");
+Model *modelTTA = createModel<TTA, TTAWidget>("TT-A");

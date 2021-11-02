@@ -62,7 +62,7 @@ struct TTOBase : TinyTricksModule {
   }
 
 
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
     // We want to use the FREQ_CV_INPUT to drive polyphony
     int nChan = std::max(1, inputs[FREQ_CV_INPUT].getChannels());
     outputs[OSC_OUTPUT].setChannels(nChan);
@@ -142,7 +142,7 @@ struct TTOBase : TinyTricksModule {
 
 struct TTOBaseWidget : TinyTricksModuleWidget {
 
-  TTOBaseWidget(TTOBase* module) {
+  TTOBaseWidget(TTOBase *module) {
     setModule(module);
 
     addInput(createInput<TinyTricksPort>(mm2px(Vec(3.567f, 22.402f)), module, TTOBase::FREQ_CV_INPUT));
@@ -168,11 +168,11 @@ struct TTOSin : TTOBase {
 };
 
 struct TTOSinWidget : TTOBaseWidget {
-  TTOSinWidget(TTOBase* module) : TTOBaseWidget(module) {
+  TTOSinWidget(TTOBase *module) : TTOBaseWidget(module) {
     InitializeSkin("TTSIN.svg");
   }
 };
-Model* modelTTSIN = createModel<TTOSin, TTOSinWidget>("TTSIN");
+Model *modelTTSIN = createModel<TTOSin, TTOSinWidget>("TTSIN");
 
 // Saw --------------------------------------------------------------------------------------------------------------
 struct TTOSaw : TTOBase {
@@ -181,13 +181,13 @@ struct TTOSaw : TTOBase {
 };
 
 struct TTOSawWidget : TTOBaseWidget {
-  TTOSawWidget(TTOBase* module) : TTOBaseWidget(module) {
+  TTOSawWidget(TTOBase *module) : TTOBaseWidget(module) {
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f, 61.225f)), module, TTOBase::THETA_PARAM));
     addInput(createInput<TinyTricksPort>(mm2px(Vec(3.567f, 70.476f)), module, TTOBase::THETA_CV_INPUT));
     InitializeSkin("TTSAW.svg");
   }
 };
-Model* modelTTSAW = createModel<TTOSaw, TTOSawWidget>("TTSAW");
+Model *modelTTSAW = createModel<TTOSaw, TTOSawWidget>("TTSAW");
 
 
 // Square --------------------------------------------------------------------------------------------------------------
@@ -197,13 +197,13 @@ struct TTOSqr : TTOBase {
 };
 
 struct TTOSqrWidget : TTOBaseWidget {
-  TTOSqrWidget(TTOBase* module) : TTOBaseWidget(module) {
+  TTOSqrWidget(TTOBase *module) : TTOBaseWidget(module) {
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f, 61.225f)), module, TTOBase::THETA_PARAM));
     addInput(createInput<TinyTricksPort>(mm2px(Vec(3.567f, 70.476f)), module, TTOBase::THETA_CV_INPUT));
     InitializeSkin("TTSQR.svg");
   }
 };
-Model* modelTTSQR = createModel<TTOSqr, TTOSqrWidget>("TTSQR");
+Model *modelTTSQR = createModel<TTOSqr, TTOSqrWidget>("TTSQR");
 
 
 // Square --------------------------------------------------------------------------------------------------------------
@@ -213,10 +213,10 @@ struct TTOTri : TTOBase {
 };
 
 struct TTOTriWidget : TTOBaseWidget {
-  TTOTriWidget(TTOBase* module) : TTOBaseWidget(module) {
+  TTOTriWidget(TTOBase *module) : TTOBaseWidget(module) {
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.62f, 61.225f)), module, TTOBase::THETA_PARAM));
     addInput(createInput<TinyTricksPort>(mm2px(Vec(3.567f, 70.476f)), module, TTOBase::THETA_CV_INPUT));
     InitializeSkin("TTTRI.svg");
   }
 };
-Model* modelTTTRI = createModel<TTOTri, TTOTriWidget>("TTTRI");
+Model *modelTTTRI = createModel<TTOTri, TTOTriWidget>("TTTRI");

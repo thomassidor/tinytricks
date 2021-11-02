@@ -123,7 +123,7 @@ struct ModulationGeneratorBase : TinyTricksModule {
 
     int outChannelsCount = 1;
     dsp::SchmittTrigger trigger;
-    ModulationSource* modSources;
+    ModulationSource *modSources;
 
     void initializeModule() {
       modSources = new ModulationSource[outChannelsCount];
@@ -148,7 +148,7 @@ struct ModulationGeneratorBase : TinyTricksModule {
       initializeModule();
     }
 
-    void process(const ProcessArgs& args) override {
+    void process(const ProcessArgs &args) override {
 
       bool regenerate = inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage());
       bool offsetOn = (params[OFFSET_PARAM].getValue() == 1.f);
@@ -164,7 +164,7 @@ struct ModulationGeneratorBase : TinyTricksModule {
       }
 
       for (int i = 0; i < outChannelsCount; i++) {
-        ModulationSource* modSource = &modSources[i];
+        ModulationSource *modSource = &modSources[i];
 
         //Sending offset
         modSource->setOffset(offsetOn);
@@ -187,7 +187,7 @@ struct ModulationGeneratorBase : TinyTricksModule {
 };
 
 struct ModulationGeneratorBaseWidget : TinyTricksModuleWidget {
-  ModulationGeneratorBaseWidget(ModulationGeneratorBase* module) {
+  ModulationGeneratorBaseWidget(ModulationGeneratorBase *module) {
     setModule(module);
 
     addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.567f, 12.003f)), module, ModulationGeneratorBase::TRIG_INPUT));
@@ -208,12 +208,12 @@ struct ModulationGeneratorX1 : ModulationGeneratorBase {
 };
 
 struct ModulationGeneratorX1Widget : ModulationGeneratorBaseWidget {
-  ModulationGeneratorX1Widget(ModulationGeneratorBase* module) : ModulationGeneratorBaseWidget(module) {
+  ModulationGeneratorX1Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
     addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.567f, 113.359f)), module, ModulationGeneratorBase::MOD_OUTPUT + 0));
     InitializeSkin("LFO1.svg");
   }
 };
-Model* modelModulationGeneratorX1 = createModel<ModulationGeneratorX1, ModulationGeneratorX1Widget>("MG1");
+Model *modelModulationGeneratorX1 = createModel<ModulationGeneratorX1, ModulationGeneratorX1Widget>("MG1");
 
 // X8 --------------------------------------------------------------------------------------------------------------
 const int X8_CHANNELS = 8;
@@ -223,14 +223,14 @@ struct ModulationGeneratorX8 : ModulationGeneratorBase {
 };
 
 struct ModulationGeneratorX8Widget : ModulationGeneratorBaseWidget {
-  ModulationGeneratorX8Widget(ModulationGeneratorBase* module) : ModulationGeneratorBaseWidget(module) {
+  ModulationGeneratorX8Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
     for (int i = 0; i < X8_CHANNELS; i++) {
       addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.501f, 12.003f + (i * 14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
     }
     InitializeSkin("LFO8.svg");
   }
 };
-Model* modelModulationGeneratorX8 = createModel<ModulationGeneratorX8, ModulationGeneratorX8Widget>("MG8");
+Model *modelModulationGeneratorX8 = createModel<ModulationGeneratorX8, ModulationGeneratorX8Widget>("MG8");
 
 // X16 --------------------------------------------------------------------------------------------------------------
 const int X16_CHANNELS = 16;
@@ -240,7 +240,7 @@ struct ModulationGeneratorX16 : ModulationGeneratorBase {
 };
 
 struct ModulationGeneratorX16Widget : ModulationGeneratorBaseWidget {
-  ModulationGeneratorX16Widget(ModulationGeneratorBase* module) : ModulationGeneratorBaseWidget(module) {
+  ModulationGeneratorX16Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
     for (int i = 0; i < X16_CHANNELS / 2; i++)
       addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.501, 12.003f + (i * 14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
 
@@ -250,4 +250,4 @@ struct ModulationGeneratorX16Widget : ModulationGeneratorBaseWidget {
     InitializeSkin("LFO16.svg");
   }
 };
-Model* modelModulationGeneratorX16 = createModel<ModulationGeneratorX16, ModulationGeneratorX16Widget>("MG16");
+Model *modelModulationGeneratorX16 = createModel<ModulationGeneratorX16, ModulationGeneratorX16Widget>("MG16");

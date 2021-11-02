@@ -49,7 +49,7 @@ struct TTL : TinyTricksModule {
     configOutput(NOTB_OUTPUT, "¬B");
   }
 
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
     int nChan = std::max(1, inputs[A_INPUT].getChannels());
     for (int op = AND_OUTPUT; op < NUM_OUTPUTS; op++)
       outputs[op].setChannels(nChan);
@@ -82,7 +82,7 @@ struct TTL : TinyTricksModule {
 
 
 struct TTLWidget : TinyTricksModuleWidget {
-  TTLWidget(TTL* module) {
+  TTLWidget(TTL *module) {
     setModule(module);
 
 
@@ -112,4 +112,4 @@ struct TTLWidget : TinyTricksModuleWidget {
 };
 
 
-Model* modelTTL = createModel<TTL, TTLWidget>("TT-L");
+Model *modelTTL = createModel<TTL, TTLWidget>("TT-L");

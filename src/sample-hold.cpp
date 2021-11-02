@@ -29,11 +29,11 @@ struct SH16 : TinyTricksModule {
       configOutput(HOLD_OUTPUT + i, string::f("Hold %d", i + 1));
     }
   }
-  void process(const ProcessArgs& args) override;
+  void process(const ProcessArgs &args) override;
 };
 
 
-void SH16::process(const ProcessArgs& args) {
+void SH16::process(const ProcessArgs &args) {
   if (inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage())) {
     for (int i = 0; i < NUM_CHANNELS; i++) {
       float v = (random::uniform() * 10.0) - 5.0f;
@@ -46,7 +46,7 @@ void SH16::process(const ProcessArgs& args) {
 
 
 struct SH16Widget : TinyTricksModuleWidget {
-  SH16Widget(SH16* module) {
+  SH16Widget(SH16 *module) {
     setModule(module);
     addInput(createInput<TinyTricksPortLight>(mm2px(Vec(8.647f, 12.003f)), module, SH16::TRIG_INPUT));
 
@@ -61,4 +61,4 @@ struct SH16Widget : TinyTricksModuleWidget {
 };
 
 
-Model* modelSH16 = createModel<SH16, SH16Widget>("SH16");
+Model *modelSH16 = createModel<SH16, SH16Widget>("SH16");

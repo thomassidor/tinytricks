@@ -46,8 +46,8 @@ struct RANDOMWRANGLER : TinyTricksModule {
   float smoothFrac = 0.f;
 
   std::default_random_engine generator;
-  std::piecewise_linear_distribution<float>* distributionLinear;
-  std::piecewise_constant_distribution<float>* distributionConstant;
+  std::piecewise_linear_distribution<float> *distributionLinear;
+  std::piecewise_constant_distribution<float> *distributionConstant;
   std::vector<float> intervals;
   std::vector<float> weights;
 
@@ -63,7 +63,7 @@ struct RANDOMWRANGLER : TinyTricksModule {
 
   int tick = 0;
 
-  CurveWidget* curve;
+  CurveWidget *curve;
 
   std::vector<float> tmp;
 
@@ -107,8 +107,8 @@ struct RANDOMWRANGLER : TinyTricksModule {
     processCurveParams(true);
   }
 
-  json_t* dataToJson() override {
-    json_t* rootJ = json_object();
+  json_t *dataToJson() override {
+    json_t *rootJ = json_object();
     // Mode
     json_object_set_new(rootJ, "isLiniearMode", json_boolean(isLiniearMode));
 
@@ -116,11 +116,11 @@ struct RANDOMWRANGLER : TinyTricksModule {
     return rootJ;
   }
 
-  void dataFromJson(json_t* rootJ) override {
+  void dataFromJson(json_t *rootJ) override {
     TinyTricksModule::dataFromJson(rootJ);
 
     //Mode
-    json_t* isLiniearModeJ = json_object_get(rootJ, "isLiniearMode");
+    json_t *isLiniearModeJ = json_object_get(rootJ, "isLiniearMode");
     if (isLiniearModeJ)
       isLiniearMode = json_is_true(isLiniearModeJ);
     curve->setMode(isLiniearMode);
@@ -245,7 +245,7 @@ struct RANDOMWRANGLER : TinyTricksModule {
     }
   }
 
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
     //Updating values from knobs and CV
     updateRate();
     updateSmoothRate();
@@ -284,23 +284,23 @@ struct RANDOMWRANGLER : TinyTricksModule {
 
 
 struct RANDOMWRANGLERWidget : TinyTricksModuleWidget {
-  CurveWidget* curve;
-  RANDOMWRANGLER* randModule;
+  CurveWidget *curve;
+  RANDOMWRANGLER *randModule;
   const float widgetSpacing = 10.807f;
 
-  void appendContextMenu(Menu* menu) override {
+  void appendContextMenu(Menu *menu) override {
     menu->addChild(new MenuEntry);
     menu->addChild(createMenuLabel("Mode"));
 
     struct LocalItem : MenuItem {
-      RANDOMWRANGLER* module;
-      void onAction(const event::Action& e) override {
+      RANDOMWRANGLER *module;
+      void onAction(const event::Action &e) override {
         module->toggleMode();
       }
     };
 
 
-    LocalItem* localItem = createMenuItem<LocalItem>("Constant distribution (instead of linear)");
+    LocalItem *localItem = createMenuItem<LocalItem>("Constant distribution (instead of linear)");
     localItem->rightText = CHECKMARK(!randModule->isLiniearMode);
     localItem->module = randModule;
     menu->addChild(localItem);
@@ -309,7 +309,7 @@ struct RANDOMWRANGLERWidget : TinyTricksModuleWidget {
     TinyTricksModuleWidget::appendContextMenu(menu);
   }
 
-  RANDOMWRANGLERWidget(RANDOMWRANGLER* module) {
+  RANDOMWRANGLERWidget(RANDOMWRANGLER *module) {
     if (module)
       randModule = module;
 
@@ -361,4 +361,4 @@ struct RANDOMWRANGLERWidget : TinyTricksModuleWidget {
 };
 
 
-Model* modelRANDOMWRANGLER = createModel<RANDOMWRANGLER, RANDOMWRANGLERWidget>("RW");
+Model *modelRANDOMWRANGLER = createModel<RANDOMWRANGLER, RANDOMWRANGLERWidget>("RW");

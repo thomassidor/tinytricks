@@ -33,7 +33,7 @@ struct A8 : TinyTricksModule {
   }
 
 
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
     float level = params[LEVEL_PARAM].getValue();
     for (int i = 0; i < NUM_CHANNELS; i++) {
       if (inputs[ATT_INPUT + i].isConnected() && outputs[ATT_OUTPUT + i].isConnected())
@@ -47,7 +47,7 @@ struct A8 : TinyTricksModule {
 
 
 struct A8Widget : TinyTricksModuleWidget {
-  A8Widget(A8* module) {
+  A8Widget(A8 *module) {
     setModule(module);
 
 
@@ -64,4 +64,4 @@ struct A8Widget : TinyTricksModuleWidget {
 };
 
 
-Model* modelA8 = createModel<A8, A8Widget>("A8");
+Model *modelA8 = createModel<A8, A8Widget>("A8");

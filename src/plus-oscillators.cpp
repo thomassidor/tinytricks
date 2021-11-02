@@ -33,7 +33,7 @@ struct TTOBasePlus : TinyTricksModule {
     NUM_LIGHTS
   };
 
-  TinyOscillator* oscillators[POLY_SIZE];
+  TinyOscillator *oscillators[POLY_SIZE];
   TinyOscillator::OscillatorType oscType;
   dsp::SchmittTrigger hardsync2Trigger;
   dsp::SchmittTrigger hardsync3Trigger;
@@ -80,8 +80,8 @@ struct TTOBasePlus : TinyTricksModule {
       delete[] oscillators[i];
   }
 
-  json_t* dataToJson() override {
-    json_t* rootJ = json_object();
+  json_t *dataToJson() override {
+    json_t *rootJ = json_object();
 
     // Hardsync 2+3
     json_object_set_new(rootJ, "hardsync2", json_boolean(hardsync2));
@@ -91,21 +91,21 @@ struct TTOBasePlus : TinyTricksModule {
     return rootJ;
   }
 
-  void dataFromJson(json_t* rootJ) override {
+  void dataFromJson(json_t *rootJ) override {
     TinyTricksModule::dataFromJson(rootJ);
 
     // hardsync2
-    json_t* hardsync2J = json_object_get(rootJ, "hardsync2");
+    json_t *hardsync2J = json_object_get(rootJ, "hardsync2");
     if (hardsync2J)
       hardsync2 = json_is_true(hardsync2J);
     // hardsync2
-    json_t* hardsync3J = json_object_get(rootJ, "hardsync3");
+    json_t *hardsync3J = json_object_get(rootJ, "hardsync3");
     if (hardsync3J)
       hardsync3 = json_is_true(hardsync3J);
   }
 
 
-  void process(const ProcessArgs& args) override {
+  void process(const ProcessArgs &args) override {
     // We want to use the FREQ_CV_INPUT to drive polyphony
     int nChan = std::max(1, inputs[FREQ_CV_INPUT].getChannels());
     outputs[OSC_OUTPUT].setChannels(nChan);
@@ -155,7 +155,7 @@ struct TTOBasePlus : TinyTricksModule {
       //Looping oscillators
       float value = 0.f;
       for (int i = 0; i < OSC_COUNT; i++) {
-        TinyOscillator* oscillator = &oscillators[c][i];
+        TinyOscillator *oscillator = &oscillators[c][i];
 
         if (pitchChanged)
           oscillator->setPitch(pitch + (detune * i));
@@ -167,7 +167,7 @@ struct TTOBasePlus : TinyTricksModule {
         oscillator->step(args.sampleRate);
 
         if (i > 0) {
-          TinyOscillator* prevOscillator = &oscillators[c][i - 1];
+          TinyOscillator *prevOscillator = &oscillators[c][i - 1];
           if (
             (i == 1 && hardsync2 && prevOscillator->isEOC()) ||
             (i == 2 && hardsync3 && prevOscillator->isEOC())
@@ -206,7 +206,7 @@ struct TTOBasePlus : TinyTricksModule {
 
 struct TTOBasePlusWidget : TinyTricksModuleWidget {
 
-  TTOBasePlusWidget(TTOBasePlus* module) {
+  TTOBasePlusWidget(TTOBasePlus *module) {
     setModule(module);
 
     addInput(createInput<TinyTricksPort>(mm2px(Vec(8.667f, 22.403f)), module, TTOBasePlus::FREQ_CV_INPUT));
@@ -243,11 +243,11 @@ struct TTOSinPlus : TTOBasePlus {
 };
 
 struct TTOSinPlusWidget : TTOBasePlusWidget {
-  TTOSinPlusWidget(TTOBasePlus* module) : TTOBasePlusWidget(module) {
+  TTOSinPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
     InitializeSkin("TTSINPLUS.svg");
   }
 };
-Model* modelTTSINPLUS = createModel<TTOSinPlus, TTOSinPlusWidget>("TTSINPLUS");
+Model *modelTTSINPLUS = createModel<TTOSinPlus, TTOSinPlusWidget>("TTSINPLUS");
 
 
 // Saw --------------------------------------------------------------------------------------------------------------
@@ -257,7 +257,7 @@ struct TTOSawPlus : TTOBasePlus {
 };
 
 struct TTOSawPlusWidget : TTOBasePlusWidget {
-  TTOSawPlusWidget(TTOBasePlus* module) : TTOBasePlusWidget(module) {
+  TTOSawPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
     //Theta
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f, 69.452f)), module, TTOBasePlus::THETA_PARAM));
     addInput(createInput<TinyTricksPort>(mm2px(Vec(14.082f, 69.053f)), module, TTOBasePlus::THETA_CV_INPUT));
@@ -265,7 +265,7 @@ struct TTOSawPlusWidget : TTOBasePlusWidget {
     InitializeSkin("TTSAWPLUS.svg");
   }
 };
-Model* modelTTSAWPLUS = createModel<TTOSawPlus, TTOSawPlusWidget>("TTSAWPLUS");
+Model *modelTTSAWPLUS = createModel<TTOSawPlus, TTOSawPlusWidget>("TTSAWPLUS");
 
 
 // Square --------------------------------------------------------------------------------------------------------------
@@ -275,7 +275,7 @@ struct TTOSqrPlus : TTOBasePlus {
 };
 
 struct TTOSqrPlusWidget : TTOBasePlusWidget {
-  TTOSqrPlusWidget(TTOBasePlus* module) : TTOBasePlusWidget(module) {
+  TTOSqrPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
     //Theta
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f, 69.452f)), module, TTOBasePlus::THETA_PARAM));
     addInput(createInput<TinyTricksPort>(mm2px(Vec(14.082f, 69.053f)), module, TTOBasePlus::THETA_CV_INPUT));
@@ -283,7 +283,7 @@ struct TTOSqrPlusWidget : TTOBasePlusWidget {
     InitializeSkin("TTSQRPLUS.svg");
   }
 };
-Model* modelTTSQRPLUS = createModel<TTOSqrPlus, TTOSqrPlusWidget>("TTSQRPLUS");
+Model *modelTTSQRPLUS = createModel<TTOSqrPlus, TTOSqrPlusWidget>("TTSQRPLUS");
 
 
 // Square --------------------------------------------------------------------------------------------------------------
@@ -293,7 +293,7 @@ struct TTOTriPlus : TTOBasePlus {
 };
 
 struct TTOTriPlusWidget : TTOBasePlusWidget {
-  TTOTriPlusWidget(TTOBasePlus* module) : TTOBasePlusWidget(module) {
+  TTOTriPlusWidget(TTOBasePlus *module) : TTOBasePlusWidget(module) {
     //Theta
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.f, 69.452f)), module, TTOBasePlus::THETA_PARAM));
     addInput(createInput<TinyTricksPort>(mm2px(Vec(14.082f, 69.053f)), module, TTOBasePlus::THETA_CV_INPUT));
@@ -301,4 +301,4 @@ struct TTOTriPlusWidget : TTOBasePlusWidget {
     InitializeSkin("TTTRIPLUS.svg");
   }
 };
-Model* modelTTTRIPLUS = createModel<TTOTriPlus, TTOTriPlusWidget>("TTTRIPLUS");
+Model *modelTTTRIPLUS = createModel<TTOTriPlus, TTOTriPlusWidget>("TTTRIPLUS");
