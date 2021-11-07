@@ -86,6 +86,11 @@ For all themes you can force the input ports to use a light theme, if you prefer
 
 ## Changelog
 
+Version 2.5.0
+* Update to VCV v2 by @sumpygump
+* Update config options to include new right-click menus for modules 
+* Apply additional style autoformatting
+
 Version 1.5.0
 * Added: [Random Wrangler (RW)](/docs/rw.md)
 * Added: Polyphony to simple oscillators (SIN, SAW, SQR, TRI), plus oscillators (SIN+, SAW+, SQR+, TRI+), Simplex Oscillator (SN-OSC), Wavetable Oscillator (WAVE), TT-A and TT-L. Huge thanks to @baconpaul for contributing with this!
