@@ -26,6 +26,10 @@ struct A8 : TinyTricksModule {
   A8() {
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
     configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Attenuation level");
+    for (int i = 0; i < NUM_CHANNELS; i++) {
+      configInput(ATT_INPUT + i, string::f("Channel %d", i + 1));
+      configOutput(ATT_OUTPUT + i, string::f("Channel %d", i + 1));
+    }
   }
 
 
@@ -35,7 +39,7 @@ struct A8 : TinyTricksModule {
       if (inputs[ATT_INPUT + i].isConnected() && outputs[ATT_OUTPUT + i].isConnected())
         outputs[ATT_OUTPUT + i].setVoltage(inputs[ATT_INPUT + i].getVoltage() * level);
     }
-	}
+  }
 };
 
 
@@ -47,7 +51,7 @@ struct A8Widget : TinyTricksModuleWidget {
     setModule(module);
 
 
-    addParam(createParam<RoundBlackKnob>(mm2px(Vec(7.7f,11.055f)), module, A8::LEVEL_PARAM));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(7.7f, 11.055f)), module, A8::LEVEL_PARAM));
 
     for (int i = 0; i < NUM_CHANNELS; i++)
       addInput(createInput<TinyTricksPort>(mm2px(Vec(3.131f, 29.859f + 11.5f * i)), module, A8::ATT_INPUT + i));

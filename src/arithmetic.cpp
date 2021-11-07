@@ -33,29 +33,42 @@ struct TTA : TinyTricksModule {
 
   TTA() {
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+    configInput(A_INPUT, "A");
+    configInput(B_INPUT, "B");
+    configOutput(APLUSB_OUTPUT, "A+B");
+    configOutput(AVGAB_OUTPUT, "Average");
+    configOutput(AMINUSB_OUTPUT, "A-B");
+    configOutput(BMINUSA_OUTPUT, "B-A");
+    configOutput(ADIVB_OUTPUT, "A/B");
+    configOutput(BDIVA_OUTPUT, "B/A");
+    configOutput(AMULB_OUTPUT, "A*B");
+    configOutput(AEXPB_OUTPUT, "A^B");
+    configOutput(ONEOVERA_OUTPUT, "1/A");
+    configOutput(ONEOVERB_OUTPUT, "1/B");
+    configOutput(MINUSA_OUTPUT, "-A");
+    configOutput(MINUSB_OUTPUT, "-B");
   }
 
   void process(const ProcessArgs &args) override {
     int nChan = std::max(1, inputs[A_INPUT].getChannels());
-    for( int op=APLUSB_OUTPUT; op < NUM_OUTPUTS; op++ )
-        outputs[op].setChannels(nChan);
+    for (int op = APLUSB_OUTPUT; op < NUM_OUTPUTS; op++)
+      outputs[op].setChannels(nChan);
 
-    for( auto c=0; c<nChan; ++c )
-    {
+    for (auto c = 0; c < nChan; ++c) {
       if (inputs[A_INPUT].isConnected() && inputs[B_INPUT].isConnected()) {
         float a = inputs[A_INPUT].getVoltage(c);
         float b = inputs[B_INPUT].getPolyVoltage(c);
 
-        outputs[APLUSB_OUTPUT].setVoltage(a+b, c);
-        outputs[AVGAB_OUTPUT].setVoltage((a+b)/2, c);
-        outputs[AMINUSB_OUTPUT].setVoltage(a-b, c);
-        outputs[BMINUSA_OUTPUT].setVoltage(b-a, c);
-        outputs[ADIVB_OUTPUT].setVoltage((b==0.f?0.f:a/b), c);
-        outputs[BDIVA_OUTPUT].setVoltage((a==0.f?0.f:b/a), c);
-        outputs[AMULB_OUTPUT].setVoltage(a*b, c);
-        outputs[AEXPB_OUTPUT].setVoltage(pow(a,b), c);
-        outputs[ONEOVERA_OUTPUT].setVoltage((a==0.f?0.f:1/a), c);
-        outputs[ONEOVERB_OUTPUT].setVoltage((b==0.f?0.f:1/b), c);
+        outputs[APLUSB_OUTPUT].setVoltage(a + b, c);
+        outputs[AVGAB_OUTPUT].setVoltage((a + b) / 2, c);
+        outputs[AMINUSB_OUTPUT].setVoltage(a - b, c);
+        outputs[BMINUSA_OUTPUT].setVoltage(b - a, c);
+        outputs[ADIVB_OUTPUT].setVoltage((b == 0.f ? 0.f : a / b), c);
+        outputs[BDIVA_OUTPUT].setVoltage((a == 0.f ? 0.f : b / a), c);
+        outputs[AMULB_OUTPUT].setVoltage(a * b, c);
+        outputs[AEXPB_OUTPUT].setVoltage(pow(a, b), c);
+        outputs[ONEOVERA_OUTPUT].setVoltage((a == 0.f ? 0.f : 1 / a), c);
+        outputs[ONEOVERB_OUTPUT].setVoltage((b == 0.f ? 0.f : 1 / b), c);
         outputs[MINUSA_OUTPUT].setVoltage(-a, c);
         outputs[MINUSB_OUTPUT].setVoltage(-b, c);
       }

@@ -5,12 +5,11 @@
 #include "oscillators/lfo.cpp"
 #include "shared/shared.cpp"
 
-
 struct ModulationSource {
   const float FREQ_LOW_BOUND = -8.f;
-	const float FREQ_HIGH_BOUND = 8.f;
-	const float FREQ_MAX_SPREAD = 8.f;
-	const float FREQ_MIDDLE = 0.f;
+  const float FREQ_HIGH_BOUND = 8.f;
+  const float FREQ_MAX_SPREAD = 8.f;
+  const float FREQ_MIDDLE = 0.f;
 
   LowFrequencyOscillator oscillator;
   float lfoWave;
@@ -20,60 +19,57 @@ struct ModulationSource {
 
   float value = 0.f;
 
-  ModulationSource(){}
+  ModulationSource() {}
 
-
-  void regenerate(float rangeParam, float biasParam, bool shOn){
+  void regenerate(float rangeParam, float biasParam, bool shOn) {
 
     //Randomly select S&H or LFO
-    if(shOn){
+    if (shOn) {
       holding = (random::uniform() >= 0.5f);
     }
-    else{
+    else {
       holding = false;
     }
 
     //Generate S&H
-    if(holding){
+    if (holding) {
       //std::cout << "Regenerated: Holding" << std::endl;
-      float spread = 5.f*rangeParam;
-      float rescaledBiasParam = rescale(biasParam,-1.f,1.f,-5.f,5.f);
-      float lowerRange = fmax(-5.f,rescaledBiasParam-spread);
-      float upperRange = fmin(5.f,rescaledBiasParam+spread);
+      float spread = 5.f * rangeParam;
+      float rescaledBiasParam = rescale(biasParam, -1.f, 1.f, -5.f, 5.f);
+      float lowerRange = fmax(-5.f, rescaledBiasParam - spread);
+      float upperRange = fmin(5.f, rescaledBiasParam + spread);
 
-      holdValue = rescale(random::uniform(),0.f, 1.f,lowerRange,upperRange);
+      holdValue = rescale(random::uniform(), 0.f, 1.f, lowerRange, upperRange);
       value = holdValue;
     }
     //Generate LFO
-    else{
+    else {
       //Choosing wave
-  		lfoWave = random::uniform() * 3.0f; //should be between 0.f and 3.f
+      lfoWave = random::uniform() * 3.0f; //should be between 0.f and 3.f
 
-  		//Setting pitch
-  		float spread = FREQ_MAX_SPREAD*rangeParam;
-      float rescaledBiasParam = rescale(biasParam,-1.f,1.f,FREQ_LOW_BOUND,FREQ_HIGH_BOUND);
-  		float lowerRange = fmax(FREQ_LOW_BOUND,rescaledBiasParam-spread);
-  		float upperRange = fmin(FREQ_HIGH_BOUND,rescaledBiasParam+spread);
+      //Setting pitch
+      float spread = FREQ_MAX_SPREAD * rangeParam;
+      float rescaledBiasParam = rescale(biasParam, -1.f, 1.f, FREQ_LOW_BOUND, FREQ_HIGH_BOUND);
+      float lowerRange = fmax(FREQ_LOW_BOUND, rescaledBiasParam - spread);
+      float upperRange = fmin(FREQ_HIGH_BOUND, rescaledBiasParam + spread);
 
-  		float pitch = rescale(random::uniform(),0.f, 1.f,lowerRange,upperRange);
+      float pitch = rescale(random::uniform(), 0.f, 1.f, lowerRange, upperRange);
 
-  		oscillator.setPitch(pitch);
+      oscillator.setPitch(pitch);
       oscillator.setPhase(random::normal());
 
-  		//Resetting
-  		oscillator.setReset(1.f);
+      //Resetting
+      oscillator.setReset(1.f);
     }
   }
 
-
-  void setOffset(bool offset){
+  void setOffset(bool offset) {
     isOffset = offset;
   }
 
-
-  bool tick(float timeDelta){
+  bool tick(float timeDelta) {
     //Tick LFO if not S&H
-    if(!holding){
+    if (!holding) {
       oscillator.step(timeDelta);
 
       float v = 0.f;
@@ -87,7 +83,7 @@ struct ModulationSource {
 
     }
     //S&H but offset changed
-    else if(holdValue != value){
+    else if (holdValue != value) {
       value = holdValue;
       return true;
     }
@@ -95,177 +91,163 @@ struct ModulationSource {
       return false;
   }
 
-
-  float getValue(){
-    if(isOffset)
-      return value+5.f;
+  float getValue() {
+    if (isOffset)
+      return value + 5.f;
     else
       return value;
   }
 };
 
-
-
 struct ModulationGeneratorBase : TinyTricksModule {
 
-  enum ParamIds {
-		OFFSET_PARAM,
-		RANGE_PARAM,
-		BIAS_PARAM,
-    SH_ON_PARAM,
-		NUM_PARAMS
-	};
+    enum ParamIds {
+      OFFSET_PARAM,
+      RANGE_PARAM,
+      BIAS_PARAM,
+      SH_ON_PARAM,
+      NUM_PARAMS
+    };
   public:
-	enum InputIds {
-		TRIG_INPUT,
-		NUM_INPUTS
-	};
-	enum OutputIds {
-		ENUMS(MOD_OUTPUT,16),
-		NUM_OUTPUTS
-	};
-	enum LightIds {
-		NUM_LIGHTS
-	};
+    enum InputIds {
+      TRIG_INPUT,
+      NUM_INPUTS
+    };
+    enum OutputIds {
+      ENUMS(MOD_OUTPUT, 16),
+      NUM_OUTPUTS
+    };
+    enum LightIds {
+      NUM_LIGHTS
+    };
 
+    int outChannelsCount = 1;
+    dsp::SchmittTrigger trigger;
+    ModulationSource *modSources;
 
-  int outChannelsCount = 1;
-	dsp::SchmittTrigger trigger;
-  ModulationSource* modSources;
+    void initializeModule() {
+      modSources = new ModulationSource[outChannelsCount];
 
-  void initializeModule(){
-    modSources = new ModulationSource[outChannelsCount];
-
-    config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-    configParam(OFFSET_PARAM, 0.f, 1.f, 0.f, "Offset");
-    configParam(SH_ON_PARAM, 0.f, 1.f, 1.f, "Enable random S&H values");
-    configParam(RANGE_PARAM, 0.f, 1.f, 1.f, "Frequency variance");
-    configParam(BIAS_PARAM, -1.f, 1.f, 0.f, "Bias");
-  }
-
-
-
-	ModulationGeneratorBase() {
-    initializeModule();
-	}
-
-  ModulationGeneratorBase(int c){
-    outChannelsCount = c;
-    initializeModule();
-  }
-
-
-  void process(const ProcessArgs &args) override {
-
-    bool regenerate = inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage());
-    bool offsetOn = (params[OFFSET_PARAM].getValue() == 1.f);
-
-    float rangeParam = 1.f;
-    float biasParam = 1.f;
-    bool shOn;
-
-    if (regenerate){
-      rangeParam = params[RANGE_PARAM].getValue();
-      biasParam = params[BIAS_PARAM].getValue();
-      shOn = (params[SH_ON_PARAM].getValue() == 1.f);
+      config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+      configInput(TRIG_INPUT, "Trigger");
+      configSwitch(OFFSET_PARAM, 0.f, 1.f, 0.f, "Offset", {"Bipolar", "Unipolar"});
+      configSwitch(SH_ON_PARAM, 0.f, 1.f, 1.f, "Enable random S&H values", {"Off", "On"});
+      configParam(RANGE_PARAM, 0.f, 1.f, 1.f, "Frequency variance");
+      configParam(BIAS_PARAM, -1.f, 1.f, 0.f, "Bias");
+      for (int i = 0; i < outChannelsCount; i++) {
+        configOutput(MOD_OUTPUT + i, string::f("Modulation %d", i + 1));
+      }
     }
 
-    for(int i = 0; i < outChannelsCount; i++){
-      ModulationSource *modSource = &modSources[i];
+    ModulationGeneratorBase() {
+      initializeModule();
+    }
 
-      //Sending offset
-      modSource->setOffset(offsetOn);
+    ModulationGeneratorBase(int c) {
+      outChannelsCount = c;
+      initializeModule();
+    }
 
-      //Triggered - generate new LFO or S&H
-    	if (regenerate) {
-        modSource->regenerate(rangeParam,biasParam,shOn);
-    	}
+    void process(const ProcessArgs &args) override {
 
-      if(outputs[MOD_OUTPUT + i].isConnected())
-      {
-        if(modSource->tick(1.0f / args.sampleRate)){
-          float newValue = modSource->getValue();
-          //std::cout << "New Value: " << newValue << std::endl;
-          outputs[MOD_OUTPUT + i].setVoltage(newValue);
+      bool regenerate = inputs[TRIG_INPUT].isConnected() && trigger.process(inputs[TRIG_INPUT].getVoltage());
+      bool offsetOn = (params[OFFSET_PARAM].getValue() == 1.f);
+
+      float rangeParam = 1.f;
+      float biasParam = 1.f;
+      bool shOn;
+
+      if (regenerate) {
+        rangeParam = params[RANGE_PARAM].getValue();
+        biasParam = params[BIAS_PARAM].getValue();
+        shOn = (params[SH_ON_PARAM].getValue() == 1.f);
+      }
+
+      for (int i = 0; i < outChannelsCount; i++) {
+        ModulationSource *modSource = &modSources[i];
+
+        //Sending offset
+        modSource->setOffset(offsetOn);
+
+        //Triggered - generate new LFO or S&H
+        if (regenerate) {
+          modSource->regenerate(rangeParam, biasParam, shOn);
+        }
+
+        if (outputs[MOD_OUTPUT + i].isConnected()) {
+          if (modSource->tick(1.0f / args.sampleRate)) {
+            float newValue = modSource->getValue();
+            //std::cout << "New Value: " << newValue << std::endl;
+            outputs[MOD_OUTPUT + i].setVoltage(newValue);
+          }
         }
       }
     }
-  }
 
 };
-
 
 struct ModulationGeneratorBaseWidget : TinyTricksModuleWidget {
-	ModulationGeneratorBaseWidget(ModulationGeneratorBase *module) {
-		setModule(module);
+  ModulationGeneratorBaseWidget(ModulationGeneratorBase *module) {
+    setModule(module);
 
-		addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.567f,12.003f)), module, ModulationGeneratorBase::TRIG_INPUT));
+    addInput(createInput<TinyTricksPortLight>(mm2px(Vec(3.567f, 12.003f)), module, ModulationGeneratorBase::TRIG_INPUT));
 
-		addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,29.749f)), module, ModulationGeneratorBase::RANGE_PARAM));
-		addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f,49.743f)), module, ModulationGeneratorBase::BIAS_PARAM));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f, 29.749f)), module, ModulationGeneratorBase::RANGE_PARAM));
+    addParam(createParam<RoundBlackKnob>(mm2px(Vec(2.62f, 49.743f)), module, ModulationGeneratorBase::BIAS_PARAM));
 
-    addParam(createParam<CKSS>(mm2px(Vec(5.151f,70.697f)), module, ModulationGeneratorBase::SH_ON_PARAM));
-		addParam(createParam<CKSS>(mm2px(Vec(5.151f,88.025f)), module, ModulationGeneratorBase::OFFSET_PARAM));
+    addParam(createParam<CKSS>(mm2px(Vec(5.151f, 70.697f)), module, ModulationGeneratorBase::SH_ON_PARAM));
+    addParam(createParam<CKSS>(mm2px(Vec(5.151f, 88.025f)), module, ModulationGeneratorBase::OFFSET_PARAM));
 
-
-	}
+  }
 };
 
-
-
-
-
 // X1 --------------------------------------------------------------------------------------------------------------
-struct ModulationGeneratorX1 : ModulationGeneratorBase{
-  ModulationGeneratorX1():ModulationGeneratorBase(1){
+struct ModulationGeneratorX1 : ModulationGeneratorBase {
+  ModulationGeneratorX1(): ModulationGeneratorBase(1) {
   }
 };
 
 struct ModulationGeneratorX1Widget : ModulationGeneratorBaseWidget {
-	ModulationGeneratorX1Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
-    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.567f,113.359f)), module, ModulationGeneratorBase::MOD_OUTPUT+0));
+  ModulationGeneratorX1Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
+    addOutput(createOutput<TinyTricksPort>(mm2px(Vec(3.567f, 113.359f)), module, ModulationGeneratorBase::MOD_OUTPUT + 0));
     InitializeSkin("LFO1.svg");
-	}
+  }
 };
 Model *modelModulationGeneratorX1 = createModel<ModulationGeneratorX1, ModulationGeneratorX1Widget>("MG1");
 
-
-
-
 // X8 --------------------------------------------------------------------------------------------------------------
 const int X8_CHANNELS = 8;
-struct ModulationGeneratorX8 : ModulationGeneratorBase{
-  ModulationGeneratorX8():ModulationGeneratorBase(X8_CHANNELS){
+struct ModulationGeneratorX8 : ModulationGeneratorBase {
+  ModulationGeneratorX8(): ModulationGeneratorBase(X8_CHANNELS) {
   }
 };
 
 struct ModulationGeneratorX8Widget : ModulationGeneratorBaseWidget {
-	ModulationGeneratorX8Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
-    for(int i = 0; i < X8_CHANNELS; i++){
-        addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.501f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
+  ModulationGeneratorX8Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
+    for (int i = 0; i < X8_CHANNELS; i++) {
+      addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.501f, 12.003f + (i * 14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
     }
     InitializeSkin("LFO8.svg");
-	}
+  }
 };
 Model *modelModulationGeneratorX8 = createModel<ModulationGeneratorX8, ModulationGeneratorX8Widget>("MG8");
 
-
 // X16 --------------------------------------------------------------------------------------------------------------
 const int X16_CHANNELS = 16;
-struct ModulationGeneratorX16 : ModulationGeneratorBase{
-  ModulationGeneratorX16():ModulationGeneratorBase(X16_CHANNELS){
+struct ModulationGeneratorX16 : ModulationGeneratorBase {
+  ModulationGeneratorX16(): ModulationGeneratorBase(X16_CHANNELS) {
   }
 };
 
 struct ModulationGeneratorX16Widget : ModulationGeneratorBaseWidget {
-	ModulationGeneratorX16Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
-    for(int i = 0; i < X16_CHANNELS/2; i++)
-        addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.501,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
+  ModulationGeneratorX16Widget(ModulationGeneratorBase *module) : ModulationGeneratorBaseWidget(module) {
+    for (int i = 0; i < X16_CHANNELS / 2; i++)
+      addOutput(createOutput<TinyTricksPort>(mm2px(Vec(18.501, 12.003f + (i * 14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i));
 
-    for(int i = 0; i < X16_CHANNELS/2; i++)
-        addOutput(createOutput<TinyTricksPort>(mm2px(Vec(28.818f,12.003f + (i*14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i + X16_CHANNELS/2));
-        
+    for (int i = 0; i < X16_CHANNELS / 2; i++)
+      addOutput(createOutput<TinyTricksPort>(mm2px(Vec(28.818f, 12.003f + (i * 14.f))), module, ModulationGeneratorBase::MOD_OUTPUT + i + X16_CHANNELS / 2));
+
     InitializeSkin("LFO16.svg");
-	}
+  }
 };
 Model *modelModulationGeneratorX16 = createModel<ModulationGeneratorX16, ModulationGeneratorX16Widget>("MG16");

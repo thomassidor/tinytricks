@@ -1,13 +1,13 @@
 #include "plugin.hpp"
-struct BareboneOscillator{
+struct BareboneOscillator {
   float phase = 0.0f;
   float freq = 0.0f;
   float isStepEOC = false;
 
-  void step(float dt){
+  void step(float dt) {
     //phase+= freq;
-    phase+= freq / dt;
-    if (phase >= 1.0f){
+    phase += freq / dt;
+    if (phase >= 1.0f) {
       phase = 0.f;
       isStepEOC = true;
     }
@@ -15,17 +15,17 @@ struct BareboneOscillator{
       isStepEOC = false;
   }
 
-  void reset(){
-      phase = 0.f;
-      isStepEOC = true;
+  void reset() {
+    phase = 0.f;
+    isStepEOC = true;
   }
 
 
-  bool isEOC(){
+  bool isEOC() {
     return isStepEOC;
   }
 
-  void setPitch(float pitch){
+  void setPitch(float pitch) {
     freq = dsp::FREQ_C4 * powf(2.0f, pitch);
   }
 };
