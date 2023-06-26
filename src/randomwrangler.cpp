@@ -63,7 +63,7 @@ struct RANDOMWRANGLER : TinyTricksModule {
 
   int tick = 0;
 
-  CurveWidget *curve;
+  CurveWidget *curve{nullptr};
 
   std::vector<float> tmp;
 
@@ -79,7 +79,7 @@ struct RANDOMWRANGLER : TinyTricksModule {
 
     configParam(RANDOMWRANGLER::RATE_PARAM, RATE_MIN, RATE_MAX, RATE_MAX, "Rate");
     configParam(RANDOMWRANGLER::SMOOTH_RATE_PARAM, SMOOTH_RATE_MIN, SMOOTH_RATE_MAX, SMOOTH_RATE_MIN, "Smoothing amount");
-    configParam(RANDOMWRANGLER::LIN_SMOOTH_PARAM, 0.0f, 1.0f, 1.0f, "Smooth shape", {"Exponential", "Linear"});
+    configSwitch(RANDOMWRANGLER::LIN_SMOOTH_PARAM, 0.0f, 1.0f, 1.0f, "Smooth shape", {"Exponential", "Linear"});
     // ENUMS(CURVE_CV_INPUT, NUM_CURVE_POINTS),
     configInput(TRIG_INPUT, "Trigger");
     configInput(RATE_CV_INPUT, "Rate CV");
@@ -123,7 +123,8 @@ struct RANDOMWRANGLER : TinyTricksModule {
     json_t *isLiniearModeJ = json_object_get(rootJ, "isLiniearMode");
     if (isLiniearModeJ)
       isLiniearMode = json_is_true(isLiniearModeJ);
-    curve->setMode(isLiniearMode);
+    if (curve)
+      curve->setMode(isLiniearMode);
     //processCurveParams(true);
   }
 
