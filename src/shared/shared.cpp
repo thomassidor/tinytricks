@@ -68,11 +68,11 @@ struct TinyTricksModuleWidget : ModuleWidget {
 
   std::string SKIN_SVG = "";
 
-  Widget *topSilver;
-  Widget *bottomSilver;
+  Widget *topSilver{nullptr};
+  Widget *bottomSilver{nullptr};
 
-  Widget *topBlack;
-  Widget *bottomBlack;
+  Widget *topBlack{nullptr};
+  Widget *bottomBlack{nullptr};
 
   int currentSkin;
 

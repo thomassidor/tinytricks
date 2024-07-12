@@ -5,3 +5,4 @@
 /plugin-arm64.dylib
 /plugin.dll
 .DS_Store
+.idea

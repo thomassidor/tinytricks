@@ -3,7 +3,6 @@
 #include "oscillators/simplex.cpp"
 #include "widgets/mini-scope.cpp"
 
-
 #define POLY_SIZE 16
 
 const float SCALE_MAX = 5.5f;
@@ -44,7 +43,7 @@ struct SNOSC : TinyTricksModule {
   };
 
 
-  MiniScope *scope;
+  MiniScope *scope{nullptr};
 
   SimplexOscillator oscillator[POLY_SIZE];
   float prevPitch[POLY_SIZE];
@@ -178,8 +177,7 @@ struct SNOSC : TinyTricksModule {
             ticksSinceScopeReset = 0;
           }
         }
-      }
-      else {
+      } else {
         if (c == 0)
           ticksSinceScopeReset = 0;
       }
@@ -191,24 +189,24 @@ struct SNOSC : TinyTricksModule {
       //Setting output
       outputs[OSC_OUTPUT].setVoltage(value, c);
 
-      if (c == 0) //Updating scope. To Consider - polyphonic scope?
+      if (scope && c == 0) //Updating scope. To Consider - polyphonic scope?
         scope->addFrame(value);
 
       //TODO: Clean up this logic. It's not pretty.
       if (forwardSyncReset) {
         outputs[SYNC_OUTPUT].setVoltage(11.f, c);
-      }
-      else if (oscillator[c].isEOC()) {
+      } else if (oscillator[c].isEOC()) {
         if (!inputs[SYNC_INPUT].isConnected())
           outputs[SYNC_OUTPUT].setVoltage(11.f, c);
         else
           outputs[SYNC_OUTPUT].setVoltage(10.f, c);
         // Normally we'll reset the scope on EOC,
         // but not if sync is connected - unless it's been too long since last sync
-        if (c == 0 && (!inputs[SYNC_INPUT].isConnected() || ticksSinceScopeReset > SimplexOscillator::BUFFER_LENGTH))
+        if (scope && c == 0 &&
+            (!inputs[SYNC_INPUT].isConnected() || ticksSinceScopeReset > SimplexOscillator::BUFFER_LENGTH))
           scope->reset();
-      }
-      else {
+
+      } else {
         outputs[SYNC_OUTPUT].setVoltage(0.f, c);
       }
     }
@@ -220,7 +218,7 @@ struct SNOSCWidget : TinyTricksModuleWidget {
   //void appendContextMenu(Menu *menu) override;
 
   SNOSCWidget(SNOSC *module) {
-    setModule(module);
+     setModule(module);
 
     if (module) {
       MiniScope *scope = new MiniScope();
@@ -229,8 +227,7 @@ struct SNOSCWidget : TinyTricksModuleWidget {
       scope->setGain(1.0f);
       addChild(scope);
       module->scope = scope;
-    }
-    else {
+    } else {
       SvgWidget *placeholder = createWidget<SvgWidget>(mm2px(Vec(3.571f, 11.0f)));
       placeholder->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/components/Wave.svg")));
       addChild(placeholder);
