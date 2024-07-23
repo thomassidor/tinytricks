@@ -173,7 +173,8 @@ struct SNOSC : TinyTricksModule {
           oscillator[c].reset();
           forwardSyncReset = true;
           if (voltage >= 11.f && c == 0) {
-            scope->reset();
+            if (scope)
+              scope->reset();
             ticksSinceScopeReset = 0;
           }
         }

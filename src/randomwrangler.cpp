@@ -1,5 +1,6 @@
 #include <random>
 #include <vector>
+#include <iostream>
 #include "plugin.hpp"
 #include "shared/shared.cpp"
 #include "widgets/curve-widget.cpp"
@@ -67,6 +68,8 @@ struct RANDOMWRANGLER : TinyTricksModule {
 
   std::vector<float> tmp;
 
+  std::atomic<int> doCurveUpdate{false};
+
   RANDOMWRANGLER() {
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 
@@ -123,14 +126,13 @@ struct RANDOMWRANGLER : TinyTricksModule {
     json_t *isLiniearModeJ = json_object_get(rootJ, "isLiniearMode");
     if (isLiniearModeJ)
       isLiniearMode = json_is_true(isLiniearModeJ);
-    if (curve)
-      curve->setMode(isLiniearMode);
-    //processCurveParams(true);
+    doCurveUpdate = true;
+    processCurveParams(true, true);
   }
 
   void toggleMode() {
     isLiniearMode = !isLiniearMode;
-    curve->setMode(isLiniearMode);
+    doCurveUpdate = true;
     regenerateDistribution();
   }
 
@@ -180,7 +182,7 @@ struct RANDOMWRANGLER : TinyTricksModule {
   }
 
 
-  void processCurveParams(bool regenerate) {
+  void processCurveParams(bool regenerate, bool force = false) {
     bool dirty = false;
     for (size_t i = 0; i < NUM_CURVE_POINTS; i++) {
       float value = params[CURVE_PARAM + i].getValue();
@@ -194,8 +196,8 @@ struct RANDOMWRANGLER : TinyTricksModule {
 
       tmp[i] = value;
     }
-    if (dirty) {
-      curve->setPoints(tmp);
+    if (dirty || force) {
+      doCurveUpdate = true;
       if (regenerate) {
         weights = tmp;
         regenerateDistribution();
@@ -285,7 +287,9 @@ struct RANDOMWRANGLER : TinyTricksModule {
 
 
 struct RANDOMWRANGLERWidget : TinyTricksModuleWidget {
+private:
   CurveWidget *curve;
+public:
   RANDOMWRANGLER *randModule;
   const float widgetSpacing = 10.807f;
 
@@ -308,6 +312,21 @@ struct RANDOMWRANGLERWidget : TinyTricksModuleWidget {
 
 
     TinyTricksModuleWidget::appendContextMenu(menu);
+  }
+
+  void step() override
+  {
+    auto rwm = dynamic_cast<RANDOMWRANGLER *>(module);
+    if (rwm)
+    {
+      if (rwm->doCurveUpdate)
+      {
+        rwm->doCurveUpdate = false;
+        curve->setMode(rwm->isLiniearMode);
+        curve->setPoints(rwm->tmp);
+      }
+    }
+    TinyTricksModuleWidget::step();
   }
 
   RANDOMWRANGLERWidget(RANDOMWRANGLER *module) {
@@ -358,6 +377,10 @@ struct RANDOMWRANGLERWidget : TinyTricksModuleWidget {
     addOutput(createOutput<TinyTricksPort>(mm2px(Vec(26.427f, 113.255f)), module, RANDOMWRANGLER::NOISE_OUTPUT));
 
     InitializeSkin("RW.svg");
+
+    if (module) {
+      module->processCurveParams(false, true);
+    }
   }
 };
 

@@ -18,6 +18,8 @@ SOURCES += $(wildcard src/*.cpp src/utility/*.cpp)
 DISTRIBUTABLES += res
 DISTRIBUTABLES += $(wildcard LICENSE*)
 
+clion-install-alias: install
+
 install-run: install
 	"/c/Program Files/VCV/Rack/Rack.exe"
 
