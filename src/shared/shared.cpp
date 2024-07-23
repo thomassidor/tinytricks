@@ -1,3 +1,5 @@
+#include <atomic>
+
 struct TinyTricksPortLight : app::SvgPort {
   TinyTricksPortLight() {
     setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/components/PortLight.svg")));
@@ -24,7 +26,9 @@ struct TinyTricksPort : app::SvgPort {
 struct TinyTricksModule : Module {
 
   int APPLIED_SKIN = 0;
+  std::atomic<bool> APPLIED_SKIN_WINS{false};
   bool FORCED_BRIGHT = false;
+  std::atomic<bool> FOLLOW_RACK_SKIN{true};
 
   TinyTricksModule() {
   }
@@ -33,17 +37,25 @@ struct TinyTricksModule : Module {
     json_t *rootJ = json_object();
     json_object_set_new(rootJ, "skin", json_integer(APPLIED_SKIN));
     json_object_set_new(rootJ, "forcebright", json_boolean(FORCED_BRIGHT));
+    json_object_set_new(rootJ, "followrackskin", json_boolean(FOLLOW_RACK_SKIN));
     return rootJ;
   }
 
   void dataFromJson(json_t *rootJ) override {
     json_t *skinJ = json_object_get(rootJ, "skin");
     if (skinJ)
-      APPLIED_SKIN = (int)json_integer_value(skinJ);
+    {
+      APPLIED_SKIN = (int) json_integer_value(skinJ);
+      APPLIED_SKIN_WINS = true;
+    }
 
     json_t *forcebrightJ = json_object_get(rootJ, "forcebright");
     if (forcebrightJ)
       FORCED_BRIGHT = json_is_true(forcebrightJ);
+
+    json_t *followr = json_object_get(rootJ, "followrackskin");
+    if (followr)
+      FOLLOW_RACK_SKIN = json_is_true(followr);
   }
 
 
@@ -74,7 +86,8 @@ struct TinyTricksModuleWidget : ModuleWidget {
   Widget *topBlack{nullptr};
   Widget *bottomBlack{nullptr};
 
-  int currentSkin;
+  bool useRackDarkMode{true};
+  int currentSkin{0};
 
   bool forceUseLightPorts = false;
 
@@ -82,12 +95,11 @@ struct TinyTricksModuleWidget : ModuleWidget {
 
   }
 
-
   void InitializeSkin(std::string svgName) {
     SKIN_SVG = svgName;
     //std::cout << "svg: " << SKIN_SVG << std::endl;
 
-    setSkin(0);
+    setSkin(0, true);
 
     //std::cout << "module: " << module << std::endl;
     //std::cout << "skin: " << currentSkin << std::endl;
@@ -106,7 +118,11 @@ struct TinyTricksModuleWidget : ModuleWidget {
     updateScrewsAndPorts();
   }
 
-  void setSkin(int skinId) {
+  void setSkin(int skinId, bool appliedWins = false) {
+    if (appliedWins && module)
+    {
+      skinId = dynamic_cast<TinyTricksModule *>(module)->APPLIED_SKIN;
+    }
     currentSkin = skinId;
 
     if (module)
@@ -149,10 +165,34 @@ struct TinyTricksModuleWidget : ModuleWidget {
       if (castModule != nullptr) {
         updatedFromModule = true;
         forceUseLightPorts = castModule->FORCED_BRIGHT;
-        setSkin(castModule->APPLIED_SKIN);
+        setSkin(castModule->APPLIED_SKIN, castModule->APPLIED_SKIN_WINS);
+        castModule->APPLIED_SKIN_WINS = false;
         updateScrewsAndPorts();
       }
     }
+
+    if (module)
+    {
+      TinyTricksModule *castModule = dynamic_cast<TinyTricksModule *>(module);
+      if (castModule->FOLLOW_RACK_SKIN)
+      {
+        useRackDarkMode = true;
+        auto beDark = rack::settings::preferDarkPanels;
+        if (beDark && currentSkin != 4)
+        {
+          setSkin(4);
+        }
+        else if (!beDark && currentSkin != 0)
+        {
+          setSkin(0);
+        }
+      }
+      else
+      {
+        useRackDarkMode = false;
+      }
+    }
+
     ModuleWidget::step();
   }
 
@@ -169,11 +209,21 @@ struct TinyTricksModuleWidget : ModuleWidget {
       }
     };
 
+    menu->addChild(rack::createMenuItem("Follow Rack Dark Panels",
+                   CHECKMARK(useRackDarkMode),
+                   [this](){
+                       useRackDarkMode = !useRackDarkMode;
+                       TinyTricksModule *castModule = dynamic_cast<TinyTricksModule *>(module);
+                       castModule->FOLLOW_RACK_SKIN = useRackDarkMode;
+                   }));
+    menu->addChild(new rack::MenuSeparator());
+
     for (int i = 0; i < SKIN_COUNT; i++) {
       ModeItem *modeItem = createMenuItem<ModeItem>(SKIN_NAMES[i]);
       modeItem->rightText = CHECKMARK(currentSkin == i);
       modeItem->widget = this;
       modeItem->skin = i;
+      modeItem->disabled = useRackDarkMode;
       menu->addChild(modeItem);
     }
 
@@ -192,4 +242,5 @@ struct TinyTricksModuleWidget : ModuleWidget {
     menu->addChild(portItem);
 
   }
+
 };
